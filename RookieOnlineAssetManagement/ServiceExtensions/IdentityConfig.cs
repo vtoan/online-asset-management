@@ -9,7 +9,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
     {
         public static IServiceCollection AddIdentityConfig(this IServiceCollection services)
         {
-            services.AddDefaultIdentity<Entities.User>(options =>
+            services.AddIdentity<Entities.User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -19,9 +19,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
                 options.Password.RequiredUniqueChars = 0;
 
                 options.SignIn.RequireConfirmedAccount = false;
-
             })
-                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.ConfigureApplicationCookie(options =>
