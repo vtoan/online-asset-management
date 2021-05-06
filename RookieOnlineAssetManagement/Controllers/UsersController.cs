@@ -15,11 +15,11 @@ namespace RookieOnlineAssetManagement.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userSer;
 
-        public UserController(IUserService userSer)
+        public UsersController(IUserService userSer)
         {
             _userSer = userSer;
         }

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using RookieOnlineAssetManagement.Data;
 
@@ -10,7 +11,6 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
         {
             services.AddDefaultIdentity<Entities.User>(options =>
             {
-
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
@@ -21,6 +21,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
                 options.SignIn.RequireConfirmedAccount = false;
 
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.ConfigureApplicationCookie(options =>
