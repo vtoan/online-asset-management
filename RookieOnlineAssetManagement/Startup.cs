@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RookieOnlineAssetManagement.Data;
-using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.ServiceExtensions;
-using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement
 {
@@ -38,6 +35,7 @@ namespace RookieOnlineAssetManagement
             //other
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddSwaggerGen();
 
             //spa
             // In production, the React files will be served from this directory
@@ -54,6 +52,13 @@ namespace RookieOnlineAssetManagement
             {
                 serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rookie Online Asset Management API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             if (env.IsDevelopment())
             {
