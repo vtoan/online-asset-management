@@ -32,6 +32,8 @@ namespace RookieOnlineAssetManagement
 
             //extension
             services.AddIdentityConfig();
+            services.AddRepositories();
+            services.AddBusinessService();
 
             //other
             services.AddControllersWithViews();
