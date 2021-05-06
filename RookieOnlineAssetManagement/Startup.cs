@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
+using RookieOnlineAssetManagement.ServiceExtensions;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement
@@ -23,36 +24,20 @@ namespace RookieOnlineAssetManagement
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //db
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<User>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-            })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //extension
+            services.AddIdentityConfig();
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Events.OnRedirectToLogin = (context) =>
-                {
-                    context.Response.StatusCode = 401;
-                    return Task.CompletedTask;
-                };
-
-                options.Events.OnRedirectToAccessDenied = (context) =>
-                {
-                    context.Response.StatusCode = 403;
-                    return Task.CompletedTask;
-                };
-            });
-
+            //other
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            //spa
             // In production, the React files will be served from this directory
             // services.AddSpaStaticFiles(configuration =>
             // {
@@ -75,8 +60,8 @@ namespace RookieOnlineAssetManagement
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // app.UseExceptionHandler("/Error");
+                app.UseStatusCodePages();
                 app.UseHsts();
             }
 
