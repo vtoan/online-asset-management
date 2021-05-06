@@ -72,6 +72,11 @@ namespace RookieOnlineAssetManagement
                 app.UseHsts();
             }
 
+            app.UseCors(b =>
+            {
+                b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             // app.UseSpaStaticFiles();
