@@ -4,7 +4,7 @@ import { Col, Container, Row } from "reactstrap";
 export default function PageLayout({ header, nav, content }) {
   return (
     <>
-      <div className="ns-bg-primary">
+      <div className="ns-bg-primary" style={{ maxHeight: "4.5em" }}>
         <Container fluid={true} className="py-4 main-content">
           {header}
         </Container>
