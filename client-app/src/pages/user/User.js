@@ -1,5 +1,7 @@
 import React from "react";
 
 export default function User() {
-  return <div>User Page</div>;
+  return (
+    <h5 className="name-list">User List</h5>
+  );
 }
