@@ -9,39 +9,28 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public class AssetRepository : IAssetRepository
     {
-        public ICollection<AssetModel> GetListAsset()
+        public Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssetModel> CreateAsset(AssetRequestModel assetRequest)
+        public Task<AssetModel> DeleteAssetAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssetModel> DeleteAsset(string id)
+        public Task<AssetModel> GetAsstByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssetModel> GetAsstById(string id)
+        public ICollection<AssetModel> GetListAssetAsync(StateAsset state, string category, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState)
         {
             throw new NotImplementedException();
         }
 
-       
-        public Task<AssetModel> UpdateAsset(string id, AssetRequestModel assetRequest)
+        public Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {
-            throw new NotImplementedException();
-        }
-
-        public ICollection<AssetModel> GetListAsset(StateAsset state, string category, string query, SortBy sortCode, SortBy sortName, int sortCate, SortBy sortState)
-        {
-            var data = new List<AssetModel>();
-            var result = new List<AssetModel>();
-
-            if()
-
             throw new NotImplementedException();
         }
     }

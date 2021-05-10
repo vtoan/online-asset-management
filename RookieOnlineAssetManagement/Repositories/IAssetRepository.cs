@@ -9,15 +9,15 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public interface IAssetRepository
     {
-        ICollection<AssetModel> GetListAsset(StateAsset state, string category, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState);
+        ICollection<AssetModel> GetListAssetAsync(StateAsset state, string category, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState);
 
-        Task<AssetModel> GetAsstById(string id);
+        Task<AssetModel> GetAsstByIdAsync(string id);
 
-        Task<AssetModel> CreateAsset(AssetRequestModel assetRequest);
+        Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest);
 
-        Task<AssetModel> UpdateAsset(string id, AssetRequestModel assetRequest);
+        Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest);
 
-        Task<AssetModel> DeleteAsset(string id);
+        Task<AssetModel> DeleteAssetAsync(string id);
 
 
 
