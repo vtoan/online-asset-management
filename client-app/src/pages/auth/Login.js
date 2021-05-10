@@ -14,8 +14,8 @@ export default function Login() {
 
   return (
     <>
-      <div className="ns-bg-primary ns-text-white" style={{ height: "4.5em" }}>
-        <div className="m-auto py-2" style={{ width: "85%", height: "100%" }}>
+      <div className="ns-bg-primary ns-text-white" style={{ height: "4.6em" }}>
+        <div className="m-auto py-2 main-content" style={{ height: "100%" }}>
           <img src="/Logo_lk.png" alt="" style={{ maxHeight: "100%" }} />
           <span
             className="px-4"
