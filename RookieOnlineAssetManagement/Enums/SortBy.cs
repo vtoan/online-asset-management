@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Enums
 {
-    public enum SortByChar
+    public enum SortBy
     {
-        ASC = 1, DESC =2
+        ASC = 1, DESC = 2
     }
 }
