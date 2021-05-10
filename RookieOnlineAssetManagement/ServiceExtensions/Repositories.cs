@@ -10,6 +10,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAssetRepository, AssetRepository>();
 
             return services;
         }

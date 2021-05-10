@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Models;
 
@@ -19,6 +20,26 @@ namespace RookieOnlineAssetManagement.Repositories
             return _dbContext.Users
                 .Select(item => new UserModel { Id = item.Id, UserName = item.UserName, Email = item.Email })
                 .ToList();
+        }
+
+        public Task<UserModel> GetUserById(string id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<UserModel> UpdateUser(string id, UserRequestModel userRequest)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<UserModel> CreateUser(UserRequestModel userRequest)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<UserModel> DeleteUser(string id)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
