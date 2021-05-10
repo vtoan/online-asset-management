@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Models;
+using RookieOnlineAssetManagement.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,25 +17,17 @@ namespace RookieOnlineAssetManagement.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger _logger;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUserService _userSer;
 
-        public UsersController(ILogger<UsersController> logger, ApplicationDbContext dbContext)
+        public UsersController(IUserService userSer)
         {
-            _logger = logger;
-            _dbContext = dbContext;
+            _userSer = userSer;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> Get()
+        public ActionResult<IEnumerable<UserModel>> Get()
         {
-            _logger.LogInformation("Getting all products");
-            return Ok(await _dbContext.Users.Select(x => new UserModel
-            {
-                Id = x.Id,
-                UserName = x.UserName,
-                Email = x.Email
-            }).ToListAsync());
+            return Ok(_userSer.GetLists());
         }
     }
 }
