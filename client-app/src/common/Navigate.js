@@ -59,7 +59,7 @@ export default function Navigate() {
 
       <Nav vertical className="nav">
         {navMap.map((navItem, index) => (
-          <NavLink key={+index} className="navLink" to={navItem.to}>
+          <NavLink exact key={+index} className="navLink" to={navItem.to}>
             {navItem.title}
           </NavLink>
         ))}
