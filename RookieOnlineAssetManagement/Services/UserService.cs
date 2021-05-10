@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
@@ -14,9 +15,9 @@ namespace RookieOnlineAssetManagement.Services
             _userRepo = userRepo;
         }
 
-        public ICollection<UserModel> GetLists()
+        public Task<ICollection<UserModel>> GetListAsync()
         {
-            return _userRepo.GetLists();
+            return _userRepo.GetListAsync();
         }
     }
 }

@@ -6,14 +6,14 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public interface IUserRepository
     {
-        ICollection<UserModel> GetLists();
+        Task<ICollection<UserModel>> GetListAsync();
 
-        Task<UserModel> GetUserById(string id);
+        Task<UserModel> GetUserByIdAsync(string id);
 
-        Task<UserModel> CreateUser(UserRequestModel userRequest );
+        Task<UserModel> CreateUserAsync(UserRequestModel userRequest);
 
-        Task<UserModel> UpdateUser(string id, UserRequestModel userRequest);
+        Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest);
 
-        Task<UserModel> DeleteUser(string id);
+        Task<bool> DeleteUserAsync(string id);
     }
 }

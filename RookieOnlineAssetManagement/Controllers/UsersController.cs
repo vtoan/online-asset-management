@@ -25,9 +25,9 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserModel>> Get()
+        public async Task<ActionResult<IEnumerable<UserModel>>> GetAsync()
         {
-            return Ok(_userSer.GetLists());
+            return Ok(await _userSer.GetListAsync());
         }
     }
 }
