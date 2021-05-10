@@ -1,5 +1,6 @@
 import React from "react";
 import { Col, Container, Row } from "reactstrap";
+import '../style.css';
 
 export default function PageLayout({ header, nav, content }) {
   return (
@@ -11,7 +12,7 @@ export default function PageLayout({ header, nav, content }) {
       </div>
       <Container fluid={true} className="main-content">
         <Row className="h-100">
-          <Col className="pt-4" xs={3}>
+          <Col className="pt-3" xs={3}>
             {nav}
           </Col>
           <Col className="p-4" xs={9}>

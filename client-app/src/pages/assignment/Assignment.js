@@ -1,5 +1,9 @@
 import React from "react";
 
 export default function Assignment() {
-  return <div>Assignment Page</div>;
+  return (
+    <>
+      <h5 className="name-list">Assignment List</h5>
+    </>
+  );
 }

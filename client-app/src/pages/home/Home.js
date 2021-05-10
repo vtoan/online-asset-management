@@ -1,8 +1,10 @@
 import React from "react";
+import '../../style.css'
+
 export default function Home() {
   return (
     <>
-      <div>Home Page</div>
+      <h5 className="name-list">My Assignment</h5>
     </>
   );
 }

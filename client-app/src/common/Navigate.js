@@ -1,7 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Nav, NavItem } from "reactstrap";
+import { NavLink } from "react-router-dom";
+import { Nav } from "reactstrap";
 import { AppContext } from "../App";
+import '../style.css';
 
 const navLinks = [
   {
@@ -34,20 +35,35 @@ const navLinks = [
 export default function Navigate() {
   const appContext = React.useContext(AppContext);
   let navMap = [];
+
   //filter navigate item with role user
+
   if (!(appContext.user.roleName === "admin"))
     navMap = navLinks.filter((item) => item.any === true);
   else navMap = navLinks;
 
   return (
-    <Nav vertical>
-      {navMap.map((navItem, index) => (
-        <NavItem key={+index}>
-          <Link className="text-decoration-none" to={navItem.to}>
+    <div className="nav-container">
+      <div className="float-left">
+        <NavLink exact to="/">
+          <img
+            className="logo"
+            src="https://vnn-imgs-f.vgcloud.vn/2020/01/16/11/nashtech-doi-nhan-dien-thuong-hieu.jpg"
+            alt="logo"
+          />
+        </NavLink>
+        <br />
+        <h6 className="name-asset">Online Asset Management</h6>
+      </div>
+      <br />
+
+      <Nav vertical className="nav">
+        {navMap.map((navItem, index) => (
+          <NavLink key={+index} className="navLink" to={navItem.to}>
             {navItem.title}
-          </Link>
-        </NavItem>
-      ))}
-    </Nav>
+          </NavLink>
+        ))}
+      </Nav>
+    </div>
   );
 }
