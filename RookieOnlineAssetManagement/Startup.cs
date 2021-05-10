@@ -48,10 +48,10 @@ namespace RookieOnlineAssetManagement
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
-            }
+            // using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            // {
+            //     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+            // }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -63,7 +63,7 @@ namespace RookieOnlineAssetManagement
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
+                // app.UseMigrationsEndPoint();
             }
             else
             {
