@@ -235,6 +235,19 @@ namespace RookieOnlineAssetManagement.Data
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.LocationId);
             });
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Roles)
+                .WithMany("Users")
+                .UsingEntity<IdentityUserRole<string>>(
+                    userRole => userRole.HasOne<IdentityRole>()
+                        .WithMany()
+                        .HasForeignKey(ur => ur.RoleId)
+                        .IsRequired(),
+                    userRole => userRole.HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey(ur => ur.UserId)
+                        .IsRequired());
         }
     }
 }
