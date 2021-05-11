@@ -1,5 +1,6 @@
 import React from "react";
+import AssetTable from './Table.js';
 
 export default function Asset() {
-  return <h5 className="name-list">Asset List</h5>;
+  return <AssetTable/>;
 }
