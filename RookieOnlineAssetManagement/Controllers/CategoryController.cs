@@ -21,13 +21,13 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryModel>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<CategoryModel>>> GetListAsync()
         {
             return Ok(await _categoryService.GetListCategoryAsync());
         }
 
         [HttpPost]
-        public async Task<ActionResult<CategoryModel>> CreateCategory(CategoryModel Model)
+        public async Task<ActionResult<CategoryModel>> CreateAsync(CategoryModel Model)
         {
             return Ok(await _categoryService.CreateCategoryrAsync(Model));
         }
