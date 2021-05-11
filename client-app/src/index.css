@@ -45,3 +45,10 @@ code {
 .ns-text-white {
   color: var(--clr-white);
 }
+label{
+  font-size: 10px;
+}
+
+.lable-arrow{
+  transition:0.5s
+}
