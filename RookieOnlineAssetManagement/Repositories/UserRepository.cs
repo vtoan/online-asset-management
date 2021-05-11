@@ -18,8 +18,8 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<ICollection<UserModel>> GetListAsync()
         {
-            return await _dbContext.Users
-                .Select(item => new UserModel { Id = item.Id, UserName = item.UserName, Email = item.Email })
+            return await _dbContext.Users.Include(item => item.Roles)
+                .Select(item => new UserModel { Id = item.Id, UserName = item.UserName, Email = item.Email, RoleName = item.Roles.First().Name })
                 .ToListAsync();
         }
 
