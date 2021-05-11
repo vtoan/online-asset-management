@@ -1,7 +1,8 @@
 import React from "react";
+import UserTable from "./Table";
 
 export default function User() {
-  return (
-    <h5 className="name-list">User List</h5>
-  );
+  return <div>
+    <UserTable/>
+  </div>;
 }
