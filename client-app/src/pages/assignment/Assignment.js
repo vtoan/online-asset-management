@@ -1,9 +1,10 @@
 import React from "react";
+import AssignmentTable from "./Table";
 
 export default function Assignment() {
   return (
-    <>
-      <h5 className="name-list">Assignment List</h5>
-    </>
+    <AssignmentTable>
+      
+    </AssignmentTable>
   );
 }
