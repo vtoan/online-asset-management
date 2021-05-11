@@ -1,19 +1,16 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RookieOnlineAssetManagement.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
@@ -23,7 +20,7 @@ namespace RookieOnlineAssetManagement
 
                 try
                 {
-                    SeedData.Initialize(services);
+                    await SeedData.InitializeAsync(services);
                 }
                 catch (Exception ex)
                 {
