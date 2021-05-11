@@ -44,10 +44,10 @@ export default function AssetTable() {
                         <Col xs={2}> <TableItem> <p>Available</p> </TableItem> </Col>
                         <Col xs={2}>
                             <Button color="#fff" className="py-0">
-                                <BsPencil />
+                                <BsPencil color="#0d6efd"/>
                             </Button>
                             <Button color="#fff" className="py-0 border-0">
-                                <TiDeleteOutline />
+                                <TiDeleteOutline color = "#dc3545"/>
                             </Button>
                         </Col>
                     </>
