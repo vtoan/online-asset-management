@@ -144,7 +144,7 @@ namespace RookieOnlineAssetManagement.Data
 
                 entity.Property(e => e.ShortName)
                     .IsRequired()
-                    .HasMaxLength(4)
+                    .HasMaxLength(2)
                     .IsUnicode(false);
             });
 
