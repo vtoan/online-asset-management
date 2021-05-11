@@ -12,11 +12,11 @@ export default function PageLayout({ header, nav, content }) {
       </div>
       <Container fluid={true} className="main-content">
         <Row className="h-100">
-          <Col className="pt-3" xs={2}>
+          <Col className="pt-3 col-3">
             {nav}
           </Col>
-          <Col className="p-4" xs={10}>
-            <div className="h-100">{content}</div>
+          <Col className="p-4">
+            {content}
           </Col>
         </Row>
       </Container>
