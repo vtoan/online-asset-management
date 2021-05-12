@@ -11,7 +11,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAssetRepository, AssetRepository>();
-
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             return services;
         }
     }

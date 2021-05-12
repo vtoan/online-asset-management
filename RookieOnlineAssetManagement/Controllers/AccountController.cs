@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Entities;
 using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Models;
+using System;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
@@ -36,11 +37,12 @@ namespace RookieOnlineAssetManagement.Controllers
             if (_signInManger.IsSignedIn(User)) return Ok();
             if (!ModelState.IsValid) return BadRequest();
             var re = await _signInManger.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, true);
+            if (re.IsLockedOut == true) return Forbid();
             if (re.Succeeded)
             {
                 var user = await _userManager.FindByNameAsync(loginModel.UserName);
                 var roles = await _userManager.GetRolesAsync(user);
-                if (user == null) return Problem();
+                if (user == null) return NotFound();
                 return Ok(new UserModel
                 {
                     Id = user.Id,
@@ -58,6 +60,31 @@ namespace RookieOnlineAssetManagement.Controllers
             if (!_signInManger.IsSignedIn(User)) return Forbid();
             await _signInManger.SignOutAsync();
             return NoContent();
+        }
+
+
+        public class ChangePassWordModel
+        {
+            [Required]
+            public string OldPassword { get; set; } 
+
+            [Required]
+            public string NewPassword { set; get; }
+          
+        }
+
+        [HttpPost("/change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePassWordModel userModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            var user = await _userManager.GetUserAsync(User);
+            var changePassword = await _userManager.ChangePasswordAsync( user, userModel.OldPassword, userModel.NewPassword);
+            if (changePassword.Succeeded)
+            {
+                return Ok();
+            }
+            return NotFound();
+
         }
     }
 }
