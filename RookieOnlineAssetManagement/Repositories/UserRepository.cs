@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace RookieOnlineAssetManagement.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<ICollection<UserModel>> GetListUserAsync(string locationId, TypeUser? type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
+        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page , int pageSize)
         {
             var queryable = _dbContext.Users.Where(item => item.LocationId == locationId);
             if (!string.IsNullOrEmpty(query))
@@ -60,38 +61,42 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
             }
 
-            
-            queryable
-             .Join(
-                      _dbContext.UserRoles,
-                      user => user.Id,
-                      userRole => userRole.UserId,
-                      (user, userrole) => new
-                      {
-                          UserId = user.Id,
-                          RoleId = userrole.RoleId,
-                          StaffCode = user.StaffCode,
-                          FullName = $"{user.FirstName} {user.LastName}",
-                          UserName = user.UserName,
-                          JoinedDate = user.JoinedDate
-                      }
-                  )
-             .Join(
-                       _dbContext.Roles,
-                       userRole => userRole.RoleId,
-                       role => role.Id,
-                       (userRole, role) => new
-                       {
-                           RoleName = role.Name,
+            queryable.Include(item => item.Roles);
 
-                       }
-                  );
+            if (type.Length > 0)
+            {
+                var stringType = type.Select(x => x.ToString()).ToArray();
+                queryable = queryable.Where(x => x.Roles.Any(r => stringType.Contains(r.NormalizedName)));
+            }
+            if (sortType.HasValue)
+            {
+                switch(sortType)
+                {
+                    case SortBy.ASC:
+                        queryable = queryable.OrderBy(item => item.Roles.First());
+                        break;
+                    case SortBy.DESC:
+                        queryable = queryable.OrderByDescending(item => item.Roles.First());
+                        break;
+                }           
+            }
+            var totalRecord = queryable.Count();
+            if(page > 0 && pageSize > 0)
+            {
+                queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
+            }
+            var list = await queryable.Select(x => new UserModel
+            {
+                Id = x.Id,
+                FullName = x.FirstName + "" + x.LastName,
+                UserName = x.UserName,
+                JoinedDate = x.JoinedDate,
+                RoleName = x.Roles.ToString(),
 
-            //if (type.HasValue)
-            //{
-            //    queryable = queryable.Where(x => x.);
-            //}
-            
+            }).ToListAsync();
+            var totalpage = (int)Math.Ceiling((double)totalRecord / pageSize);
+            return (list, totalpage);
+
         }
 
         public Task<UserModel> GetUserByIdAsync(string id)
@@ -113,5 +118,7 @@ namespace RookieOnlineAssetManagement.Repositories
         {
             throw new System.NotImplementedException();
         }
+
+       
     }
 }
