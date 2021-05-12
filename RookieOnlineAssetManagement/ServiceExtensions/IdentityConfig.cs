@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using RookieOnlineAssetManagement.Data;
+using RookieOnlineAssetManagement.Entities;
 
 namespace RookieOnlineAssetManagement.ServiceExtensions
 {
@@ -9,7 +10,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
     {
         public static IServiceCollection AddIdentityConfig(this IServiceCollection services)
         {
-            services.AddIdentity<Entities.User, IdentityRole>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -19,6 +20,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
                 options.Password.RequiredUniqueChars = 0;
 
                 options.SignIn.RequireConfirmedAccount = false;
+                options.Lockout.AllowedForNewUsers = false;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
