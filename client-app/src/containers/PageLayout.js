@@ -15,7 +15,7 @@ export default function PageLayout({ header, nav, content }) {
           <Col className="pt-3" xs={2}>
             {nav}
           </Col>
-          <Col className="p-4" xs={10}>
+          <Col className="p-5" xs={10}>
             <div className="h-100">{content}</div>
           </Col>
         </Row>
