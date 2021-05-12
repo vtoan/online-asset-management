@@ -76,18 +76,20 @@ namespace RookieOnlineAssetManagement.Repositories
             return assetmodel;
         }
 
-        public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(StateAsset? state, string categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page = 1, int pageSize = 10)
+        public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(StateAsset[] state, string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize)
         {
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == locationid);
 
-            if (state.HasValue)
+            if (state.Length > 0)
             {
-                queryable = queryable.Where(x => x.State == (short)state.Value);
+                var stateNum = Array.ConvertAll(state, value => (int)value);
+                queryable = queryable.Where(x => stateNum.Contains(x.State));
             }
-            if (!string.IsNullOrEmpty(categoryid))
+            if (categoryid.Length > 0)
             {
-                queryable = queryable.Where(x => x.CategoryId == categoryid);
+                queryable = queryable.Where(x => categoryid.Contains(x.CategoryId));
+                
             }
             if (!string.IsNullOrEmpty(query))
             {
@@ -142,6 +144,10 @@ namespace RookieOnlineAssetManagement.Repositories
             {
             }
             var totalRecord = queryable.Count();
+            if (page > 0 && pageSize > 0)
+            {
+                queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
+            }
             var list = await queryable.Select(x => new AssetModel
             {
                 AssetId = x.AssetId,
@@ -150,7 +156,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 Specification = x.Specification,
                 InstalledDate = x.InstalledDate.Value,
                 State = x.State
-            }).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            }).ToListAsync();
             var totalpage = (int)Math.Ceiling((double)totalRecord / pageSize);
             return (list, totalpage);
         }
@@ -158,7 +164,12 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest)
         {
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
             if (asset == null)
+            {
+                return null;
+            }
+            if (assignment != null)
             {
                 return null;
             }
