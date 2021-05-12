@@ -36,11 +36,12 @@ namespace RookieOnlineAssetManagement.Controllers
             if (_signInManger.IsSignedIn(User)) return Ok();
             if (!ModelState.IsValid) return BadRequest();
             var re = await _signInManger.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, true);
+            if (re.IsLockedOut == true) return Forbid();
             if (re.Succeeded)
             {
                 var user = await _userManager.FindByNameAsync(loginModel.UserName);
                 var roles = await _userManager.GetRolesAsync(user);
-                if (user == null) return Problem();
+                if (user == null) return NotFound();
                 return Ok(new UserModel
                 {
                     Id = user.Id,

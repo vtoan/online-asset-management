@@ -29,5 +29,6 @@ namespace RookieOnlineAssetManagement.Entities
         public ICollection<Assignment> AssignmentUsers { get; set; }
         public ICollection<ReturnRequest> ReturnRequestAcceptedUsers { get; set; }
         public ICollection<ReturnRequest> ReturnRequestRequestUsers { get; set; }
+        public ICollection<IdentityRole> Roles { get; set; }
     }
 }
