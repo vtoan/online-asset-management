@@ -2,8 +2,8 @@ import { Col, Row, Button, Table } from 'reactstrap';
 import '../../index.css';
 import TableItem from '../../common/TableItem';
 import LableItems from '../../common/LableItems'
-import { BsCheck } from "react-icons/bs";      
-import { TiDeleteOutline} from "react-icons/ti";
+import { BsCheck } from "react-icons/bs";
+import { TiDeleteOutline } from "react-icons/ti";
 
 
 export default function RequestTable() {
@@ -27,7 +27,7 @@ export default function RequestTable() {
     return (
         <Table borderless>
             <thead>
-                <tr style ={{"fontSize":"14px"}}>
+                <tr style={{ "fontSize": "14px", "fontWeight": "500" }}>
                     <th><TableItem>  <LableItems title="No" onChanged={onChangeSortId}></LableItems></TableItem> </th>
                     <th><TableItem>  <LableItems title="Asset Code" onChanged={onChangeSortId}></LableItems></TableItem> </th>
                     <th><TableItem>  <LableItems title="Asset Name" onChanged={onChangeSortId}></LableItems></TableItem> </th>
@@ -50,11 +50,15 @@ export default function RequestTable() {
                     <td>07/03/2020</td>
                     <td>Completed</td>
                     <td>
-                        <BsCheck></BsCheck>
-                        
+                        <Button color="#fff" className="py-0 px-0" style={{ "lineHeight": "0px" }}>
+                            <BsCheck></BsCheck>
+                        </Button>
+
                     </td>
                     <td>
-                        <TiDeleteOutline></TiDeleteOutline>
+                        <Button color="#fff" className="py-0 px-0" style={{ "lineHeight": "0px" }}>
+                            <TiDeleteOutline></TiDeleteOutline>
+                        </Button>
                     </td>
                 </tr>
             </tbody>
