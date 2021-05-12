@@ -16,6 +16,7 @@ namespace RookieOnlineAssetManagement.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<ReturnRequest> ReturnRequests { get; set; }
+        public DbSet<UserExtension> UserExtensions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -28,6 +29,16 @@ namespace RookieOnlineAssetManagement.Data
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
 
+            modelBuilder.Entity<UserExtension>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("UserExtension");
+
+                entity.Property(e => e.UserName)
+                    .IsUnicode(true)
+                    .HasMaxLength(256);
+            });
             modelBuilder.Entity<Asset>(entity =>
             {
                 entity.ToTable("Asset");
@@ -224,8 +235,6 @@ namespace RookieOnlineAssetManagement.Data
                 entity.Property(e => e.LocationId)
                     .HasMaxLength(450)
                     .HasColumnName("LocationID");
-
-                entity.Property(e => e.NumIncrease).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.StaffCode)
                     .HasMaxLength(6)
