@@ -1,5 +1,5 @@
 import React from "react";
-
+import ReportTable from './Table.js';
 export default function Report() {
-  return <h5 className="name-list">Report</h5>;
+  return <ReportTable></ReportTable>;
 }
