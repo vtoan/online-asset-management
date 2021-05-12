@@ -1,4 +1,9 @@
-﻿using RookieOnlineAssetManagement.Enums;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using RookieOnlineAssetManagement.Data;
+using RookieOnlineAssetManagement.Entities;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -9,29 +14,171 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public class AssetRepository : IAssetRepository
     {
-        public Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest)
+        private readonly ApplicationDbContext _dbContext;
+        public AssetRepository(ApplicationDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+        public async Task<AssetRequestModel> CreateAssetAsync(AssetRequestModel assetRequest)
+        {
+            var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryId == assetRequest.CategoryId);
+            assetRequest.AssetId = category.ShortName + (100000 + category.NumIncrease + 1).ToString();
+            var asset = new Asset
+            {
+                AssetId = assetRequest.AssetId,
+                CategoryId = assetRequest.CategoryId,
+                AssetName = assetRequest.AssetName,
+                Specification = assetRequest.Specification,
+                InstalledDate = assetRequest.InstalledDate,
+                State = assetRequest.State,
+                LocationId = assetRequest.LocationId
+            };
+            var transaction = _dbContext.Database.BeginTransaction();
+            try
+            {
+                _dbContext.Assets.Add(asset);
+                category.NumIncrease = category.NumIncrease + 1;
+                await _dbContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch
+            {
+
+            }
+            return assetRequest;
+        }
+        public async Task<bool> DeleteAssetAsync(string id)
+        {
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == id);
+            if (assignment != null)
+            {
+                return false;
+            }
+            var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == id);
+            var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryId == asset.CategoryId);
+            _dbContext.Assets.Remove(asset);
+            _dbContext.SaveChanges();
+            return true;
         }
 
-        public Task<AssetModel> DeleteAssetAsync(string id)
+        public async Task<AssetModel> GetAssetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var asset = await _dbContext.Assets.Include(x=>x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
+            var assetmodel = new AssetModel
+            {
+                AssetId = asset.AssetId,
+                AssetName = asset.AssetName,
+                CategoryName = asset.Category.CategoryName,
+                Specification = asset.Specification,
+                InstalledDate = asset.InstalledDate.Value,
+                State = asset.State
+            };
+            return assetmodel;
         }
 
-        public Task<AssetModel> GetAsstByIdAsync(string id)
+        public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(StateAsset[] state, string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize)
         {
-            throw new NotImplementedException();
+            var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
+            queryable = queryable.Where(x => x.LocationId == locationid);
+
+            if (state.Length > 0)
+            {
+                var stateNum = Array.ConvertAll(state, value => (int)value);
+                queryable = queryable.Where(x => stateNum.Contains(x.State));
+            }
+            if (categoryid.Length > 0)
+            {
+                queryable = queryable.Where(x => categoryid.Contains(x.CategoryId));
+                
+            }
+            if (!string.IsNullOrEmpty(query))
+            {
+                queryable = queryable.Where(x => x.AssetId.Contains(query) || x.AssetName.Contains(query));
+            }
+
+            if (sortCode.HasValue)
+            {
+                if (sortCode.Value == SortBy.ASC)
+                {
+                    queryable = queryable.OrderBy(x => x.AssetId);
+                }
+                else
+                {
+                    queryable = queryable.OrderByDescending(x => x.AssetId);
+                }
+            }
+            else if (sortName.HasValue)
+            {
+                if (sortName.Value == SortBy.ASC)
+                {
+                    queryable = queryable.OrderBy(x => x.AssetName);
+                }
+                else
+                {
+                    queryable = queryable.OrderByDescending(x => x.AssetName);
+                }
+            }
+            else if (sortCate.HasValue)
+            {
+                if (sortCate.Value == SortBy.ASC)
+                {
+                    queryable = queryable.OrderBy(x => x.Category.CategoryName);
+                }
+                else
+                {
+                    queryable = queryable.OrderByDescending(x => x.Category.CategoryName);
+                }
+            }
+            else if (sortState.HasValue)
+            {
+                if (sortState.Value == SortBy.ASC)
+                {
+                    queryable = queryable.OrderBy(x => x.State);
+                }
+                else
+                {
+                    queryable = queryable.OrderByDescending(x => x.State);
+                }
+            }
+            else
+            {
+            }
+            var totalRecord = queryable.Count();
+            if (page > 0 && pageSize > 0)
+            {
+                queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
+            }
+            var list = await queryable.Select(x => new AssetModel
+            {
+                AssetId = x.AssetId,
+                AssetName = x.AssetName,
+                CategoryName = x.Category.CategoryName,
+                Specification = x.Specification,
+                InstalledDate = x.InstalledDate.Value,
+                State = x.State
+            }).ToListAsync();
+            var totalpage = (int)Math.Ceiling((double)totalRecord / pageSize);
+            return (list, totalpage);
         }
 
-        public ICollection<AssetModel> GetListAssetAsync(StateAsset state, string category, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState)
+        public async Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
-        {
-            throw new NotImplementedException();
+            var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
+            if (asset == null)
+            {
+                return null;
+            }
+            if (assignment != null)
+            {
+                return null;
+            }
+            asset.AssetName = assetRequest.AssetName;
+            asset.Specification = assetRequest.Specification;
+            asset.InstalledDate = assetRequest.InstalledDate.Value;
+            asset.State = assetRequest.State;
+            await _dbContext.SaveChangesAsync();
+            return assetRequest;
         }
     }
 }
