@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+hr {
+  margin: 0.5em 0 !important;
+}
+
 :root {
   --clr-primary: rgb(207, 35, 56);
   --clr-secondary: rgb(239, 241, 245);
@@ -45,10 +49,99 @@ code {
 .ns-text-white {
   color: var(--clr-white);
 }
-label{
+label {
   font-size: 10px;
 }
 
-.lable-arrow{
-  transition:0.5s
+.lable-arrow {
+  transition: 0.5s;
+}
+
+/*Navigate*/
+.nav {
+  background-color: rgba(239, 241, 245, 1);
+  width: 220px;
+}
+.logo {
+  width: 120px;
+}
+
+.name-asset {
+  color: rgba(207, 35, 56, 1);
+  font-weight: bold;
+}
+
+.navLink {
+  color: #000000;
+  font-weight: bold;
+  text-decoration: none;
+  border: solid white 2px;
+  padding: 10px;
+}
+
+.navLink:hover {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffffff;
+}
+
+.active {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffff;
+}
+
+/*PageLayout*/
+
+.pt-3 {
+  padding: 40px;
+}
+
+.p-4 {
+  margin-top: 50px;
+}
+
+/*Header*/
+
+.header-name {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #ffffff;
+  margin-left: 40px;
+}
+
+.user-profile {
+  float: right;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Pages */
+
+.name-list {
+  color: rgba(207, 35, 56, 1);
+}
+
+/* Table */
+.table-item-bold {
+  font-weight: 700;
+}
+.table-item-bold hr {
+  border: 1px solid var(--clr-dark);
+  opacity: 1;
+}
+.table-icon {
+  font-size: 1.4em;
+  cursor: pointer;
+  display: inline-block !important;
+  padding-left: 0.75em;
+}
+
+.table-icon .disabled {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+
+.table-actions {
+  padding-right: 0 !important;
+  text-align: right;
 }

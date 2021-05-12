@@ -1,6 +1,5 @@
 import React from "react";
 import { Col, Container, Row } from "reactstrap";
-import "../style.css";
 
 export default function PageLayout({ header, nav, content }) {
   return (
