@@ -1,4 +1,5 @@
-﻿using RookieOnlineAssetManagement.Enums;
+﻿using Microsoft.AspNetCore.Mvc;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -9,15 +10,15 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public interface IAssetRepository
     {
-        ICollection<AssetModel> GetListAssetAsync(StateAsset state, string category, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState);
+        Task<(ICollection<AssetModel> Datas ,int TotalPage)> GetListAssetAsync(StateAsset[] state, string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize);
 
-        Task<AssetModel> GetAsstByIdAsync(string id);
+        Task<AssetModel> GetAssetByIdAsync(string id);
 
-        Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest);
+        Task<AssetRequestModel> CreateAssetAsync(AssetRequestModel assetRequest);
 
-        Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest);
+        Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest);
 
-        Task<AssetModel> DeleteAssetAsync(string id);
+        Task<bool> DeleteAssetAsync(string id);
 
 
 
