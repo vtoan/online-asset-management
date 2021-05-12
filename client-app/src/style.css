@@ -8,6 +8,11 @@
   width: 120px;
 }
 
+.nav-container
+{
+  width: 200px;
+}
+
 .name-asset {
   color: rgba(207, 35, 56, 1);
   font-weight: bold;
@@ -63,4 +68,245 @@
 
 .name-list {
   color: rgba(207, 35, 56, 1);
+}
+
+/*assetCreate*/
+
+/* The container */
+.container-radio {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  margin-top: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container-radio:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-radio input:checked ~ .checkmark {
+  background-color: rgba(207, 35, 56, 1);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-radio input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-radio .checkmark:after {
+  top: 4px;
+  left: 3.7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+.row-create-new {
+  margin-top: 10px;
+}
+
+.col-create-new {
+  margin-left: 20px;
+}
+
+.name-new-asset {
+  width: 200px;
+  height: 27px;
+  border-radius: 7px;
+}
+
+.category-asset {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.date-asset {
+  width: 205px;
+  border-radius: 7px;
+}
+
+.container-radio {
+  font-size: 15px;
+}
+
+.specification-asset {
+  border-radius: 7px;
+}
+
+.area-button {
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+.submit-create-asset {
+  float: right;
+  padding-right: 65px;
+}
+
+
+.form-asset {
+  margin-top: 40px;
+}
+
+.col-asset {
+  width: 13%;
+}
+
+/*filter bar*/
+
+.fa.fa-filter {
+  position: absolute;
+  left: 89%;
+  border: 1px solid grey;
+  padding: 8px;
+  border-radius: 0px 5px 5px 0px;
+  z-index: -1;
+  top: 1%;
+}
+
+.filter-cate {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  padding-left: 10px;
+  border-radius: 5px 0px 0px 5px;
+}
+
+.multiselect {
+  width: 200px;
+}
+
+.selectBox {
+  position: relative;
+}
+
+.selectBox .filter-cate {
+  font-size: 15px;
+  width: 179px;
+  height: 34px;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.checkboxes {
+  border: 1px #dadada solid;
+  width: 206px;
+  margin-left: 2px;
+  display: none;
+}
+
+.checkboxes label {
+  display: block;
+  padding-left: 5px;
+}
+
+.checkboxes label:hover {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffffff;
+}
+
+.checkboxlist {
+  margin-top: 5px;
+}
+
+.checkboxlist .checkbox {
+  margin: 5px;
+}
+
+/*SearchBar*/
+
+* {
+  box-sizing: border-box;
+}
+
+form.example input[type='text'] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 165px;
+  height: 34px;
+  background: #ffffff;
+  border-radius: 5px 0px 0px 5px;
+}
+
+form.example button {
+  width: 30px;
+  height: 34px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 14px;
+  border: 1px solid grey;
+  border-left: none;
+  border-radius: 0px 5px 5px 0px;
+}
+
+/*Select day */
+#select-date {
+  width: 165px;
+  height: 34px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  padding-left: 5px;
+}
+
+#select-date[type='date']::before {
+  content: attr(data-placeholder);
+  width: 165px;
+}
+
+#select-date[type='date']:focus::before,
+#select-date[type='date']:valid::before {
+  display: none;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+
+/*CreateButton*/
+
+.btn-create {
+  font-size: 14px;
 }

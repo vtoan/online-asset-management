@@ -1,9 +1,28 @@
-import React from "react";
+import React from 'react';
+import { Row, Col } from 'reactstrap';
+import SelectDate from '../../common/SelectDate';
+import SearchBar from '../../common/SearchBar';
+import CreateNew from '../../common/CreateNew';
+import FilterState from '../../common/FilterState';
 
 export default function Assignment() {
   return (
     <>
       <h5 className="name-list">Assignment List</h5>
+      <Row>
+        <Col>
+          <FilterState namefilter="State" />
+        </Col>
+        <Col>
+          <SelectDate namedate="Assigned Date" />
+        </Col>
+        <Col>
+          <SearchBar />
+        </Col>
+        <Col>
+          <CreateNew namecreate="Create new assignment" />
+        </Col>
+      </Row>
     </>
   );
 }
