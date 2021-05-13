@@ -1,7 +1,5 @@
-import { Table, Button } from 'reactstrap';
 import '../../index.css';
 import TableItem from '../../common/TableItem';
-import LableItems from '../../common/LableItems'
 import NSTable from '../../common/NSTable';
 
 
