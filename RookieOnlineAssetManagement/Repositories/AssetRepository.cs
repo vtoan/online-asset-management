@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using RookieOnlineAssetManagement.Data;
@@ -12,9 +13,10 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class AssetRepository : IAssetRepository
+    public class AssetRepository : BaseRepository,IAssetRepository
     {
         private readonly ApplicationDbContext _dbContext;
+        
         public AssetRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -43,7 +45,7 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             catch
             {
-
+                
             }
             return assetRequest;
         }

@@ -16,7 +16,8 @@ namespace RookieOnlineAssetManagement.Repositories
                 queryable = queryable.Skip(offset * pageSize);
             }
             if (pageSize > 0) queryable = queryable.Take(pageSize);
-            return (queryable.ToList(), totalItem);
+            var totalpage = (int)Math.Ceiling((double)totalItem / pageSize);
+            return (queryable.ToList(), totalpage);
         }
     }
 }
