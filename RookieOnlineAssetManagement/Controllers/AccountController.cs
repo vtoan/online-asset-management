@@ -47,7 +47,6 @@ namespace RookieOnlineAssetManagement.Controllers
                 {
                     Id = user.Id,
                     UserName = user.UserName,
-                    Email = user.Email,
                     RoleName = roles.Count > 0 ? roles[0] : "unknown"
                 });
             }
