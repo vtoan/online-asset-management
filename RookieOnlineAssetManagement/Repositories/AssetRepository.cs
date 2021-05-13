@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
@@ -12,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class AssetRepository : IAssetRepository
+    public class AssetRepository : BaseRepository, IAssetRepository
     {
         private readonly ApplicationDbContext _dbContext;
         public AssetRepository(ApplicationDbContext dbContext)
@@ -34,17 +32,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 LocationId = assetRequest.LocationId
             };
             var transaction = _dbContext.Database.BeginTransaction();
-            try
-            {
-                _dbContext.Assets.Add(asset);
-                category.NumIncrease = category.NumIncrease + 1;
-                await _dbContext.SaveChangesAsync();
-                transaction.Commit();
-            }
-            catch
-            {
-
-            }
+            _dbContext.Assets.Add(asset);
+            category.NumIncrease = category.NumIncrease + 1;
+            await _dbContext.SaveChangesAsync();
+            transaction.Commit();
             return assetRequest;
         }
         public async Task<bool> DeleteAssetAsync(string id)
@@ -55,7 +46,6 @@ namespace RookieOnlineAssetManagement.Repositories
                 return false;
             }
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == id);
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryId == asset.CategoryId);
             _dbContext.Assets.Remove(asset);
             _dbContext.SaveChanges();
             return true;
@@ -63,7 +53,7 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<AssetModel> GetAssetByIdAsync(string id)
         {
-            var asset = await _dbContext.Assets.Include(x=>x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
+            var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
             var assetmodel = new AssetModel
             {
                 AssetId = asset.AssetId,
@@ -80,75 +70,47 @@ namespace RookieOnlineAssetManagement.Repositories
         {
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == locationid);
-
             if (state.Length > 0)
             {
                 var stateNum = Array.ConvertAll(state, value => (int)value);
                 queryable = queryable.Where(x => stateNum.Contains(x.State));
             }
             if (categoryid.Length > 0)
-            {
                 queryable = queryable.Where(x => categoryid.Contains(x.CategoryId));
-                
-            }
             if (!string.IsNullOrEmpty(query))
-            {
                 queryable = queryable.Where(x => x.AssetId.Contains(query) || x.AssetName.Contains(query));
-            }
-
+            //sort
             if (sortCode.HasValue)
             {
                 if (sortCode.Value == SortBy.ASC)
-                {
                     queryable = queryable.OrderBy(x => x.AssetId);
-                }
                 else
-                {
                     queryable = queryable.OrderByDescending(x => x.AssetId);
-                }
             }
             else if (sortName.HasValue)
             {
                 if (sortName.Value == SortBy.ASC)
-                {
                     queryable = queryable.OrderBy(x => x.AssetName);
-                }
                 else
-                {
                     queryable = queryable.OrderByDescending(x => x.AssetName);
-                }
             }
             else if (sortCate.HasValue)
             {
                 if (sortCate.Value == SortBy.ASC)
-                {
                     queryable = queryable.OrderBy(x => x.Category.CategoryName);
-                }
                 else
-                {
                     queryable = queryable.OrderByDescending(x => x.Category.CategoryName);
-                }
             }
             else if (sortState.HasValue)
             {
                 if (sortState.Value == SortBy.ASC)
-                {
                     queryable = queryable.OrderBy(x => x.State);
-                }
                 else
-                {
                     queryable = queryable.OrderByDescending(x => x.State);
-                }
             }
-            else
-            {
-            }
-            var totalRecord = queryable.Count();
-            if (page > 0 && pageSize > 0)
-            {
-                queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
-            }
-            var list = await queryable.Select(x => new AssetModel
+
+            var result = Paging<Asset>(queryable, pageSize, page);
+            var list = await result.Sources.Select(x => new AssetModel
             {
                 AssetId = x.AssetId,
                 AssetName = x.AssetName,
@@ -157,8 +119,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 InstalledDate = x.InstalledDate.Value,
                 State = x.State
             }).ToListAsync();
-            var totalpage = (int)Math.Ceiling((double)totalRecord / pageSize);
-            return (list, totalpage);
+            return (list, result.TotalPage);
         }
 
         public async Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest)
