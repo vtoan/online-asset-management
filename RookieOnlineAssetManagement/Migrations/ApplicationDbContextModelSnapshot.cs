@@ -452,6 +452,11 @@ namespace RookieOnlineAssetManagement.Migrations
 
             modelBuilder.Entity("RookieOnlineAssetManagement.Entities.UserExtension", b =>
                 {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<short>("NumIncrease")
                         .HasColumnType("smallint");
 
@@ -459,6 +464,8 @@ namespace RookieOnlineAssetManagement.Migrations
                         .HasMaxLength(256)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("ID");
 
                     b.ToTable("UserExtension");
                 });
