@@ -22,7 +22,6 @@ namespace RookieOnlineAssetManagement.Entities
         public bool? IsChange { get; set; }
         public string LocationId { get; set; }
         public string StaffCode { get; set; }
-        public int NumIncrease { get; set; }
 
         public Location Location { get; set; }
         public ICollection<Assignment> AssignmentAdmins { get; set; }
