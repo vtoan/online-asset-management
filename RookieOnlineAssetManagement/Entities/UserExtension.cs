@@ -8,6 +8,8 @@ namespace RookieOnlineAssetManagement.Entities
 {
     public class UserExtension
     {
+        [Key]
+        public int ID { get; set; }
         [StringLength(256)]
         public string UserName { get; set; }
         public short NumIncrease { get; set; }
