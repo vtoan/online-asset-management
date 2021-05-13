@@ -6,16 +6,19 @@ using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
+using RookieOnlineAssetManagement.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
-        public UserRepository(ApplicationDbContext dbContext)
+        private readonly UserManager<User> _userManager;
+        public UserRepository(ApplicationDbContext dbContext, UserManager<User> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page , int pageSize)
@@ -104,9 +107,66 @@ namespace RookieOnlineAssetManagement.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
+        public async Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
         {
-            throw new System.NotImplementedException();
+            string username = userRequest.FirstName.ToLower();
+            var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
+            string prefix = new string(firstChars).ToLower();
+            username = username + prefix;
+
+            var UserExtension = await _dbContext.UserExtensions.FirstOrDefaultAsync(x => x.UserName == username);
+
+            var transaction = _dbContext.Database.BeginTransaction();
+            //try
+            //{
+                if (UserExtension == null)
+                {
+                    short numincrease = 1;
+                    var userextension = new UserExtension
+                    {
+                        UserName = username,
+                        NumIncrease = numincrease
+                    };
+                    _dbContext.UserExtensions.Add(userextension);
+                }
+                else
+                {
+                    username = username + UserExtension.NumIncrease.ToString();
+                    UserExtension.NumIncrease = (short)(UserExtension.NumIncrease + 1);
+                }
+
+                var password = username + "@" + userRequest.DateOfBirth.Value.ToString("ddMMyyyy");
+                var role = userRequest.Type;
+            var user = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirstName = userRequest.FirstName,
+                LastName = userRequest.LastName,
+                UserName = username,
+                DateOfBirth = userRequest.DateOfBirth,
+                Gender = userRequest.Gender,
+                JoinedDate = userRequest.JoinedDate,
+                LocationId = userRequest.LocationId
+            };
+
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    result = await _userManager.AddToRoleAsync(user, role);
+                }
+                else
+                {
+                    return null;
+                }
+
+                await _dbContext.SaveChangesAsync();
+                transaction.Commit();
+            //}
+            //catch
+            //{
+            //    return null;
+            //}
+            return userRequest;
         }
 
         public Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)

@@ -31,8 +31,6 @@ namespace RookieOnlineAssetManagement.Data
 
             modelBuilder.Entity<UserExtension>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("UserExtension");
 
                 entity.Property(e => e.UserName)

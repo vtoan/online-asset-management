@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RookieOnlineAssetManagement.Data;
 
 namespace RookieOnlineAssetManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210513063911_addkeytoUserExtension_ver2")]
+    partial class addkeytoUserExtension_ver2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -452,11 +454,6 @@ namespace RookieOnlineAssetManagement.Migrations
 
             modelBuilder.Entity("RookieOnlineAssetManagement.Entities.UserExtension", b =>
                 {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<short>("NumIncrease")
                         .HasColumnType("smallint");
 
@@ -464,8 +461,6 @@ namespace RookieOnlineAssetManagement.Migrations
                         .HasMaxLength(256)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("ID");
 
                     b.ToTable("UserExtension");
                 });

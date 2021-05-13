@@ -32,5 +32,10 @@ namespace RookieOnlineAssetManagement.Controllers
             HttpContext.Response.Headers.Add("total-pages",result.TotalPage.ToString());
             return Ok(result.Datas);
         }
+        [HttpPost]
+        public async Task<ActionResult<UserRequestModel>> Create(UserRequestModel userRequestModel)
+        {
+            return Ok(await _userSer.CreateUserAsync(userRequestModel));
+        }
     }
 }
