@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Entities;
 using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Models;
-using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
@@ -47,13 +47,15 @@ namespace RookieOnlineAssetManagement.Controllers
                 {
                     Id = user.Id,
                     UserName = user.UserName,
-                    Email = user.Email,
-                    RoleName = roles.Count > 0 ? roles[0] : "unknown"
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    RoleName = roles.Count > 0 ? roles[0] : "unknown",
+                    LocationId = user.LocationId
                 });
             }
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost("/logout")]
         public async Task<IActionResult> LogoutAsync()
         {
@@ -66,25 +68,24 @@ namespace RookieOnlineAssetManagement.Controllers
         public class ChangePassWordModel
         {
             [Required]
-            public string OldPassword { get; set; } 
+            public string OldPassword { get; set; }
 
             [Required]
             public string NewPassword { set; get; }
-          
         }
 
+        [Authorize]
         [HttpPost("/change-password")]
         public async Task<IActionResult> ChangePasswordAsync(ChangePassWordModel userModel)
         {
             if (!ModelState.IsValid) return BadRequest();
             var user = await _userManager.GetUserAsync(User);
-            var changePassword = await _userManager.ChangePasswordAsync( user, userModel.OldPassword, userModel.NewPassword);
+            var changePassword = await _userManager.ChangePasswordAsync(user, userModel.OldPassword, userModel.NewPassword);
             if (changePassword.Succeeded)
             {
                 return Ok();
             }
             return NotFound();
-
         }
     }
 }
