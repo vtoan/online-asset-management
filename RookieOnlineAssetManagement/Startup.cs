@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RookieOnlineAssetManagement.Data;
+using RookieOnlineAssetManagement.Middleware;
 using RookieOnlineAssetManagement.ServiceExtensions;
 
 namespace RookieOnlineAssetManagement
@@ -53,6 +54,8 @@ namespace RookieOnlineAssetManagement
             //     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
             // }
 
+            app.UseGlobalHandlerException();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -60,17 +63,17 @@ namespace RookieOnlineAssetManagement
                 c.RoutePrefix = string.Empty;
             });
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                // app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                // app.UseExceptionHandler("/Error");
-                app.UseStatusCodePages();
-                app.UseHsts();
-            }
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseDeveloperExceptionPage();
+            //     // app.UseMigrationsEndPoint();
+            // }
+            // else
+            // {
+            //     // app.UseExceptionHandler("/Error");
+            //     app.UseStatusCodePages();
+            //     app.UseHsts();
+            // }
 
             app.UseCors(b =>
             {
