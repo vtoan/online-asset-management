@@ -56,6 +56,14 @@ export default function Request() {
   const handleDenyRequest = (item) => {
     console.log(item);
   };
+  const handleChangeSort = (target) => {
+    console.log(target);
+    _fetchData();
+  }
+  const handleChangePage = (page) => {
+    console.log(page);
+    _fetchData();
+  }
 
   return (
     <>
@@ -64,6 +72,8 @@ export default function Request() {
         totalPage={totalPages}
         onAccept={handleAcceptRequest}
         onDeny={handleDenyRequest}
+        onChangeSort={handleChangeSort}
+        onChangePage={handleChangePage}
       />
     </>
   );
