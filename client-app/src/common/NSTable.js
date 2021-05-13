@@ -62,7 +62,7 @@ export default function NSTable({
           <tr>
             {titles &&
               titles.map((item, index) => (
-                <td key={index} style={{ width: index === 0 && "8%" }}>
+                <td key={index} style={{ width: index === 0 && "10%" }}>
                   <TableItem bold>
                     <LableItems
                       {...item}
@@ -72,7 +72,7 @@ export default function NSTable({
                   </TableItem>
                 </td>
               ))}
-            <td width="8%"></td>
+            <td width="10%"></td>
           </tr>
         </thead>
         <tbody>
