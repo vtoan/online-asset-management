@@ -32,5 +32,18 @@ namespace RookieOnlineAssetManagement.Controllers
             HttpContext.Response.Headers.Add("total-pages",result.TotalPage.ToString());
             return Ok(result.Datas);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserRequestModel>> Update(string id ,UserRequestModel userRequest)
+        {
+            return Ok(await _userSer.UpdateUserAsync(id,userRequest));
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<UserRequestModel>> Disable(string id)
+        {
+            return Ok(await _userSer.DisableUserAsync(id));
+        }
+
     }
 }
