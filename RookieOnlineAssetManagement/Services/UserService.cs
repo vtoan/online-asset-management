@@ -20,5 +20,9 @@ namespace RookieOnlineAssetManagement.Services
         {
             return _userRepo.GetListUserAsync(locationId, type, query, sortCode, sortFullName, sortDate, sortType, page, pageSize);
         }
+        public Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
+        {
+            return _userRepo.CreateUserAsync(userRequest);
+        }
     }
 }
