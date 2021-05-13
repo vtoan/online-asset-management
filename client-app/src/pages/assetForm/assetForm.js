@@ -46,11 +46,9 @@ export default function AssetForm() {
     const [stateSelected, setStateSelected] = React.useState(null);
     const [stateCurrent, setStateCurrent] = React.useState([]);
     const [nameHeader, setnameHeader] = React.useState('');
-    //let stateAssetCurrent = [];
 
     React.useEffect(() => {
         if (id) {
-            //let data = asset[1]
             setnameHeader('Edit Asset');
             let data = asset.find((data) => data.id === Number(id));
             setEdit(data);
@@ -151,7 +149,7 @@ export default function AssetForm() {
                         <div className="submit-create-asset">
                             <Button color="danger" type="submit">Save</Button>
                             <Link to="/assets">
-                                <Button type="reset" outline color="secondary" style={{ marginLeft: 20 }}>
+                                <Button type="reset" outline color="secondary" className="btn-cancel">
                                     Cancel
                                  </Button>
                             </Link>

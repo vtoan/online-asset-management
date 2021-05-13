@@ -20,29 +20,28 @@ export default function FilterState({ namefilter }) {
             <form>
                 <div className="multiselect">
                     <div className="selectBox" onClick={showCheckboxes}>
-                        <span for="stuff" className="fa fa-filter" />
-                        <select class="filter-cate">
+                        <span className="fa fa-filter" />
+                        <select className="filter-cate">
                             <option>{namefilter}</option>
                         </select>
                         <div className="overSelect" />
                     </div>
                     <div ref={checkboxes} className="checkboxes">
                         <label className="checkboxlist">
-                            <input class="checkbox" type="checkbox" id="" />All
+                            <input className="checkbox" type="checkbox" id="" />All
                         </label>
                         <label className="checkboxlist">
-                            <input class="checkbox" type="checkbox" id="one" />Laptop
+                            <input className="checkbox" type="checkbox" id="one" />Laptop
                         </label>
                         <label className="checkboxlist">
                             <input
-                                class="checkbox"
+                                className="checkbox"
                                 type="checkbox"
-                                class="checkbox"
                                 id="two"
                             />Monitor
                         </label>
                         <label className="checkboxlist">
-                            <input class="checkbox" type="checkbox" id="three" />Personal Computer
+                            <input className="checkbox" type="checkbox" id="three" />Personal Computer
                         </label>
                     </div>
                 </div>

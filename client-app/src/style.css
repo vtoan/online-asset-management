@@ -70,124 +70,6 @@
   color: rgba(207, 35, 56, 1);
 }
 
-/*assetCreate*/
-
-/* The container */
-.container-radio {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Hide the browser's default radio button */
-.container-radio input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* Create a custom radio button */
-.checkmark {
-  margin-top: 3px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 15px;
-  width: 15px;
-  background-color: #eee;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container-radio:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-/* When the radio button is checked, add a blue background */
-.container-radio input:checked ~ .checkmark {
-  background-color: rgba(207, 35, 56, 1);
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: '';
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container-radio input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container-radio .checkmark:after {
-  top: 4px;
-  left: 3.7px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: white;
-}
-
-.row-create-new {
-  margin-top: 10px;
-}
-
-.col-create-new {
-  margin-left: 20px;
-}
-
-.name-new-asset {
-  width: 200px;
-  height: 27px;
-  border-radius: 7px;
-}
-
-.category-asset {
-  width: 200px;
-  border-radius: 7px;
-}
-
-.date-asset {
-  width: 205px;
-  border-radius: 7px;
-}
-
-.container-radio {
-  font-size: 15px;
-}
-
-.specification-asset {
-  border-radius: 7px;
-}
-
-.area-button {
-  margin-top: 10px;
-  padding-right: 10px;
-}
-
-.submit-create-asset {
-  float: right;
-  padding-right: 65px;
-}
-
-
-.form-asset {
-  margin-top: 40px;
-}
-
-.col-asset {
-  width: 13%;
-}
-
 /*filter bar*/
 
 .fa.fa-filter {
@@ -309,4 +191,169 @@ form.example button {
 
 .btn-create {
   font-size: 14px;
+}
+
+/* ----------------------------------- Radio checkbox css ----------------------------------- */
+
+/* The container */
+.container-radio {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-right: 10px;
+}
+
+/* Hide the browser's default radio button */
+.container-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  margin-top: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container-radio:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-radio input:checked ~ .checkmark {
+  background-color: rgba(207, 35, 56, 1);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-radio input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-radio .checkmark:after {
+  top: 4px;
+  left: 3.7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+/*------------------------------------------------------------------------------*/
+
+/* --- Common css for Forms --- */
+
+.row-create-new {
+  margin-top: 10px;
+}
+
+.col-create-new {
+  margin-left: 20px;
+}
+
+/* --- assetForm --- */
+
+.name-new-asset {
+  width: 200px;
+  height: 27px;
+  border-radius: 7px;
+}
+
+.category-asset {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.date-asset {
+  width: 205px;
+  border-radius: 7px;
+}
+
+.container-radio {
+  font-size: 15px;
+}
+
+.specification-asset {
+  border-radius: 7px;
+}
+
+.area-button {
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+.submit-create-asset {
+  float: right;
+  padding-right: 40px;
+}
+
+.btn-cancel
+{
+  margin-left: 30px;
+}
+
+.form-asset {
+  margin-top: 40px;
+}
+
+.col-asset {
+  width: 13%;
+}
+
+/* --- UserCreate --- */
+
+.last-name-user,
+.first-name-user {
+  width: 200px;
+  height: 27px;
+  border-radius: 7px;
+}
+
+.date-user {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.category-type {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.area-button-user {
+  float: right;
+  margin-top: 20px;
+  padding-right: 10px;
+}
+
+.submit-create-user {
+  float: right;
+}
+
+.form-user {
+  margin-top: 40px;
+}
+
+.col-user {
+  width: 11%;
 }
