@@ -4,7 +4,7 @@ import Asset from "./pages/asset/Asset";
 import Assignment from "./pages/assignment/Assignment";
 import Request from "./pages/request/Request";
 import Report from "./pages/report/Report";
-import assetCreate from "./pages/assetCreate/assetCreate";
+import assetCreate from "./pages/assetForm/assetForm";
 
 export const routePaths = [
   {

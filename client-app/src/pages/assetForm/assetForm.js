@@ -40,7 +40,7 @@ const asset =
     },
     ]
 
-export default function AssetCreateNew() {
+export default function AssetForm() {
     const { id } = useParams();
     const [dataEdit, setEdit] = React.useState(null);
     const [stateSelected, setStateSelected] = React.useState(null);
