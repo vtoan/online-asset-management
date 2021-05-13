@@ -9,5 +9,6 @@ namespace RookieOnlineAssetManagement.Services
     {
         Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize);
         Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest);
+        Task<UserDetailModel> GetUserByIdAsync(string id);
     }
 }
