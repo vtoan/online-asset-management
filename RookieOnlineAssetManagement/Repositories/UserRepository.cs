@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
@@ -164,14 +165,45 @@ namespace RookieOnlineAssetManagement.Repositories
             return userRequest;
         }
 
-        public Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
+        public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
-            throw new System.NotImplementedException();
+            var user = await _dbContext.Users.FindAsync(id);
+            if(user == null)
+            {
+                return null;
+            }
+            user.DateOfBirth = userRequest.DateOfBirth.Value;
+            user.Gender = userRequest.Gender;
+            user.JoinedDate = userRequest.JoinedDate.Value;
+            await _changeRoleUserAsync(user.Id, userRequest.Type);          
+            await _dbContext.SaveChangesAsync();
+
+
+            return userRequest;
+        }
+        
+        public async Task<bool> DisableUserAsync(string id)
+        {
+            var user = await _dbContext.Users.FindAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            user.LockoutEnabled = true;
+            user.LockoutEnd = DateTime.MaxValue;
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
 
-        public Task<bool> DeleteUserAsync(string id)
+        private async Task _changeRoleUserAsync(string userId, TypeUser typeUser)
         {
-            throw new System.NotImplementedException();
+            if (typeUser == 0) return;
+            var role = await _dbContext.Roles.Where(item => item.NormalizedName == typeUser.ToString()).FirstOrDefaultAsync();
+            if (role == null) return;
+            var roleUser = await _dbContext.UserRoles.Where(item => item.UserId == userId).FirstOrDefaultAsync();
+            if (roleUser != null)
+            _dbContext.UserRoles.Remove(roleUser);
+            _dbContext.UserRoles.Add(new IdentityUserRole<string>() { UserId = userId, RoleId = role.Id });
         }
 
 

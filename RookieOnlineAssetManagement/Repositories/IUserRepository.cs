@@ -13,8 +13,8 @@ namespace RookieOnlineAssetManagement.Repositories
 
         Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest);
 
-        Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest);
+        Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest);
 
-        Task<bool> DeleteUserAsync(string id);
+        Task<bool> DisableUserAsync(string id);
     }
 }
