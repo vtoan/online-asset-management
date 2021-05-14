@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RookieOnlineAssetManagement.Migrations
 {
-    public partial class ChangeUser : Migration
+    public partial class UpdateAssignment : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,6 +48,20 @@ namespace RookieOnlineAssetManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserExtension",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NumIncrease = table.Column<short>(type: "smallint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserExtension", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Asset",
                 columns: table => new
                 {
@@ -89,8 +103,6 @@ namespace RookieOnlineAssetManagement.Migrations
                     IsChange = table.Column<bool>(type: "bit", nullable: true),
                     LocationID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     StaffCode = table.Column<string>(type: "varchar(6)", unicode: false, maxLength: 6, nullable: true),
-                    NumIncrease = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -151,7 +163,7 @@ namespace RookieOnlineAssetManagement.Migrations
                     AssetName = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
                     AssignedDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     Note = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
-                    State = table.Column<bool>(type: "bit", nullable: false),
+                    State = table.Column<int>(type: "int", nullable: false),
                     LocationID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
                 },
                 constraints: table =>
@@ -398,6 +410,9 @@ namespace RookieOnlineAssetManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
+
+            migrationBuilder.DropTable(
+                name: "UserExtension");
 
             migrationBuilder.DropTable(
                 name: "UserLogins");

@@ -8,8 +8,7 @@ using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
-using RookieOnlineAssetManagement.Entities;
-using Microsoft.AspNetCore.Identity;
+using RookieOnlineAssetManagement.Utils;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
@@ -148,7 +147,8 @@ namespace RookieOnlineAssetManagement.Repositories
                     UserExtension.NumIncrease = (short)(UserExtension.NumIncrease + 1);
                 }
 
-                var password = username + "@" + userRequest.DateOfBirth.Value.ToString("ddMMyyyy");
+                // var password = username + "@" + userRequest.DateOfBirth.Value.ToString("ddMMyyyy");
+                var password = AccountHelper.GenerateAccountPass(username, userRequest.DateOfBirth.Value);
                 var role = userRequest.Type.ToString();
                 var staffcode = "SD" + number.ToString("0000");
 
@@ -189,20 +189,20 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
             var user = await _dbContext.Users.FindAsync(id);
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
-            await _changeRoleUserAsync(user.Id, userRequest.Type);          
+            await _changeRoleUserAsync(user.Id, userRequest.Type);
             await _dbContext.SaveChangesAsync();
 
 
             return userRequest;
         }
-        
+
         public async Task<bool> DisableUserAsync(string id)
         {
             var user = await _dbContext.Users.FindAsync(id);
@@ -210,8 +210,10 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return false;
             }
-            user.LockoutEnabled = true;
-            user.LockoutEnd = DateTime.MaxValue;
+            await _userManager.SetLockoutEnabledAsync(user, true);
+            await _userManager.SetLockoutEndDateAsync(user, DateTime.MaxValue);
+            // user.LockoutEnabled = true;
+            // user.LockoutEnd = DateTime.MaxValue;
             await _dbContext.SaveChangesAsync();
             return true;
         }
@@ -223,7 +225,7 @@ namespace RookieOnlineAssetManagement.Repositories
             if (role == null) return;
             var roleUser = await _dbContext.UserRoles.Where(item => item.UserId == userId).FirstOrDefaultAsync();
             if (roleUser != null)
-            _dbContext.UserRoles.Remove(roleUser);
+                _dbContext.UserRoles.Remove(roleUser);
             _dbContext.UserRoles.Add(new IdentityUserRole<string>() { UserId = userId, RoleId = role.Id });
         }
 
