@@ -4,10 +4,10 @@ import '../style.css';
 export default function SelectDate({ namedate }) {
     return (
         <>
-            <form class="example">
+            <form className="example">
                 <input type="text" />
                 <button type="submit">
-                    <i class="fa fa-search" />
+                    <i className="fa fa-search" />
                 </button>
             </form>
         </>
