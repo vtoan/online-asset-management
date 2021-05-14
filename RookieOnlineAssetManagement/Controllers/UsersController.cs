@@ -7,7 +7,6 @@ using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
@@ -29,7 +28,7 @@ namespace RookieOnlineAssetManagement.Controllers
         public async Task<ActionResult<IEnumerable<UserModel>>> GetListAsync(string locationId, [FromQuery] TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
         {
             var result = await _userSer.GetListUserAsync(locationId, type, query, sortCode, sortFullName, sortDate, sortType, page, pageSize);
-            HttpContext.Response.Headers.Add("total-pages",result.TotalPage.ToString());
+            HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
         }
         [HttpGet("{id}")]
@@ -37,6 +36,19 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             return Ok(await _userSer.GetUserByIdAsync(id));
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserRequestModel>> Update(string id, UserRequestModel userRequest)
+        {
+            return Ok(await _userSer.UpdateUserAsync(id, userRequest));
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<UserRequestModel>> Disable(string id)
+        {
+            return Ok(await _userSer.DisableUserAsync(id));
+        }
+
         [HttpPost]
         public async Task<ActionResult<UserRequestModel>> Create(UserRequestModel userRequestModel)
         {

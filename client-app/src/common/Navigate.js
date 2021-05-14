@@ -2,7 +2,6 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 import { AppContext } from "../App";
-import '../style.css';
 
 const navLinks = [
   {
