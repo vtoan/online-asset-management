@@ -1,11 +1,10 @@
-import React from 'react';
-import { Button } from 'reactstrap';
-import '../style.css';
+import React from "react";
+import { Button } from "reactstrap";
 
 export default function CreateNew({ namecreate }) {
-    return (
-        <>
-            <Button className="btn-create" color="danger">{namecreate}</Button>
-        </>
-    );
+  return (
+    <Button className="btn-create" color="danger">
+      {namecreate}
+    </Button>
+  );
 }
