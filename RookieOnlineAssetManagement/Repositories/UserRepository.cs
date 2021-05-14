@@ -89,18 +89,35 @@ namespace RookieOnlineAssetManagement.Repositories
             var list = await result.Sources.Select(x => new UserModel
             {
                 Id = x.Id,
-                FullName = x.FirstName + "" + x.LastName,
+                FullName = x.FirstName + " " + x.LastName,
                 UserName = x.UserName,
                 JoinedDate = x.JoinedDate,
-                RoleName = x.Roles.ToString(),
+                RoleName = x.Roles.First().NormalizedName,
 
             }).ToListAsync();
             return (list, result.TotalPage);
         }
 
-        public Task<UserModel> GetUserByIdAsync(string id)
+        public async Task<UserDetailModel> GetUserByIdAsync(string id)
         {
-            throw new System.NotImplementedException();
+            var user = await _dbContext.Users.Where(item => item.Id == id).Include(item => item.Location).FirstOrDefaultAsync();
+            if (user == null) return null;
+            var userRole = await _dbContext.UserRoles.Where(item => item.UserId == user.Id).FirstOrDefaultAsync();
+            if (userRole == null) return null;
+            var role = await _dbContext.Roles.Where(item => item.Id == userRole.RoleId).FirstOrDefaultAsync();
+            if (role == null) return null;
+            var userdetail = new UserDetailModel
+            {
+                Id = user.StaffCode,
+                FullName = user.FirstName + " " + user.LastName,
+                UserName = user.UserName,
+                DateOfBirth = user.DateOfBirth.Value,
+                Gender = user.Gender.Value,
+                JoinedDate = user.JoinedDate,
+                RoleName = role.NormalizedName,
+                Location = user.Location.LocationName
+            };
+            return userdetail;
         }
 
         public async Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
@@ -111,10 +128,10 @@ namespace RookieOnlineAssetManagement.Repositories
             username = username + prefix;
 
             var UserExtension = await _dbContext.UserExtensions.FirstOrDefaultAsync(x => x.UserName == username);
-
+            int number = _dbContext.UserExtensions.Sum(x => x.NumIncrease) + 1;
             var transaction = _dbContext.Database.BeginTransaction();
-            //try
-            //{
+            try
+            {
                 if (UserExtension == null)
                 {
                     short numincrease = 1;
@@ -132,18 +149,22 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
 
                 var password = username + "@" + userRequest.DateOfBirth.Value.ToString("ddMMyyyy");
-                var role = userRequest.Type;
-            var user = new User
-            {
-                Id = Guid.NewGuid().ToString(),
-                FirstName = userRequest.FirstName,
-                LastName = userRequest.LastName,
-                UserName = username,
-                DateOfBirth = userRequest.DateOfBirth,
-                Gender = userRequest.Gender,
-                JoinedDate = userRequest.JoinedDate,
-                LocationId = userRequest.LocationId
-            };
+                var role = userRequest.Type.ToString();
+                var staffcode = "SD" + number.ToString("0000");
+
+                var user = new User
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FirstName = userRequest.FirstName,
+                    LastName = userRequest.LastName,
+                    UserName = username,
+                    DateOfBirth = userRequest.DateOfBirth,
+                    Gender = userRequest.Gender,
+                    JoinedDate = userRequest.JoinedDate,
+                    LocationId = userRequest.LocationId,
+                    StaffCode = staffcode,
+                    IsChange = false
+                };
 
                 var result = await _userManager.CreateAsync(user, password);
                 if (result.Succeeded)
@@ -157,11 +178,11 @@ namespace RookieOnlineAssetManagement.Repositories
 
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
-            //}
-            //catch
-            //{
-            //    return null;
-            //}
+            }
+            catch
+            {
+                return null;
+            }
             return userRequest;
         }
 

@@ -49,7 +49,6 @@ namespace RookieOnlineAssetManagement.Controllers
                     UserName = user.UserName,
                     FullName = $"{user.FirstName} {user.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
-                    LocationId = user.LocationId
                 });
             }
             return NotFound();

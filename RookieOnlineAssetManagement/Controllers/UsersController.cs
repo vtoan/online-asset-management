@@ -7,7 +7,6 @@ using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
@@ -32,6 +31,11 @@ namespace RookieOnlineAssetManagement.Controllers
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
         }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserDetailModel>> GetAsync(string id)
+        {
+            return Ok(await _userSer.GetUserByIdAsync(id));
+        }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UserRequestModel>> Update(string id, UserRequestModel userRequest)
@@ -48,7 +52,11 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<UserRequestModel>> Create(UserRequestModel userRequestModel)
         {
-            return Ok(await _userSer.CreateUserAsync(userRequestModel));
+            if (!ModelState.IsValid) return BadRequest();
+            var result = await _userSer.CreateUserAsync(userRequestModel);
+            if (result == null) return BadRequest();
+            return Ok(result);
         }
+
     }
 }
