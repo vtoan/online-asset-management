@@ -1,5 +1,10 @@
 import React from "react";
 import AssignmentTable from "./Table";
+import { Row, Col } from "reactstrap";
+import SelectDate from "../../common/SelectDate";
+import SearchBar from "../../common/SearchBar";
+import CreateNew from "../../common/CreateNew";
+import FilterState from "../../common/FilterState";
 
 const seedData = [
   {
@@ -9,8 +14,7 @@ const seedData = [
     Assignedto: "ndhd",
     Assignedby: "dvt",
     AssignedDate: "8/5/2020",
-    Status: "Accepted"
-
+    Status: "Accepted",
   },
   {
     No: 2,
@@ -19,8 +23,7 @@ const seedData = [
     Assignedto: "ndhd",
     Assignedby: "dvt",
     AssignedDate: "8/5/2020",
-    Status: "Accepted"
-
+    Status: "Accepted",
   },
   {
     No: 3,
@@ -29,58 +32,70 @@ const seedData = [
     Assignedto: "ndhd",
     Assignedby: "dvt",
     AssignedDate: "8/5/2020",
-    Status: "Accepted"
-
+    Status: "Accepted",
   },
-]
+];
 export default function Assignment() {
-
   const [assignmentData, setAssignment] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
 
   React.useEffect(() => {
     _fetchData();
-  }, [])
+  }, []);
 
   const _fetchData = () => {
     setAssignment([]);
     setTimeout(() => {
       setAssignment(seedData);
       setTotalPages(2);
-    }, 500)
-  }
+    }, 500);
+  };
   const onEdit = (item) => {
     console.log(item);
-  }
+  };
 
   const onRefresh = (item) => {
     console.log(item);
-  }
+  };
 
   const onDeny = (item) => {
     console.log(item);
-  }
+  };
   const onChangeSort = (target) => {
     console.log(target);
     _fetchData();
-  }
+  };
   const onChangePage = (page) => {
     console.log(page);
     _fetchData();
-  }
+  };
 
   return (
     <>
-    <AssignmentTable
-      datas={assignmentData}
-      totalPage={totalPages}
-      onEdit={onEdit}
-      onDeny={onDeny}
-      onRefresh={onRefresh}
-      onChangeSort={onChangeSort}
-      onChangePage={onChangePage}
-    />
+      <h5 className="name-list">Assignment List</h5>
+      <Row>
+        <Col>
+          <FilterState namefilter="State" />
+        </Col>
+        <Col>
+          <SelectDate namedate="Assigned Date" />
+        </Col>
+        <Col>
+          <SearchBar />
+        </Col>
+        <Col>
+          <CreateNew namecreate="Create new assignment" />
+        </Col>
+      </Row>
+      <AssignmentTable
+        datas={assignmentData}
+        totalPage={totalPages}
+        onEdit={onEdit}
+        onDeny={onDeny}
+        onRefresh={onRefresh}
+        onChangeSort={onChangeSort}
+        onChangePage={onChangePage}
+      />
     </>
-    
   );
 }

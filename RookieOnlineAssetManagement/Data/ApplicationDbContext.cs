@@ -16,6 +16,7 @@ namespace RookieOnlineAssetManagement.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<ReturnRequest> ReturnRequests { get; set; }
+        public DbSet<UserExtension> UserExtensions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -28,6 +29,14 @@ namespace RookieOnlineAssetManagement.Data
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
 
+            modelBuilder.Entity<UserExtension>(entity =>
+            {
+                entity.ToTable("UserExtension");
+
+                entity.Property(e => e.UserName)
+                    .IsUnicode(true)
+                    .HasMaxLength(256);
+            });
             modelBuilder.Entity<Asset>(entity =>
             {
                 entity.ToTable("Asset");
@@ -144,7 +153,7 @@ namespace RookieOnlineAssetManagement.Data
 
                 entity.Property(e => e.ShortName)
                     .IsRequired()
-                    .HasMaxLength(4)
+                    .HasMaxLength(2)
                     .IsUnicode(false);
             });
 
@@ -225,8 +234,6 @@ namespace RookieOnlineAssetManagement.Data
                     .HasMaxLength(450)
                     .HasColumnName("LocationID");
 
-                entity.Property(e => e.NumIncrease).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.StaffCode)
                     .HasMaxLength(6)
                     .IsUnicode(false);
@@ -235,6 +242,19 @@ namespace RookieOnlineAssetManagement.Data
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.LocationId);
             });
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Roles)
+                .WithMany("Users")
+                .UsingEntity<IdentityUserRole<string>>(
+                    userRole => userRole.HasOne<IdentityRole>()
+                        .WithMany()
+                        .HasForeignKey(ur => ur.RoleId)
+                        .IsRequired(),
+                    userRole => userRole.HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey(ur => ur.UserId)
+                        .IsRequired());
         }
     }
 }

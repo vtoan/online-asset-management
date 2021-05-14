@@ -1,5 +1,9 @@
 import React from "react";
 import RequestTable from "./RequestTable";
+import { Row, Col } from "reactstrap";
+import SelectDate from "../../common/SelectDate";
+import SearchBar from "../../common/SearchBar";
+import FilterState from "../../common/FilterState";
 
 const seedData = [
   {
@@ -59,14 +63,27 @@ export default function Request() {
   const handleChangeSort = (target) => {
     console.log(target);
     _fetchData();
-  }
+  };
   const handleChangePage = (page) => {
     console.log(page);
     _fetchData();
-  }
+  };
 
   return (
     <>
+      <h5 className="name-list">Request List</h5>
+      <Row>
+        <Col>
+          <FilterState namefilter="State" />
+        </Col>
+        <Col>
+          <SelectDate namedate="Returned Date" />
+        </Col>
+        <Col />
+        <Col>
+          <SearchBar />
+        </Col>
+      </Row>
       <RequestTable
         datas={requestDatas}
         totalPage={totalPages}

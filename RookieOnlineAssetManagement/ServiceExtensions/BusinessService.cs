@@ -8,7 +8,8 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
         public static IServiceCollection AddBusinessService(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
-
+            services.AddScoped<IAssetService, AssetService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             return services;
         }
     }

@@ -1,5 +1,7 @@
 import React from "react";
-import ReportTable from './Table.js';
+import ReportTable from "./ReportTable.js";
+import { Row, Col } from "reactstrap";
+import CreateNew from "../../common/CreateNew";
 
 const seedData = [
   {
@@ -10,7 +12,6 @@ const seedData = [
     NotAvailable: "0",
     Waitingforrecycling: "0",
     Recycled: "0",
-
   },
   {
     Category: "BluetoothMouse",
@@ -29,8 +30,8 @@ const seedData = [
     NotAvailable: "0",
     Waitingforrecycling: "0",
     Recycled: "0",
-  }
-]
+  },
+];
 export default function Report() {
   const [reportData, setReport] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
@@ -44,8 +45,8 @@ export default function Report() {
     setTimeout(() => {
       setReport(seedData);
       setTotalPages(2);
-    }, 500)
-  }
+    }, 500);
+  };
 
   //handleClick
   const handleChangePage = (page) => {
@@ -59,13 +60,22 @@ export default function Report() {
   };
 
   return (
-    <div>
+    <>
+      <h5 className="name-list">Report</h5>
+      <Row>
+        <Col />
+        <Col />
+        <Col />
+        <Col>
+          <CreateNew namecreate="Export" />
+        </Col>
+      </Row>
       <ReportTable
         datas={reportData}
         onChangePage={handleChangePage}
         onChangeSort={handleChangeSort}
         totalPage={totalPages}
       />
-    </div>
+    </>
   );
 }

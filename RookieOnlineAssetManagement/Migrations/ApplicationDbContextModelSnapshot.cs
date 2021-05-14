@@ -282,9 +282,9 @@ namespace RookieOnlineAssetManagement.Migrations
 
                     b.Property<string>("ShortName")
                         .IsRequired()
-                        .HasMaxLength(4)
+                        .HasMaxLength(2)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(4)");
+                        .HasColumnType("varchar(2)");
 
                     b.HasKey("CategoryId");
 
@@ -411,11 +411,6 @@ namespace RookieOnlineAssetManagement.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("NumIncrease")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -453,6 +448,26 @@ namespace RookieOnlineAssetManagement.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("RookieOnlineAssetManagement.Entities.UserExtension", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<short>("NumIncrease")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("UserExtension");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

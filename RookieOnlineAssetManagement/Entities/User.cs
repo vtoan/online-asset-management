@@ -22,12 +22,12 @@ namespace RookieOnlineAssetManagement.Entities
         public bool? IsChange { get; set; }
         public string LocationId { get; set; }
         public string StaffCode { get; set; }
-        public int NumIncrease { get; set; }
 
         public Location Location { get; set; }
         public ICollection<Assignment> AssignmentAdmins { get; set; }
         public ICollection<Assignment> AssignmentUsers { get; set; }
         public ICollection<ReturnRequest> ReturnRequestAcceptedUsers { get; set; }
         public ICollection<ReturnRequest> ReturnRequestRequestUsers { get; set; }
+        public ICollection<IdentityRole> Roles { get; set; }
     }
 }
