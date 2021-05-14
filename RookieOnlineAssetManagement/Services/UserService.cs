@@ -5,6 +5,7 @@ using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
+using RookieOnlineAssetManagement.Utils;
 
 namespace RookieOnlineAssetManagement.Services
 {
@@ -27,10 +28,17 @@ namespace RookieOnlineAssetManagement.Services
             return await _userRepo.GetListUserAsync(locationId, type, query, sortCode, sortFullName, sortDate, sortType, page, pageSize);
         }
 
-        public async Task<UserRequestModel> UpdateUserAsync(string id,UserRequestModel userRequest)
+        public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
-            return await _userRepo.UpdateUserAsync(id,userRequest);
+            return await _userRepo.UpdateUserAsync(id, userRequest);
         }
+
+        public async Task<string> GetDefaultPassword(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+            return AccountHelper.GenerateAccountPass(user.UserName, user.DateOfBirth);
+        }
+
         public Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
         {
             var checkage = CheckDateAgeGreaterThan(18, userRequest.DateOfBirth.Value);
@@ -67,7 +75,7 @@ namespace RookieOnlineAssetManagement.Services
         }
         public bool CheckDateAgeGreaterThan(int age, DateTime BirthOfDate)
         {
-            if(DateTime.Now.Year-BirthOfDate.Year>=18)
+            if (DateTime.Now.Year - BirthOfDate.Year >= 18)
             {
                 return true;
             }
@@ -88,5 +96,7 @@ namespace RookieOnlineAssetManagement.Services
                 return false;
             }
         }
+
+
     }
 }

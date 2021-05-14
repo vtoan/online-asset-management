@@ -38,19 +38,19 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserRequestModel>> Update(string id, UserRequestModel userRequest)
+        public async Task<ActionResult<UserRequestModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
             return Ok(await _userSer.UpdateUserAsync(id, userRequest));
         }
 
-        [HttpDelete]
-        public async Task<ActionResult<UserRequestModel>> Disable(string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<UserRequestModel>> DisableAsync(string id)
         {
             return Ok(await _userSer.DisableUserAsync(id));
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserRequestModel>> Create(UserRequestModel userRequestModel)
+        public async Task<ActionResult<UserRequestModel>> CreateAsync(UserRequestModel userRequestModel)
         {
             if (!ModelState.IsValid) return BadRequest();
             var result = await _userSer.CreateUserAsync(userRequestModel);

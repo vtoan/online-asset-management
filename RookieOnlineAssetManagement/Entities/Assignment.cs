@@ -13,7 +13,7 @@ namespace RookieOnlineAssetManagement.Entities
         public string AssetName { get; set; }
         public DateTime? AssignedDate { get; set; }
         public string Note { get; set; }
-        public bool State { get; set; }
+        public int State { get; set; }
         public string LocationId { get; set; }
 
         public User Admin { get; set; }

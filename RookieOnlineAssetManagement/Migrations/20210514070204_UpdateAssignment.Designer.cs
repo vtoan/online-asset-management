@@ -10,8 +10,8 @@ using RookieOnlineAssetManagement.Data;
 namespace RookieOnlineAssetManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210512103151_add_Entity_UserExtention")]
-    partial class add_Entity_UserExtention
+    [Migration("20210514070204_UpdateAssignment")]
+    partial class UpdateAssignment
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -245,8 +245,8 @@ namespace RookieOnlineAssetManagement.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
 
-                    b.Property<bool>("State")
-                        .HasColumnType("bit");
+                    b.Property<int>("State")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -454,6 +454,11 @@ namespace RookieOnlineAssetManagement.Migrations
 
             modelBuilder.Entity("RookieOnlineAssetManagement.Entities.UserExtension", b =>
                 {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<short>("NumIncrease")
                         .HasColumnType("smallint");
 
@@ -461,6 +466,8 @@ namespace RookieOnlineAssetManagement.Migrations
                         .HasMaxLength(256)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("ID");
 
                     b.ToTable("UserExtension");
                 });

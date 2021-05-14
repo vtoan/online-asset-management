@@ -5,6 +5,7 @@ using RookieOnlineAssetManagement.Entities;
 using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Models;
 using Microsoft.AspNetCore.Authorization;
+using RookieOnlineAssetManagement.Utils;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
@@ -49,6 +50,7 @@ namespace RookieOnlineAssetManagement.Controllers
                     UserName = user.UserName,
                     FullName = $"{user.FirstName} {user.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
+                    LocationId = user.LocationId
                 });
             }
             return NotFound();
@@ -80,11 +82,22 @@ namespace RookieOnlineAssetManagement.Controllers
             if (!ModelState.IsValid) return BadRequest();
             var user = await _userManager.GetUserAsync(User);
             var changePassword = await _userManager.ChangePasswordAsync(user, userModel.OldPassword, userModel.NewPassword);
-            if (changePassword.Succeeded)
-            {
-                return Ok();
-            }
+            if (changePassword.Succeeded) return Ok();
             return NotFound();
         }
+
+        [Authorize]
+        [HttpPost("/change-password-first/{id}")]
+        public async Task<IActionResult> ChangePasswordFirstAsync(string id, [FromBody] string newPassword)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(newPassword)) return BadRequest();
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+            var defaultPass = AccountHelper.GenerateAccountPass(user.UserName, user.DateOfBirth.Value);
+            var changePassword = await _userManager.ChangePasswordAsync(user, defaultPass, newPassword);
+            if (changePassword.Succeeded) return Ok();
+            return NotFound();
+        }
+
     }
 }

@@ -9,5 +9,7 @@ namespace RookieOnlineAssetManagement.Models
         public string FullName { get; set; }
         public string RoleName { get; set; }
         public DateTime? JoinedDate { get; set; }
+        public string LocationId { get; set; }
+
     }
 }
