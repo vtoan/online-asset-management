@@ -8,7 +8,6 @@ import {
 } from "reactstrap";
 import { routePaths } from "../router";
 import { AppContext } from "../App";
-import '../style.css';
 
 export default function Header() {
   const location = useLocation();
@@ -28,13 +27,9 @@ export default function Header() {
 
   return (
     <div>
-      <span className="header-name" >{title}</span>
+      <span className="header-name">{title}</span>
       <UncontrolledDropdown setActiveFromChild className="user-profile">
-        <DropdownToggle
-          style={{ cursor: "pointer" }}
-          tag="span"
-          caret
-        >
+        <DropdownToggle style={{ cursor: "pointer" }} tag="span" caret>
           {appContext.user?.userName}
         </DropdownToggle>
         <DropdownMenu>

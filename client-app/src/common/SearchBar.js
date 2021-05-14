@@ -1,15 +1,14 @@
-import React from 'react';
-import '../style.css';
+import React from "react";
 
 export default function SelectDate({ namedate }) {
-    return (
-        <>
-            <form className="example">
-                <input type="text" />
-                <button type="submit">
-                    <i className="fa fa-search" />
-                </button>
-            </form>
-        </>
-    );
+  return (
+    <>
+      <form className="example">
+        <input type="text" />
+        <button type="submit">
+          <i className="fa fa-search" />
+        </button>
+      </form>
+    </>
+  );
 }
