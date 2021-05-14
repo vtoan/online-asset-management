@@ -2,6 +2,22 @@ import React from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Row, Col, Button } from "reactstrap";
+import http from '../../ultis/httpClient';
+
+let params = {
+  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+};
+
+function _createQuery(params) {
+  if (!params) return "";
+  let queryStr = "";
+  for (const key in params) {
+    if (!params[key]) continue;
+    if (queryStr) queryStr += "&&";
+    queryStr += key + "=" + params[key];
+  }
+  return "?" + queryStr;
+}
 
 const stateAsset = [
   {
@@ -47,6 +63,13 @@ export default function AssetForm() {
   const [stateSelected, setStateSelected] = React.useState(null);
   const [stateCurrent, setStateCurrent] = React.useState([]);
   const [nameHeader, setnameHeader] = React.useState("");
+  const [category, setCategory] = React.useState([]);
+
+  const _fetchData = () => {
+    http.get("/api/category").then(resp => {
+      setCategory(resp.data);
+    }).catch(err => console.log(err))
+  };
 
   React.useEffect(() => {
     if (id) {
@@ -60,24 +83,30 @@ export default function AssetForm() {
       setStateCurrent(stateAsset.splice(0, 2));
       setnameHeader("Create New Asset");
     }
+    _fetchData();
   }, [id]);
+
   const handleSubmit = (event) => {
-    const myObj = {
-      name: event.target.nameAsset.value,
-      category: event.target.nameCategoryAsset.value,
-      specification: event.target.specificationAsset.value,
-      date: event.target.dateAddAsset.value,
-      state: event.target.radioAvailable.value,
-    };
 
     event.preventDefault();
-    console.log(myObj);
+    const asset = {
+      assetName: String(event.target.nameAsset.value),
+      categoryId: String(event.target.nameCategoryAsset.value),
+      specification: String(event.target.specificationAsset.value),
+      installedDate: String(event.target.dateAddAsset.value),
+      state: Number(event.target.radioAvailable.value),
+      locationid: params.locationid
+    };
+    http.post("/api/asset" + _createQuery(params), asset).then(resp => {
+      console.log(asset);
+    }).catch(err => console.log(err))
   };
 
   const handleChangeState = (event) => {
     setStateSelected(Number(event.target.value));
     console.log(event.target.value);
   };
+
   return (
     <>
       <h5 className="name-list">{nameHeader}</h5>
@@ -100,14 +129,15 @@ export default function AssetForm() {
             <span>Category</span>
           </Col>
           <Col className="col-create-new">
+
             <select
               name="nameCategoryAsset"
               defaultValue={dataEdit?.category ?? ""}
               className="category-asset"
             >
-              <option value="Laptop">Laptop</option>
-              <option value="Monitor">Monitor</option>
-              <option value="Personal Computer">Personal Computer</option>
+              {category && category.map((cate) =>
+                (<option value={cate.categoryId}>{cate.categoryName}</option>))
+              }
             </select>
           </Col>
         </Row>
