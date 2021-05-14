@@ -64,7 +64,7 @@ export default function Asset() {
   return (
     <>
       <h5 className="name-list">Asset List</h5>
-      <Row>
+      <Row className="filter-bar">
         <Col>
           <FilterState namefilter="State" />
         </Col>
@@ -74,7 +74,7 @@ export default function Asset() {
         <Col>
           <SearchBar />
         </Col>
-        <Col>
+        <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
             <CreateNew namecreate="Create new asset" />
           </Link>

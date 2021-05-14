@@ -1,5 +1,5 @@
 import React from "react";
-import UserTable from "./Table";
+import UserTable from "./UserTable";
 import { Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
 import SearchBar from "../../common/SearchBar";
@@ -69,15 +69,14 @@ export default function User() {
   return (
     <>
       <h5 className="name-list">User List</h5>
-      <Row>
+      <Row className="filter-bar">
         <Col>
           <FilterState namefilter="Type" />
         </Col>
-        <Col />
         <Col>
           <SearchBar />
         </Col>
-        <Col>
+        <Col style={{ textAlign: "right" }}>
           <Link to="/users/1">
             <CreateNew namecreate="Create new user" />
           </Link>

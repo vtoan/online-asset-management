@@ -1,5 +1,5 @@
 import React from "react";
-import AssignmentTable from "./Table";
+import AssignmentTable from "./AssignmentTable";
 import { Row, Col } from "reactstrap";
 import SelectDate from "../../common/SelectDate";
 import SearchBar from "../../common/SearchBar";
@@ -73,7 +73,7 @@ export default function Assignment() {
   return (
     <>
       <h5 className="name-list">Assignment List</h5>
-      <Row>
+      <Row className="filter-bar">
         <Col>
           <FilterState namefilter="State" />
         </Col>
@@ -83,7 +83,7 @@ export default function Assignment() {
         <Col>
           <SearchBar />
         </Col>
-        <Col>
+        <Col style={{ textAlign: "right" }}>
           <CreateNew namecreate="Create new assignment" />
         </Col>
       </Row>

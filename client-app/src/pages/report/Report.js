@@ -62,11 +62,8 @@ export default function Report() {
   return (
     <>
       <h5 className="name-list">Report</h5>
-      <Row>
-        <Col />
-        <Col />
-        <Col />
-        <Col>
+      <Row className="filter-bar">
+        <Col style={{ textAlign: "right" }}>
           <CreateNew namecreate="Export" />
         </Col>
       </Row>
