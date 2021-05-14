@@ -12,12 +12,24 @@ code {
     monospace;
 }
 
+hr {
+  margin: 0.5em 0 !important;
+}
+
 :root {
   --clr-primary: rgb(207, 35, 56);
   --clr-secondary: rgb(239, 241, 245);
   --clr-dark: rgba(33, 37, 41);
   --clr-white: rgba(250, 252, 252);
 }
+/* 
+input,
+select {
+  padding: 0.5em;
+  border-color: #dadada !important;
+  border-width: 1px !important;
+} */
+
 .main-content {
   width: 90%;
 }
@@ -44,4 +56,399 @@ code {
 
 .ns-text-white {
   color: var(--clr-white);
+}
+
+/*Navigate*/
+.nav {
+  background-color: rgba(239, 241, 245, 1);
+  width: 220px;
+}
+.logo {
+  width: 120px;
+}
+
+.nav-container {
+  width: 200px;
+}
+
+.name-asset {
+  color: rgba(207, 35, 56, 1);
+  font-weight: bold;
+}
+
+.navLink {
+  color: #000000;
+  font-weight: bold;
+  text-decoration: none;
+  border: solid white 2px;
+  padding: 10px;
+}
+
+.navLink:hover {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffffff;
+}
+
+.active {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffff;
+}
+
+/*PageLayout*/
+
+.pt-3 {
+  padding: 40px;
+}
+
+.p-4 {
+  margin-top: 50px;
+}
+
+/*Header*/
+
+.header-name {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #ffffff;
+  margin-left: 40px;
+}
+
+.user-profile {
+  float: right;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Pages */
+
+.name-list {
+  color: rgba(207, 35, 56, 1);
+}
+
+/* Table */
+table thead tr td:first-child {
+  padding-left: 0;
+}
+
+table tbody tr td:first-child {
+  padding-left: 0;
+}
+
+.lable-arrow {
+  transition: 0.5s;
+}
+
+.table-item-bold {
+  font-weight: 700;
+}
+.table-item-bold hr {
+  border: 1px solid var(--clr-dark);
+  opacity: 1;
+}
+.table-icon {
+  font-size: 1.4em;
+  cursor: pointer;
+  display: inline-block !important;
+  padding-left: 0.75em;
+}
+
+.table-icon .disabled {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+
+.table-actions {
+  padding-right: 0 !important;
+  text-align: right;
+}
+
+/*filter bar*/
+.filter-bar {
+  margin-bottom: 1em;
+  padding-top: 1em;
+}
+
+.fa.fa-filter {
+  position: absolute;
+  left: 89%;
+  border: 1px solid grey;
+  padding: 8px;
+  border-radius: 0px 5px 5px 0px;
+  z-index: -1;
+  top: 1%;
+}
+
+.filter-cate {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+  padding-left: 10px;
+  border-radius: 5px 0px 0px 5px;
+}
+
+.multiselect {
+  width: 200px;
+}
+
+.selectBox {
+  position: relative;
+}
+
+.selectBox .filter-cate {
+  font-size: 15px;
+  width: 179px;
+  height: 34px;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.checkboxes {
+  border: 1px #dadada solid;
+  width: 206px;
+  margin-left: 2px;
+  display: none;
+  position: absolute;
+  z-index: 99;
+  background-color: white;
+}
+
+.checkboxes label {
+  display: block;
+  padding-left: 5px;
+  font-size: 1em;
+}
+
+.checkboxes label:hover {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffffff;
+}
+
+.checkboxlist {
+  margin-top: 5px;
+}
+
+.checkboxlist .checkbox {
+  margin: 5px;
+}
+
+/*SearchBar*/
+
+* {
+  box-sizing: border-box;
+}
+
+form.example input[type="text"] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 165px;
+  height: 34px;
+  background: #ffffff;
+  border-radius: 5px 0px 0px 5px;
+}
+
+form.example button {
+  width: 30px;
+  height: 34px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 14px;
+  border: 1px solid grey;
+  border-left: none;
+  border-radius: 0px 5px 5px 0px;
+}
+
+/*Select day */
+#select-date {
+  width: 165px;
+  height: 34px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  padding-left: 5px;
+}
+
+#select-date[type="date"]::before {
+  content: attr(data-placeholder);
+  width: 165px;
+}
+
+#select-date[type="date"]:focus::before,
+#select-date[type="date"]:valid::before {
+  display: none;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+
+/*CreateButton*/
+
+/* Radio checkbox css */
+
+/* The container */
+.container-radio {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-right: 10px;
+}
+
+/* Hide the browser's default radio button */
+.container-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  margin-top: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container-radio:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-radio input:checked ~ .checkmark {
+  background-color: rgba(207, 35, 56, 1);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-radio input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-radio .checkmark:after {
+  top: 4px;
+  left: 3.7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* --- Common css for Forms --- */
+
+.row-create-new {
+  margin-top: 10px;
+}
+
+.col-create-new {
+  margin-left: 20px;
+}
+
+/* --- assetForm --- */
+
+.name-new-asset {
+  width: 200px;
+  /* height: 27px; */
+  border-radius: 7px;
+}
+
+.category-asset {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.date-asset {
+  width: 205px;
+  border-radius: 7px;
+}
+
+.container-radio {
+  font-size: 15px;
+}
+
+.specification-asset {
+  border-radius: 7px;
+}
+
+.area-button {
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+.submit-create-asset {
+  float: right;
+  padding-right: 40px;
+}
+
+.btn-cancel {
+  margin-left: 30px;
+}
+
+.form-asset {
+  margin-top: 40px;
+}
+
+.col-asset {
+  width: 13%;
+}
+
+/* --- UserCreate --- */
+
+.last-name-user,
+.first-name-user {
+  width: 200px;
+  height: 27px;
+  border-radius: 7px;
+}
+
+.date-user {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.category-type {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.area-button-user {
+  float: right;
+  margin-top: 20px;
+  padding-right: 10px;
+}
+
+.submit-create-user {
+  float: right;
+}
+
+.form-user {
+  margin-top: 40px;
+}
+
+.col-user {
+  width: 11%;
 }

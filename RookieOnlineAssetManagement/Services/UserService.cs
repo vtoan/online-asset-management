@@ -30,5 +30,9 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _userRepo.UpdateUserAsync(id,userRequest);
         }
+        public Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
+        {
+            return _userRepo.CreateUserAsync(userRequest);
+        }
     }
 }

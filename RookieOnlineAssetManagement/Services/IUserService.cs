@@ -12,5 +12,6 @@ namespace RookieOnlineAssetManagement.Services
         Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest);
 
         Task<bool> DisableUserAsync(string id);
+        Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest);
     }
 }

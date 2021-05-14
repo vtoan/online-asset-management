@@ -5,21 +5,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
+using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
+using RookieOnlineAssetManagement.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
-        public UserRepository(ApplicationDbContext dbContext)
+        private readonly UserManager<User> _userManager;
+        public UserRepository(ApplicationDbContext dbContext, UserManager<User> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
-        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page , int pageSize)
+        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
         {
             var queryable = _dbContext.Users.Where(item => item.LocationId == locationId);
             if (!string.IsNullOrEmpty(query))
@@ -41,15 +45,14 @@ namespace RookieOnlineAssetManagement.Repositories
                 switch (sortFullName)
                 {
                     case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.FirstName).OrderBy(item=>item.LastName);
+                        queryable = queryable.OrderBy(item => item.FirstName).OrderBy(item => item.LastName);
                         break;
                     case SortBy.DESC:
                         queryable = queryable.OrderByDescending(item => item.FirstName).OrderBy(item => item.LastName);
                         break;
-                }              
+                }
             }
-
-            if (sortDate.HasValue)
+            else if (sortDate.HasValue)
             {
                 switch (sortDate)
                 {
@@ -61,7 +64,7 @@ namespace RookieOnlineAssetManagement.Repositories
                         break;
                 }
             }
-
+            //include role
             queryable.Include(item => item.Roles);
 
             if (type.Length > 0)
@@ -71,7 +74,7 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             if (sortType.HasValue)
             {
-                switch(sortType)
+                switch (sortType)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.Roles.First());
@@ -79,14 +82,11 @@ namespace RookieOnlineAssetManagement.Repositories
                     case SortBy.DESC:
                         queryable = queryable.OrderByDescending(item => item.Roles.First());
                         break;
-                }           
+                }
             }
-            var totalRecord = queryable.Count();
-            if(page > 0 && pageSize > 0)
-            {
-                queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
-            }
-            var list = await queryable.Select(x => new UserModel
+
+            var result = Paging<User>(queryable, pageSize, page);
+            var list = await result.Sources.Select(x => new UserModel
             {
                 Id = x.Id,
                 FullName = x.FirstName + "" + x.LastName,
@@ -95,9 +95,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 RoleName = x.Roles.ToString(),
 
             }).ToListAsync();
-            var totalpage = (int)Math.Ceiling((double)totalRecord / pageSize);
-            return (list, totalpage);
-
+            return (list, result.TotalPage);
         }
 
         public Task<UserModel> GetUserByIdAsync(string id)
@@ -105,9 +103,66 @@ namespace RookieOnlineAssetManagement.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
+        public async Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
         {
-            throw new System.NotImplementedException();
+            string username = userRequest.FirstName.ToLower();
+            var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
+            string prefix = new string(firstChars).ToLower();
+            username = username + prefix;
+
+            var UserExtension = await _dbContext.UserExtensions.FirstOrDefaultAsync(x => x.UserName == username);
+
+            var transaction = _dbContext.Database.BeginTransaction();
+            //try
+            //{
+                if (UserExtension == null)
+                {
+                    short numincrease = 1;
+                    var userextension = new UserExtension
+                    {
+                        UserName = username,
+                        NumIncrease = numincrease
+                    };
+                    _dbContext.UserExtensions.Add(userextension);
+                }
+                else
+                {
+                    username = username + UserExtension.NumIncrease.ToString();
+                    UserExtension.NumIncrease = (short)(UserExtension.NumIncrease + 1);
+                }
+
+                var password = username + "@" + userRequest.DateOfBirth.Value.ToString("ddMMyyyy");
+                var role = userRequest.Type;
+            var user = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirstName = userRequest.FirstName,
+                LastName = userRequest.LastName,
+                UserName = username,
+                DateOfBirth = userRequest.DateOfBirth,
+                Gender = userRequest.Gender,
+                JoinedDate = userRequest.JoinedDate,
+                LocationId = userRequest.LocationId
+            };
+
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    result = await _userManager.AddToRoleAsync(user, role);
+                }
+                else
+                {
+                    return null;
+                }
+
+                await _dbContext.SaveChangesAsync();
+                transaction.Commit();
+            //}
+            //catch
+            //{
+            //    return null;
+            //}
+            return userRequest;
         }
 
         public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
@@ -151,6 +206,6 @@ namespace RookieOnlineAssetManagement.Repositories
             _dbContext.UserRoles.Add(new IdentityUserRole<string>() { UserId = userId, RoleId = role.Id });
         }
 
-       
+
     }
 }
