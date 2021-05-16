@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import FilterState from "../../common/FilterState";
+import { useNSModals } from "../../containers/ModalContainer";
 
 const seedData = [
   {
@@ -33,6 +34,16 @@ const seedData = [
 export default function User() {
   const [userDatas, setUser] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  //modal
+  const { modalLoading, modalConfirm } = useNSModals();
+  modalConfirm.config({
+    message: "Do you want to disable this user?",
+    btnName: "Disable",
+    onSubmit: (item) => {
+      console.log("delete");
+      console.log(item);
+    },
+  });
 
   React.useEffect(() => {
     _fetchData();
@@ -63,7 +74,11 @@ export default function User() {
   };
 
   const handleDelete = (item) => {
-    console.log(item);
+    modalLoading.show("Checking user...");
+    setTimeout(() => {
+      modalLoading.close();
+      modalConfirm.show(item);
+    }, 1000);
   };
 
   return (
