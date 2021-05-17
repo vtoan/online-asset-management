@@ -35,29 +35,44 @@ function formatDate(date) {
   return [year, month, day].join('-');
 }
 
+const roles = [
+  {
+    id: 1,
+    name: "ADMIN",
+  },
+  {
+    id: 2,
+    name: "STAFF",
+  }
+];
+
 export default function UserForm() {
   const { id } = useParams();
   const [dataEdit, setEdit] = React.useState(null);
   const [nameHeader, setnameHeader] = React.useState("");
   const [selectType, setSelectType] = React.useState("");
+  const [typeRole, setTypeRole] = React.useState([]);
+  const [joinedDate, setjoinedDate] = React.useState([]);
+  const [dateOfBirth, setDateOfBirth] = React.useState([]);
   const [gender, setGender] = React.useState(0);
-  const [dataUser, setDataUser] = React.useState([]);
 
-  const _fetchUserData = (assetId) => {
-    http.get("/api/user/" + assetId).then(resp => {
-      setDataUser(resp.data)
-      console.log(dataUser);
+  const _fetchUserData = (userId) => {
+    http.get("/api/users/" + userId).then(resp => {
+      setEdit(resp.data);
+      setGender(resp.data.gender);
+      setSelectType(resp.data.roleName);
+      setDateOfBirth(formatDate(resp.data.dateOfBirth));
+      setjoinedDate(formatDate(resp.data.joinedDate))
+      selectType == "ADMIN" ? setTypeRole(roles) : setTypeRole(roles.reverse());
+      console.log(dataEdit);
+      console.log(selectType);
     }).catch(err => console.log(err))
   };
 
   React.useEffect(() => {
     if (id) {
-      setnameHeader("Edit User");
       _fetchUserData(id);
-      // setEdit(data);
-      // setGender(data.gender);
-      // setSelectType(data.type);
-      // console.log(data);
+      setnameHeader("Edit User");
     } else {
       setnameHeader("Create New User");
     }
@@ -67,33 +82,41 @@ export default function UserForm() {
     event.preventDefault();
     const user = {
       id: id,
-      firstname: String(event.target.firstName.value),
-      lastname: String(event.target.lastName.value),
+      firstName: String(event.target.firstName.value),
+      lastName: String(event.target.lastName.value),
       dateOfBirth: String(event.target.dobUser.value),
       gender: Boolean(event.target.gender.value),
       joinedDate: String(event.target.dateAddUser.value),
       type: Number(event.target.nameCategoryType.value),
-      locationid: params.locationid
+      locationId: params.locationid
     };
-    http.post("/api/users" + _createQuery(params), user).then(resp => {
-      console.log(user);
-    }).catch(err => console.log(err))
-    // if (id) {
-    //   http.put("/api/user/" + id + _createQuery(params), user).then(resp => {
-    //     console.log(user);
-    //   }).catch(err => console.log(err))
-    // }
-    // else {
-    //   http.post("/api/user" + _createQuery(params), user).then(resp => {
-    //     console.log(user);
-    //   }).catch(err => console.log(err))
-    // }
+    if (id) {
+      http.put("/api/users/" + id + _createQuery(params), user).then(resp => {
+        console.log(user);
+      }).catch(err => console.log(err))
+    }
+    else {
+      http.post("/api/user" + _createQuery(params), user).then(resp => {
+        console.log(user);
+      }).catch(err => console.log(err))
+    }
   };
 
   const handeChangeGender = (event) => {
     console.log(event.target.value);
     setGender(event.target.value);
   };
+
+  const handleChangeDateBOB = (event) => {
+    setDateOfBirth(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const handleChangeDateJoined = (event) => {
+    setjoinedDate(event.target.value);
+    console.log(event.target.value);
+  };
+
   return (
     <>
       <h5 className="name-list">{nameHeader}</h5>
@@ -107,7 +130,8 @@ export default function UserForm() {
               type="text"
               className="first-name-user"
               name="firstName"
-              defaultValue={dataEdit?.firstname ?? ""}
+              value={dataEdit?.userName ?? ""}
+              disabled={id}
             />
           </Col>
         </Row>
@@ -120,7 +144,8 @@ export default function UserForm() {
               type="text"
               className="last-name-user"
               name="lastName"
-              defaultValue={dataEdit?.lastname ?? ""}
+              value={dataEdit?.fullName ?? ""}
+              disabled={id}
             />
           </Col>
         </Row>
@@ -133,7 +158,8 @@ export default function UserForm() {
               type="date"
               className="date-user"
               name="dobUser"
-              defaultValue={dataEdit?.dob ?? ""}
+              value={dateOfBirth}
+              onChange={handleChangeDateBOB}
             />
           </Col>
         </Row>
@@ -175,7 +201,8 @@ export default function UserForm() {
               type="date"
               className="date-user"
               name="dateAddUser"
-              defaultValue={dataEdit?.joinday ?? ""}
+              value={joinedDate}
+              onChange={handleChangeDateJoined}
             />
           </Col>
         </Row>
@@ -186,12 +213,13 @@ export default function UserForm() {
           <Col className="col-user-new">
             <select
               name="nameCategoryType"
-              value={selectType}
               onChange={(e) => setSelectType(e.target.value)}
               className="category-type"
+              defaultValue={selectType}
             >
-              <option value="2">Staff</option>
-              <option value="1">Admin</option>
+              {typeRole.map((item) => (
+                <option value={item.id}>{item.name}</option>
+              ))}
             </select>
           </Col>
         </Row>

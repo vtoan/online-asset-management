@@ -60,7 +60,7 @@ export default function User() {
   };
 
   const handleEdit = (item) => {
-    history.push("/users/" + item.id);
+    history.push("/users/" + item.code);
   };
 
   const handleDelete = (item) => {
