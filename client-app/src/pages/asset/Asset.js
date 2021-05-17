@@ -12,9 +12,18 @@ import AssetFilterCategory from "./AssetFilterCategory";
 
 let params = {};
 
+function _refreshParams() {
+  params.sortCode = 0;
+  params.sortName = 0;
+  params.sortCate = 0;
+  params.sortState = 0;
+  params.page = 1;
+}
+
 export default function Asset() {
   const [assetDatas, setAssets] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  const [pageCurrent, setPageCurrent] = React.useState(0);
   const history = useHistory();
   //modal
   const { modalAlert, modalLoading, modalConfirm } = useNSModals();
@@ -59,16 +68,9 @@ export default function Asset() {
       setAssets(resp.data);
       let totalPages = resp.headers["total-pages"];
       setTotalPages(totalPages > 0 ? totalPages : 0);
+      setPageCurrent(params.page);
     });
   };
-
-  function _refreshParams() {
-    params.sortCode = 0;
-    params.sortName = 0;
-    params.sortCate = 0;
-    params.sortState = 0;
-    params.page = 1;
-  }
 
   const handleChangePage = (page) => {
     _refreshParams();
@@ -147,6 +149,7 @@ export default function Asset() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         totalPage={totalPages}
+        pageSelected={pageCurrent}
       />
     </>
   );

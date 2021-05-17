@@ -55,6 +55,7 @@ export default function AssetTable({
   onChangeSort,
   onEdit,
   onDelete,
+  pageSelected,
 }) {
   const itemRender = (asset) => (
     <>
@@ -69,7 +70,8 @@ export default function AssetTable({
       </td>
       <td>
         <TableItem>
-          {stateOptions.find((item) => item.value === asset.state).label}
+          {stateOptions.find((item) => item.value === asset.state)?.label ??
+            "Unknown"}
         </TableItem>
       </td>
       <td className="table-actions">
@@ -94,6 +96,7 @@ export default function AssetTable({
       itemRender={itemRender}
       onChangeSort={onChangeSort}
       onChangePage={onChangePage}
+      pageSelected={pageSelected}
     />
   );
 }

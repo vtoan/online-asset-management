@@ -16,6 +16,7 @@ export default function NSTable({
   titles,
   datas,
   totalPages,
+  pageSelected,
 }) {
   const [sortCurrent, setSortCurrent] = React.useState("");
   const [isLoading, setLoading] = React.useState(true);
@@ -24,6 +25,10 @@ export default function NSTable({
   React.useEffect(() => {
     if (datas && datas.length > 0) setLoading(false);
   }, [datas]);
+
+  React.useEffect(() => {
+    setPageCurrent(pageSelected);
+  }, [pageSelected]);
 
   const handleChangeSort = (target) => {
     if (onChangeSort) {
