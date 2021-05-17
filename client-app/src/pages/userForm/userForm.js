@@ -2,57 +2,92 @@ import React from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Row, Col, Button } from "reactstrap";
+import http from '../../ultis/httpClient';
 
-const userdate = [
-  {
-    id: 1,
-    firstname: "Doraemon",
-    lastname: "Nobita-kun",
-    dob: "2000-01-15",
-    gender: 0,
-    joinday: "2020-03-15",
-    type: "Admin",
-  },
-  {
-    id: 2,
-    firstname: "Pikachu",
-    lastname: "Pokemon",
-    dob: "1998-06-01",
-    gender: 1,
-    joinday: "2020-05-14",
-    type: "Staff",
-  },
-];
+let params = {
+  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+};
+
+function _createQuery(params) {
+  if (!params) return "";
+  let queryStr = "";
+  for (const key in params) {
+    if (!params[key]) continue;
+    if (queryStr) queryStr += "&&";
+    queryStr += key + "=" + params[key];
+  }
+  return "?" + queryStr;
+}
+
+function formatDate(date) {
+  if (date == null) {
+    date = Date.now();
+  }
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2)
+    month = '0' + month;
+  if (day.length < 2)
+    day = '0' + day;
+  return [year, month, day].join('-');
+}
+
 export default function UserForm() {
   const { id } = useParams();
   const [dataEdit, setEdit] = React.useState(null);
   const [nameHeader, setnameHeader] = React.useState("");
   const [selectType, setSelectType] = React.useState("");
   const [gender, setGender] = React.useState(0);
+  const [dataUser, setDataUser] = React.useState([]);
+
+  const _fetchUserData = (assetId) => {
+    http.get("/api/user/" + assetId).then(resp => {
+      setDataUser(resp.data)
+      console.log(dataUser);
+    }).catch(err => console.log(err))
+  };
+
   React.useEffect(() => {
     if (id) {
       setnameHeader("Edit User");
-      let data = userdate.find((data) => data.id === Number(id));
-      setEdit(data);
-      setGender(data.gender);
-      setSelectType(data.type);
-      console.log(data);
+      _fetchUserData(id);
+      // setEdit(data);
+      // setGender(data.gender);
+      // setSelectType(data.type);
+      // console.log(data);
     } else {
       setnameHeader("Create New User");
     }
   }, [id]);
   const handleSubmit = (event) => {
-    const myObj = {
-      firstname: event.target.firstName.value,
-      lastname: event.target.lastName.value,
-      dob: event.target.dobUser.value,
-      gender: event.target.gender.value,
-      joinday: event.target.dateAddUser.value,
-      type: event.target.nameCategoryType.value,
-    };
 
     event.preventDefault();
-    console.log(myObj);
+    const user = {
+      id: id,
+      firstname: String(event.target.firstName.value),
+      lastname: String(event.target.lastName.value),
+      dateOfBirth: String(event.target.dobUser.value),
+      gender: Boolean(event.target.gender.value),
+      joinedDate: String(event.target.dateAddUser.value),
+      type: Number(event.target.nameCategoryType.value),
+      locationid: params.locationid
+    };
+    http.post("/api/users" + _createQuery(params), user).then(resp => {
+      console.log(user);
+    }).catch(err => console.log(err))
+    // if (id) {
+    //   http.put("/api/user/" + id + _createQuery(params), user).then(resp => {
+    //     console.log(user);
+    //   }).catch(err => console.log(err))
+    // }
+    // else {
+    //   http.post("/api/user" + _createQuery(params), user).then(resp => {
+    //     console.log(user);
+    //   }).catch(err => console.log(err))
+    // }
   };
 
   const handeChangeGender = (event) => {
@@ -155,8 +190,8 @@ export default function UserForm() {
               onChange={(e) => setSelectType(e.target.value)}
               className="category-type"
             >
-              <option value="Staff">Staff</option>
-              <option value="Admin">Admin</option>
+              <option value="2">Staff</option>
+              <option value="1">Admin</option>
             </select>
           </Col>
         </Row>

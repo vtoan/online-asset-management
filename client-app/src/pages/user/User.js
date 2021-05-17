@@ -1,21 +1,21 @@
 import React from "react";
 import UserTable from "./UserTable";
 import { Row, Col } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import FilterState from "../../common/FilterState";
 
 const seedData = [
   {
-    code: "HD1111",
+    code: "64a45518-ab96-44ad-88b3-a19f53bd4ce7",
     fullName: "Laptop asd ",
     userName: "Laptop",
     joinedDate: "07/04/2021",
     Type: "Staff",
   },
   {
-    code: "HD1111",
+    code: "64a45518-ab96-44ad-88b3-a19f53bd4ce7",
     fullName: "Laptop asd ",
     userName: "Laptop",
     joinedDate: "07/04/2021",
@@ -33,6 +33,7 @@ const seedData = [
 export default function User() {
   const [userDatas, setUser] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  const history = useHistory();
 
   React.useEffect(() => {
     _fetchData();
@@ -59,7 +60,7 @@ export default function User() {
   };
 
   const handleEdit = (item) => {
-    console.log(item);
+    history.push("/users/" + item.id);
   };
 
   const handleDelete = (item) => {
@@ -77,7 +78,7 @@ export default function User() {
           <SearchBar />
         </Col>
         <Col style={{ textAlign: "right" }}>
-          <Link to="/users/1">
+          <Link to="/new-user">
             <CreateNew namecreate="Create new user" />
           </Link>
         </Col>
