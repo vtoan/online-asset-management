@@ -1,92 +1,123 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Input } from "reactstrap";
 import { Link, useHistory } from "react-router-dom";
+import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
-import FilterState from "../../common/FilterState";
-import { useNSModals } from "../../containers/ModalContainer.js";
+import { _createQuery } from "../../ultis/requestHelper";
+import http from "../../ultis/httpClient.js";
+import AssetFilterState from "./AssetFilterState.js";
+import AssetFilterCategory from "./AssetFilterCategory";
 
-const seedData = [
-  {
-    id: "LT100001",
-    name: "Laptop asd ",
-    category: "Laptop",
-    status: 1,
-  },
-  {
-    id: "LT100001",
-    name: "Laptop asd ",
-    category: "Laptop",
-    status: 1,
-  },
-  {
-    id: "LT100001",
-    name: "Laptop asd ",
-    category: "Laptop",
-    status: 1,
-  },
-];
+let params = {};
+
+function _refreshParams() {
+  params.sortCode = 0;
+  params.sortName = 0;
+  params.sortCate = 0;
+  params.sortState = 0;
+  params.page = 1;
+}
 
 export default function Asset() {
   const [assetDatas, setAssets] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  const [pageCurrent, setPageCurrent] = React.useState(0);
+  const history = useHistory();
   //modal
   const { modalAlert, modalLoading, modalConfirm } = useNSModals();
   modalConfirm.config({
     message: "Do you want to delete this asset?",
     btnName: "Delete",
     onSubmit: (item) => {
-      console.log("delete");
-      console.log(item);
+      modalLoading.show("Processing ...");
+      http
+        .delete("/api/asset/" + item.assetId)
+        .then((resp) => {
+          _refreshParams();
+          _fetchData();
+        })
+        .catch((err) => {
+          showDisableDeleteModal();
+        })
+        .finally(() => {
+          modalLoading.close();
+        });
     },
   });
-  const history = useHistory();
 
   React.useEffect(() => {
+    params = {
+      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+      sortCode: 0,
+      sortName: 0,
+      sortCate: 0,
+      sortState: 0,
+      query: "",
+      pagesize: 4,
+      page: 1,
+      state: [],
+      categoryid: [],
+    };
     _fetchData();
   }, []);
 
   const _fetchData = () => {
-    setAssets([]);
-    setTimeout(() => {
-      setAssets(seedData);
-      setTotalPages(2);
-    }, 500);
+    http.get("/api/asset" + _createQuery(params)).then((resp) => {
+      setAssets(resp.data);
+      let totalPages = resp.headers["total-pages"];
+      setTotalPages(totalPages > 0 ? totalPages : 0);
+      setPageCurrent(params.page);
+    });
   };
 
   const handleChangePage = (page) => {
-    console.log(page);
+    _refreshParams();
+    params.page = page;
     _fetchData();
   };
 
   const handleChangeSort = (target) => {
-    console.log(target);
+    _refreshParams();
+    params = { ...params, ...target };
+    if (target < 0) return (params.sortCode = null);
+    _fetchData();
+  };
+
+  const handleSearch = (query) => {
+    _refreshParams();
+    params.query = query;
     _fetchData();
   };
 
   const handleEdit = (item) => {
-    history.push("/assets/" + item.id);
+    history.push("/assets/" + item.assetId);
   };
 
   const handleDelete = (item) => {
-    modalLoading.show("Checking user...");
-    setTimeout(() => {
-      modalLoading.close();
-      // modalConfirm.show(item);
-      showCantDelete();
-    }, 1000);
+    modalConfirm.show(item);
   };
 
-  const showCantDelete = () => {
+  const handleFilterState = (items) => {
+    _refreshParams();
+    params.state = items;
+    _fetchData();
+  };
+
+  const handleFilterCategory = (items) => {
+    _refreshParams();
+    params.categoryid = items;
+    _fetchData();
+  };
+
+  const showDisableDeleteModal = (itemId) => {
     let msg = (
       <>
         Cannot delete the asset because it belongs to one or more historical
         assignments.If the asset is not able to be used anymore, please update
         its state in
-        <a className="d-block" href="/">
-          ook
-        </a>
+        <Link to={"/asset/" + itemId}>To Edit Page</Link>
       </>
     );
     modalAlert.show({ title: "Can't delete asset", msg: msg });
@@ -96,14 +127,14 @@ export default function Asset() {
     <>
       <h5 className="name-list">Asset List</h5>
       <Row className="filter-bar">
-        <Col>
-          <FilterState namefilter="State" />
+        <Col xs={2}>
+          <AssetFilterState onChange={handleFilterState} />
+        </Col>
+        <Col xs={2}>
+          <AssetFilterCategory onChange={handleFilterCategory} />
         </Col>
         <Col>
-          <FilterState namefilter="Category" />
-        </Col>
-        <Col>
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
@@ -118,6 +149,7 @@ export default function Asset() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         totalPage={totalPages}
+        pageSelected={pageCurrent}
       />
     </>
   );

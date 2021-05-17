@@ -77,7 +77,7 @@ namespace RookieOnlineAssetManagement
 
             app.UseCors(b =>
             {
-                b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("total-pages").WithHeaders("total-pages");
             });
 
             app.UseHttpsRedirection();
