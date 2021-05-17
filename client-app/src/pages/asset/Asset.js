@@ -14,6 +14,7 @@ let params = {
   sortCate: 0,
   sortState: 0,
   query: "",
+  pagesize: 1,
 };
 
 function refreshParams(){
@@ -45,7 +46,8 @@ export default function Asset() {
   const _fetchData = () => {
     http.get("/api/asset" + _createQuery(params)).then(resp => {
       setAssets(resp.data);
-      setTotalPages(2);
+      let totalPages = resp.headers["total-pages"];
+      setTotalPages(totalPages > 0 ? totalPages : 0);
     })
   };
 
