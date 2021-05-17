@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0 !important;
 }
 
 code {
@@ -451,4 +452,10 @@ form.example button {
 
 .col-user {
   width: 11%;
+}
+/* modal*/
+.modal-dialog .modal-content .close {
+  border: none;
+  background-color: white;
+  font-size: 1.4em;
 }
