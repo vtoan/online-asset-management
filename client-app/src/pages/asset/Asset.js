@@ -15,13 +15,14 @@ let params = {
   sortState: 0,
   query: "",
   pagesize: 1,
+  page: null,
 };
 
-function refreshParams(){
-  params.sortCode= 0;
-  params.sortName= 0;
-  params.sortCate= 0;
-  params.sortState= 0;
+function refreshParams() {
+  params.sortCode = 0;
+  params.sortName = 0;
+  params.sortCate = 0;
+  params.sortState = 0;
 }
 
 function _createQuery(params) {
@@ -53,6 +54,8 @@ export default function Asset() {
 
   const handleChangePage = (page) => {
     console.log(page);
+    params.page = page;
+    refreshParams();
     _fetchData();
   };
 
@@ -93,7 +96,7 @@ export default function Asset() {
           <FilterState namefilter="Category" />
         </Col>
         <Col>
-          <SearchBar onSearch={handleChanged}/>
+          <SearchBar onSearch={handleChanged} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
