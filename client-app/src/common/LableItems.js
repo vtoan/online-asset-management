@@ -11,7 +11,7 @@ export default function LableItems({ title, nameSort, reset, onChanged }) {
   const handleClick = () => {
     setSort(sortState !== "" ? "" : "rotate(180deg)");
     let target = {};
-    target[nameSort] = sortState === "" ? "desc" : "asc";
+    target[nameSort] = sortState === "" ? "1" : "2";
     onChanged(target);
   };
   

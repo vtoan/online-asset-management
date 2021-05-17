@@ -1,7 +1,6 @@
 import React from "react";
 import HomeTable from "./Table";
 
-
 const seedData = [
   {
     AssetCode: "LA100002",
@@ -23,8 +22,8 @@ const seedData = [
     Category: "Laptop",
     AssignedDate: "10/04/2019",
     State: "Accepted",
-  }
-]
+  },
+];
 export default function Home() {
   const [homeData, setHome] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
@@ -38,8 +37,8 @@ export default function Home() {
     setTimeout(() => {
       setHome(seedData);
       setTotalPages(2);
-    }, 500)
-  }
+    }, 500);
+  };
   //handleClick
   const handleChangePage = (page) => {
     console.log(page);
@@ -59,7 +58,7 @@ export default function Home() {
   };
   const onRefresh = (item) => {
     console.log(item);
-  }
+  };
 
   return (
     <HomeTable

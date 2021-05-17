@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0 !important;
 }
 
 code {
@@ -169,7 +170,7 @@ table tbody tr td:first-child {
   padding-top: 1em;
 }
 
-.fa.fa-filter {
+/* .fa.fa-filter {
   position: absolute;
   left: 89%;
   border: 1px solid grey;
@@ -177,7 +178,7 @@ table tbody tr td:first-child {
   border-radius: 0px 5px 5px 0px;
   z-index: -1;
   top: 1%;
-}
+} */
 
 .filter-cate {
   -webkit-appearance: none;
@@ -451,4 +452,17 @@ form.example button {
 
 .col-user {
   width: 11%;
+}
+/* modal*/
+.modal-dialog .modal-content .close {
+  border: none;
+  background-color: white;
+  font-size: 1.4em;
+}
+
+/* customer form */
+.form-control:focus {
+  border-color: #4285f4;
+  box-shadow: none;
+  border-width: 2px;
 }
