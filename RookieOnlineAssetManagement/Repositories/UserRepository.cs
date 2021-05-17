@@ -194,13 +194,11 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
-            //
-            user.Id = userRequest.UserId;
             if (user.FirstName != userRequest.FirstName || user.LastName != userRequest.LastName)
             {
                 return null;
             }
-            //
+            // user.Id = userRequest.UserId;
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
