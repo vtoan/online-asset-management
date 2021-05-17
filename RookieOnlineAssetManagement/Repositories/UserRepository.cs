@@ -88,6 +88,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var list = await result.Sources.Select(x => new UserModel
             {
                 Id = x.Id,
+                StaffCode = x.StaffCode,
                 FullName = x.FirstName + " " + x.LastName,
                 UserName = x.UserName,
                 JoinedDate = x.JoinedDate,
@@ -107,14 +108,14 @@ namespace RookieOnlineAssetManagement.Repositories
             if (role == null) return null;
             var userdetail = new UserDetailModel
             {
-                Id = user.StaffCode,
-                FullName = user.FirstName + " " + user.LastName,
+                Id = user.Id,
+                FirstName=user.FirstName,
+                LastName=user.LastName,
                 UserName = user.UserName,
                 DateOfBirth = user.DateOfBirth.Value,
                 Gender = user.Gender.Value,
                 JoinedDate = user.JoinedDate,
                 RoleName = role.NormalizedName,
-                Location = user.Location.LocationName
             };
             return userdetail;
         }
@@ -193,6 +194,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
+            user.Id = userRequest.UserId;
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
@@ -228,7 +230,5 @@ namespace RookieOnlineAssetManagement.Repositories
                 _dbContext.UserRoles.Remove(roleUser);
             _dbContext.UserRoles.Add(new IdentityUserRole<string>() { UserId = userId, RoleId = role.Id });
         }
-
-
     }
 }
