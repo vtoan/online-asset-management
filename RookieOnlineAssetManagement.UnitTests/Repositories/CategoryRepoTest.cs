@@ -18,6 +18,49 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             _fixture.CreateDatabase();
         }
         [Fact]
+        public async Task CreateCategory_Failed()
+        {
+            var dbContext = _fixture.Context;
+            var categoryId = Guid.NewGuid().ToString();
+            var locationId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            var assetTest = new CategoryModel()
+            {
+                CategoryId = categoryId,
+                CategoryName = "Test",
+                ShortName ="T",
+            };
+            await dbContext.SaveChangesAsync();
+            // create repo
+            var assetRepo = new CategoryRepository(dbContext);
+            var assetNew = await assetRepo.CreateCategoryrAsync(assetTest);
+            // test
+            Assert.NotNull(assetNew);
+        }
+
+        [Fact]
+        public async Task CreateCategory_Failed_success()
+        {
+            var dbContext = _fixture.Context;
+            var categoryId = Guid.NewGuid().ToString();
+            var locationId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            var assetTest = new CategoryModel()
+            {
+                CategoryId = categoryId,
+                CategoryName = "Test",
+                ShortName = "T",
+            };
+            await dbContext.SaveChangesAsync();
+            // create repo
+            var assetRepo = new CategoryRepository(dbContext);
+            var assetNew = await assetRepo.CreateCategoryrAsync(assetTest);
+            // test
+            Assert.NotNull(assetNew);
+        }
+        [Fact]
         public async Task CreateCategory_Success()
         {
             var dbContext = _fixture.Context;
@@ -29,7 +72,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             {
                 CategoryId = categoryId,
                 CategoryName = "category Test",
-                ShortName ="ct",
+                ShortName = "ct",
             };
             await dbContext.SaveChangesAsync();
             // create repo
