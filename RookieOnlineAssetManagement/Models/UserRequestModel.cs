@@ -9,16 +9,22 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class UserRequestModel
     {
-        [Required]
+        [Required(ErrorMessage ="First Name cannot null")]
         public string FirstName { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Last Name cannot null")]
         public string LastName { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Date Of Birth cannot null")]
         public DateTime? DateOfBirth { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Gender cannot null")]
         public bool? Gender { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Joined Date cannot null")]
         public DateTime? JoinedDate { get; set; }
+
+        [Required(ErrorMessage = "Type cannot null")]
         public TypeUser Type { get; set; }
         public string LocationId { get; set; }
     }

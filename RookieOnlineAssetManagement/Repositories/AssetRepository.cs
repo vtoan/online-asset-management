@@ -46,6 +46,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 return false;
             }
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == id);
+            if (asset == null)
+            {
+                return false;
+            }
             _dbContext.Assets.Remove(asset);
             _dbContext.SaveChanges();
             return true;
@@ -54,6 +58,10 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<AssetModel> GetAssetByIdAsync(string id)
         {
             var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
+            if (asset == null)
+            {
+                return null;
+            }
             var assetmodel = new AssetModel
             {
                 AssetId = asset.AssetId,
@@ -128,11 +136,11 @@ namespace RookieOnlineAssetManagement.Repositories
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
             if (asset == null)
             {
-                return null;
+                return (AssetRequestModel)(null);
             }
             if (assignment != null)
             {
-                return null;
+                return (AssetRequestModel)(null);
             }
             asset.AssetName = assetRequest.AssetName;
             asset.Specification = assetRequest.Specification;
