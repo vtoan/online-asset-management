@@ -5,27 +5,33 @@ import { Link } from "react-router-dom";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import FilterState from "../../common/FilterState";
+import http from '../../ultis/httpClient.js';
 
-const seedData = [
-  {
-    id: "HD1111",
-    name: "Laptop asd ",
-    category: "Laptop",
-    status: 1,
-  },
-  {
-    id: "HD1112",
-    name: "Laptop asd ",
-    category: "Laptop",
-    status: 1,
-  },
-  {
-    id: "HD1113",
-    name: "Laptop asd ",
-    category: "Laptop",
-    status: 1,
-  },
-];
+let params = {
+  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+  sortCode: 0,
+  sortName: 0,
+  sortCate: 0,
+  sortState: 0,
+};
+
+function refreshPramas(){
+  params.sortCode= 0;
+  params.sortName= 0;
+  params.sortCate= 0;
+  params.sortState= 0;
+}
+
+function _createQuery(params) {
+  if (!params) return "";
+  let queryStr = "";
+  for (const key in params) {
+    if (!params[key]) continue;
+    if (queryStr) queryStr += "&&";
+    queryStr += key + "=" + params[key];
+  }
+  return "?" + queryStr;
+}
 
 export default function Asset() {
   const [assetDatas, setAssets] = React.useState([]);
@@ -36,11 +42,10 @@ export default function Asset() {
   }, []);
 
   const _fetchData = () => {
-    setAssets([]);
-    setTimeout(() => {
-      setAssets(seedData);
+    http.get("/api/asset" + _createQuery(params)).then(resp => {
+      setAssets(resp.data);
       setTotalPages(2);
-    }, 500);
+    })
   };
 
   const handleChangePage = (page) => {
@@ -50,6 +55,12 @@ export default function Asset() {
 
   const handleChangeSort = (target) => {
     console.log(target);
+    console.log(params);
+    refreshPramas()
+    params = { ...params, ...target }
+    if (target < 0) {
+      return params.sortCode = null;
+    }
     _fetchData();
   };
 

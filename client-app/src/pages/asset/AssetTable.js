@@ -7,7 +7,7 @@ import NSTable from "../../common/NSTable";
 const tableTitles = [
   {
     title: "Asset ID",
-    nameSort: "sortId",
+    nameSort: "sortCode",
   },
   {
     title: "Asset Name",
@@ -15,11 +15,11 @@ const tableTitles = [
   },
   {
     title: "Category",
-    nameSort: "sortCategory",
+    nameSort: "sortCate",
   },
   {
-    title: "Status",
-    nameSort: "sortStaus",
+    title: "State",
+    nameSort: "sortState",
   },
 ];
 
@@ -31,25 +31,25 @@ export default function AssetTable({
   onEdit,
   onDelete,
 }) {
-  const itemRender = (item) => (
+  const itemRender = (asset) => (
     <>
       <td>
-        <TableItem>{item.id}</TableItem>
+        <TableItem>{asset.assetId}</TableItem>
       </td>
       <td>
-        <TableItem>{item.name}</TableItem>
+        <TableItem>{asset.assetName}</TableItem>
       </td>
       <td>
-        <TableItem>{item.category}</TableItem>
+        <TableItem>{asset.categoryName}</TableItem>
       </td>
       <td>
-        <TableItem>Available</TableItem>
+        <TableItem>{asset.state}</TableItem>
       </td>
       <td className="table-actions">
-        <span className="table-icon" onClick={() => onEdit && onEdit(item)}>
+        <span className="table-icon" onClick={() => onEdit && onEdit(asset)}>
           <BsPencil color="#0d6efd" />
         </span>
-        <span className="table-icon" onClick={() => onDelete && onDelete(item)}>
+        <span className="table-icon" onClick={() => onDelete && onDelete(asset)}>
           <TiDeleteOutline color="#dc3545" />
         </span>
       </td>
