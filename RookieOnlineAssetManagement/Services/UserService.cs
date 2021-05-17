@@ -41,19 +41,23 @@ namespace RookieOnlineAssetManagement.Services
 
         public Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
         {
+            DayOfWeek dayofweek;
             var checkage = CheckDateAgeGreaterThan(18, userRequest.DateOfBirth.Value);
-            var checkjoineddate = CheckIsSaturdayOrSunday(userRequest.JoinedDate.Value);
+            var checkjoineddate = CheckIsSaturdayOrSunday(userRequest.JoinedDate.Value, out dayofweek);
             var checkjoineddategreaterthanbirthofdate = CheckDateGreaterThan(userRequest.DateOfBirth.Value, userRequest.JoinedDate.Value);
             if (checkage == false)
             {
+                throw new Exception("Age is not valid");
                 return Task.FromResult<UserRequestModel>(null);
             }
             if (checkjoineddate == true)
             {
+                throw new Exception("Joined Date is : " + dayofweek.ToString());
                 return Task.FromResult<UserRequestModel>(null);
             }
             if (checkjoineddategreaterthanbirthofdate == false)
             {
+                throw new Exception("Joined Date is smaller tham Birth Of Date");
                 return Task.FromResult<UserRequestModel>(null);
             }
             return _userRepo.CreateUserAsync(userRequest);
@@ -84,9 +88,9 @@ namespace RookieOnlineAssetManagement.Services
                 return false;
             }
         }
-        public bool CheckIsSaturdayOrSunday(DateTime JoinedDate)
+        public bool CheckIsSaturdayOrSunday(DateTime JoinedDate,out DayOfWeek dayofweek)
         {
-            var dayofweek = JoinedDate.DayOfWeek;
+            dayofweek = JoinedDate.DayOfWeek;
             if (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday)
             {
                 return true;

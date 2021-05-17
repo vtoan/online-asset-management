@@ -40,6 +40,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserRequestModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
+            if (!ModelState.IsValid) return BadRequest(userRequest);
             return Ok(await _userSer.UpdateUserAsync(id, userRequest));
         }
 

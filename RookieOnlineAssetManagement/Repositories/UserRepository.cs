@@ -193,12 +193,15 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
+            if (user.FirstName != userRequest.FirstName || user.LastName != userRequest.LastName)
+            {
+                return null;
+            }
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
             await _changeRoleUserAsync(user.Id, userRequest.Type);
             await _dbContext.SaveChangesAsync();
-
 
             return userRequest;
         }
@@ -207,6 +210,11 @@ namespace RookieOnlineAssetManagement.Repositories
         {
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
+            {
+                return false;
+            }
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.UserId == id);
+            if (assignment != null)
             {
                 return false;
             }
