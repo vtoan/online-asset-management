@@ -48,17 +48,17 @@ namespace RookieOnlineAssetManagement.Services
             if (checkage == false)
             {
                 throw new Exception("Age is not valid");
-                return Task.FromResult<UserRequestModel>(null);
+                // return Task.FromResult<UserRequestModel>(null);
             }
             if (checkjoineddate == true)
             {
                 throw new Exception("Joined Date is : " + dayofweek.ToString());
-                return Task.FromResult<UserRequestModel>(null);
+                // return Task.FromResult<UserRequestModel>(null);
             }
             if (checkjoineddategreaterthanbirthofdate == false)
             {
                 throw new Exception("Joined Date is smaller tham Birth Of Date");
-                return Task.FromResult<UserRequestModel>(null);
+                // return Task.FromResult<UserRequestModel>(null);
             }
             return _userRepo.CreateUserAsync(userRequest);
         }
@@ -88,7 +88,7 @@ namespace RookieOnlineAssetManagement.Services
                 return false;
             }
         }
-        public bool CheckIsSaturdayOrSunday(DateTime JoinedDate,out DayOfWeek dayofweek)
+        public bool CheckIsSaturdayOrSunday(DateTime JoinedDate, out DayOfWeek dayofweek)
         {
             dayofweek = JoinedDate.DayOfWeek;
             if (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday)
