@@ -29,6 +29,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<CategoryModel>> CreateAsync(CategoryModel Model)
         {
+            if (!ModelState.IsValid) return BadRequest(Model);
             return Ok(await _categoryService.CreateCategoryrAsync(Model));
         }
     }
