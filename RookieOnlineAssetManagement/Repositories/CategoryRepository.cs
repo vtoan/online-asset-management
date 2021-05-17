@@ -19,6 +19,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<CategoryModel> CreateCategoryrAsync(CategoryModel category)
         {
+            var CateRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryName == category.CategoryName || x.ShortName == category.ShortName);
+            if (CateRepo != null)
+            {
+                return null;
+            }
             category.CategoryId = Guid.NewGuid().ToString();
             category.ShortName = category.ShortName.ToUpper();
             var cate = new Category
