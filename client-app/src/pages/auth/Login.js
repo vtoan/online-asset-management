@@ -1,15 +1,38 @@
 import React from "react";
-import { Container, Button } from "reactstrap";
+import { Container } from "reactstrap";
 import { AppContext } from "../../App";
+import NSLoadingModal, { useNSLoadingModal } from "../../common/NSLoadingModal";
+import NSLoginModal, { useNSLoginModal } from "../../common/NSLoginModal";
+import http from "../../ultis/httpClient";
 
 export default function Login() {
   const appContext = React.useContext(AppContext);
-  //test login
-  const handleLogin = () => {
-    appContext.setUser({ userName: "Rookie" });
-  };
-  const handleLoginAdmin = () => {
-    appContext.setUser({ userName: "Rookie Admin", roleName: "admin" });
+  const loadingModal = useNSLoadingModal();
+  const loginModal = useNSLoginModal();
+  loginModal.config((data) => {
+    loginModal.close();
+    loadingModal.show();
+    _sigin(data);
+  });
+
+  React.useEffect(() => {
+    loginModal.show();
+    //eslint-disable-next-line
+  }, []);
+
+  const _sigin = (data) => {
+    http
+      .post("/login", data)
+      .then((resp) => {
+        appContext.setUser(resp.data);
+        console.log(resp.data);
+      })
+      .catch((err) => {
+        loginModal.show("Username or Password incorrect!");
+      })
+      .finally(() => {
+        loadingModal.close();
+      });
   };
 
   return (
@@ -29,14 +52,9 @@ export default function Login() {
           </span>
         </div>
       </div>
-      <Container className="py-5">
-        <Button color="primary" onClick={handleLogin}>
-          Login
-        </Button>{" "}
-        <Button color="success" onClick={handleLoginAdmin}>
-          Login Admin
-        </Button>
-      </Container>
+      <Container className="py-5"></Container>
+      <NSLoginModal hook={loginModal} />
+      <NSLoadingModal hook={loadingModal} />
     </>
   );
 }
