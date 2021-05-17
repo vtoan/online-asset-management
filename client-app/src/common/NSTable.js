@@ -62,10 +62,14 @@ export default function NSTable({
           <tr>
             {titles &&
               titles.map((item, index) => (
-                <td key={index} style={{ width: index === 0 && "10%" }}>
+                <td
+                  key={index}
+                  style={{ width: index === 0 ? "10%" : item.width }}
+                >
                   <TableItem bold>
                     <LableItems
-                      {...item}
+                      title={item.title}
+                      nameSort={item.nameSort}
                       reset={sortCurrent}
                       onChanged={handleChangeSort}
                     />
