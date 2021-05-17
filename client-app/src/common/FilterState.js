@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function FilterState({ namefilter }) {
+export default function FilterState({ namefilter, options, onSelectedItem }) {
   const [expanded, setExpanded] = React.useState(false);
   const checkboxes = React.useRef(null);
 
@@ -13,6 +13,15 @@ export default function FilterState({ namefilter }) {
       setExpanded(false);
     }
   };
+
+  const handleSelected = (option) => {
+    onSelectedItem && onSelectedItem(option);
+  };
+
+  const handleSelectedAll = () => {
+    onSelectedItem && onSelectedItem();
+  };
+
   return (
     <>
       <form>
@@ -26,21 +35,24 @@ export default function FilterState({ namefilter }) {
           </div>
           <div ref={checkboxes} className="checkboxes">
             <label className="checkboxlist">
-              <input className="checkbox" type="checkbox" id="" />
+              <input
+                className="checkbox"
+                type="checkbox"
+                onClick={() => handleSelectedAll()}
+              />
               All
             </label>
-            <label className="checkboxlist">
-              <input className="checkbox" type="checkbox" id="one" />
-              Laptop
-            </label>
-            <label className="checkboxlist">
-              <input className="checkbox" type="checkbox" id="two" />
-              Monitor
-            </label>
-            <label className="checkboxlist">
-              <input className="checkbox" type="checkbox" id="three" />
-              Personal Computer
-            </label>
+            {options &&
+              options.map((item) => (
+                <label className="checkboxlist">
+                  <input
+                    className="checkbox"
+                    type="checkbox"
+                    onClick={() => handleSelected(item)}
+                  />
+                  {item?.label}
+                </label>
+              ))}
           </div>
         </div>
       </form>
