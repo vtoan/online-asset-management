@@ -12,14 +12,39 @@ const tableTitles = [
   {
     title: "Asset Name",
     nameSort: "sortName",
+    width: "30%",
   },
   {
     title: "Category",
     nameSort: "sortCate",
+    width: "30%",
   },
   {
     title: "State",
     nameSort: "sortState",
+  },
+];
+
+const stateOptions = [
+  {
+    label: "Assigned",
+    value: 1,
+  },
+  {
+    label: "Avaiable",
+    value: 2,
+  },
+  {
+    label: "NotAvaiable",
+    value: 3,
+  },
+  {
+    label: "WatingRecycling",
+    value: 4,
+  },
+  {
+    label: "Recycled",
+    value: 5,
   },
 ];
 
@@ -43,13 +68,18 @@ export default function AssetTable({
         <TableItem>{asset.categoryName}</TableItem>
       </td>
       <td>
-        <TableItem>{asset.state}</TableItem>
+        <TableItem>
+          {stateOptions.find((item) => item.value === asset.state).label}
+        </TableItem>
       </td>
       <td className="table-actions">
         <span className="table-icon" onClick={() => onEdit && onEdit(asset)}>
           <BsPencil color="#0d6efd" />
         </span>
-        <span className="table-icon" onClick={() => onDelete && onDelete(asset)}>
+        <span
+          className="table-icon"
+          onClick={() => onDelete && onDelete(asset)}
+        >
           <TiDeleteOutline color="#dc3545" />
         </span>
       </td>
