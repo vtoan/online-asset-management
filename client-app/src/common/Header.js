@@ -17,7 +17,17 @@ export default function Header() {
 
   //listener every navigate to other pages
   React.useEffect(() => {
-    let route = routePaths.find((item) => item.path === location.pathname);
+    console.log(location.pathname);
+
+    let route = routePaths.find((item) => {
+      let path = item.path;
+      if (item.path.includes(":")) {
+        let idx = path.indexOf("/:");
+        path = path.slice(0, idx);
+        return location.pathname.startsWith(path);
+      }
+      return item.path === location.pathname;
+    });
     setTitle(route?.title);
   }, [location]);
 
