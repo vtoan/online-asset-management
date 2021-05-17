@@ -13,9 +13,10 @@ let params = {
   sortName: 0,
   sortCate: 0,
   sortState: 0,
+  query: "",
 };
 
-function refreshPramas(){
+function refreshParams(){
   params.sortCode= 0;
   params.sortName= 0;
   params.sortCate= 0;
@@ -56,11 +57,18 @@ export default function Asset() {
   const handleChangeSort = (target) => {
     console.log(target);
     console.log(params);
-    refreshPramas()
+    refreshParams()
     params = { ...params, ...target }
     if (target < 0) {
       return params.sortCode = null;
     }
+    _fetchData();
+  };
+
+  const handleChanged = (query) => {
+    console.log(query);
+    params.query = query;
+    refreshParams();
     _fetchData();
   };
 
@@ -83,7 +91,7 @@ export default function Asset() {
           <FilterState namefilter="Category" />
         </Col>
         <Col>
-          <SearchBar />
+          <SearchBar onSearch={handleChanged}/>
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
