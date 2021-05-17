@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
 using RookieOnlineAssetManagement.Controllers;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Models;
@@ -28,36 +29,33 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         [Fact]
         public async Task GetCate_Success()
         {
-            var dbContext = _fixture.Context;
-            var category = new Category { CategoryName = "Product Category", CategoryId = "ca1" ,ShortName ="CA"};
-            dbContext.Categories.Add(category);
-            await dbContext.SaveChangesAsync();
-            // create dependency
-            var cateDao = new CategoryRepository(dbContext);
-            var cateService = new CategoryService(cateDao);
-            // test
-            var cateController = new CategoryController(cateService);
-            var result = cateController.GetListAsync();
+            var mockCateService = new Mock<ICategoryService>();
+            var cateModel = new CategoryModel
+            {
+                CategoryId = Guid.NewGuid().ToString(),
+                CategoryName = "Demo",
+                ShortName = "DE"
+            };
+            mockCateService.Setup(m => m.GetListCategoryAsync());
+            var cateSer = new CategoryController(mockCateService.Object);
+            var result = await cateSer.GetListAsync();
             Assert.NotNull(result);
         }
 
         [Fact]
         public async Task CreateCate_Success()
         {
-            // initial mock data
-            var dbContext = _fixture.Context;
-            // create dependency
-            var cateRepo = new CategoryRepository(dbContext);
-            var cateService = new CategoryService(cateRepo);
-            // test
-            var category= new CategoryModel { CategoryName = "Create Category Test", CategoryId = "CT",ShortName="CA" };
-            var cateController = new CategoryController(cateService);
-            var result = await cateController.CreateAsync(category);
-
-            Assert.IsType<ActionResult<CategoryModel>> (result);
+            var mockCateService = new Mock<ICategoryService>();
+            var cateModel = new CategoryModel
+            {
+                CategoryId = Guid.NewGuid().ToString(),
+                CategoryName = "Category Demo",
+                ShortName = "CD"
+            };
+            mockCateService.Setup(m => m.CreateCategoryrAsync(It.IsAny<CategoryModel>())).ReturnsAsync(cateModel);
+            var cateSer = new CategoryController(mockCateService.Object);
+            var result = await cateSer.CreateAsync(cateModel);
             Assert.NotNull(result);
-            var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-            Assert.NotNull(actionResult);
         }
     }
 }
