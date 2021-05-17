@@ -44,10 +44,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 switch (sortFullName)
                 {
                     case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.FirstName).OrderBy(item => item.LastName);
+                        queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
                         break;
                     case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.FirstName).OrderBy(item => item.LastName);
+                        queryable = queryable.OrderByDescending(item => item.FirstName).ThenBy(x => x.LastName);
                         break;
                 }
             }
@@ -109,6 +109,8 @@ namespace RookieOnlineAssetManagement.Repositories
             var userdetail = new UserDetailModel
             {
                 Id = user.Id,
+                StaffCode = user.StaffCode,
+                FullName = user.FirstName + " " + user.LastName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 UserName = user.UserName,
@@ -116,6 +118,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 Gender = user.Gender.Value,
                 JoinedDate = user.JoinedDate,
                 RoleName = role.NormalizedName,
+                LocationName = user.Location.LocationName
             };
             return userdetail;
         }

@@ -11,5 +11,6 @@ namespace RookieOnlineAssetManagement.Models
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Gender { get; set; }
+        public string LocationName { get; set; }
     }
 }
