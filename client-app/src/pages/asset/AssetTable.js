@@ -7,19 +7,44 @@ import NSTable from "../../common/NSTable";
 const tableTitles = [
   {
     title: "Asset ID",
-    nameSort: "sortId",
+    nameSort: "sortCode",
   },
   {
     title: "Asset Name",
     nameSort: "sortName",
+    width: "30%",
   },
   {
     title: "Category",
-    nameSort: "sortCategory",
+    nameSort: "sortCate",
+    width: "30%",
   },
   {
-    title: "Status",
-    nameSort: "sortStaus",
+    title: "State",
+    nameSort: "sortState",
+  },
+];
+
+const stateOptions = [
+  {
+    label: "Assigned",
+    value: 1,
+  },
+  {
+    label: "Avaiable",
+    value: 2,
+  },
+  {
+    label: "NotAvaiable",
+    value: 3,
+  },
+  {
+    label: "WatingRecycling",
+    value: 4,
+  },
+  {
+    label: "Recycled",
+    value: 5,
   },
 ];
 
@@ -30,26 +55,33 @@ export default function AssetTable({
   onChangeSort,
   onEdit,
   onDelete,
+  pageSelected,
 }) {
-  const itemRender = (item) => (
+  const itemRender = (asset) => (
     <>
       <td>
-        <TableItem>{item.id}</TableItem>
+        <TableItem>{asset.assetId}</TableItem>
       </td>
       <td>
-        <TableItem>{item.name}</TableItem>
+        <TableItem>{asset.assetName}</TableItem>
       </td>
       <td>
-        <TableItem>{item.category}</TableItem>
+        <TableItem>{asset.categoryName}</TableItem>
       </td>
       <td>
-        <TableItem>Available</TableItem>
+        <TableItem>
+          {stateOptions.find((item) => item.value === asset.state)?.label ??
+            "Unknown"}
+        </TableItem>
       </td>
       <td className="table-actions">
-        <span className="table-icon" onClick={() => onEdit && onEdit(item)}>
+        <span className="table-icon" onClick={() => onEdit && onEdit(asset)}>
           <BsPencil color="#0d6efd" />
         </span>
-        <span className="table-icon" onClick={() => onDelete && onDelete(item)}>
+        <span
+          className="table-icon"
+          onClick={() => onDelete && onDelete(asset)}
+        >
           <TiDeleteOutline color="#dc3545" />
         </span>
       </td>
@@ -64,6 +96,7 @@ export default function AssetTable({
       itemRender={itemRender}
       onChangeSort={onChangeSort}
       onChangePage={onChangePage}
+      pageSelected={pageSelected}
     />
   );
 }

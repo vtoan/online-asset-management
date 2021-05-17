@@ -2,48 +2,56 @@ import React from "react";
 import UserTable from "./UserTable";
 import { Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
+import { useNSModals } from "../../containers/ModalContainer";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import FilterState from "../../common/FilterState";
+import { _createQuery } from "../../ultis/requestHelper";
+import http from "../../ultis/httpClient.js";
 
-const seedData = [
-  {
-    code: "HD1111",
-    fullName: "Laptop asd ",
-    userName: "Laptop",
-    joinedDate: "07/04/2021",
-    Type: "Staff",
-  },
-  {
-    code: "HD1111",
-    fullName: "Laptop asd ",
-    userName: "Laptop",
-    joinedDate: "07/04/2021",
-    Type: "Staff",
-  },
-  {
-    code: "HD1111",
-    fullName: "Laptop asd ",
-    userName: "Laptop",
-    joinedDate: "07/04/2021",
-    Type: "Staff",
-  },
-];
+let params = {
+  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+  sortCode: 0,
+  sortName: 0,
+  sortCate: 0,
+  sortState: 0,
+  query: "",
+  pagesize: 4,
+  page: null,
+  filter: null,
+};
+
+function refreshParams() {
+  params.sortCode = 0;
+  params.sortName = 0;
+  params.sortCate = 0;
+  params.sortState = 0;
+}
 
 export default function User() {
   const [userDatas, setUser] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  //modal
+  const { modalLoading, modalConfirm } = useNSModals();
+  modalConfirm.config({
+    message: "Do you want to disable this user?",
+    btnName: "Disable",
+    onSubmit: (item) => {
+      console.log("delete");
+      console.log(item);
+    },
+  });
 
   React.useEffect(() => {
     _fetchData();
   }, []);
 
   const _fetchData = () => {
-    setUser([]);
-    setTimeout(() => {
-      setUser(seedData);
-      setTotalPages(2);
-    }, 500);
+    http.get("/api/Users" + _createQuery(params)).then((response) => {
+      setUser(response.data);
+      console.log(response.data);
+    });
+    setTotalPages(2);
   };
 
   //handleClick
@@ -63,7 +71,11 @@ export default function User() {
   };
 
   const handleDelete = (item) => {
-    console.log(item);
+    modalLoading.show("Checking user...");
+    setTimeout(() => {
+      modalLoading.close();
+      modalConfirm.show(item);
+    }, 1000);
   };
 
   return (

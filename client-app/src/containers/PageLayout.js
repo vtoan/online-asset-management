@@ -1,9 +1,10 @@
 import React from "react";
 import { Col, Container, Row } from "reactstrap";
+import ModalContainer from "./ModalContainer";
 
 export default function PageLayout({ header, nav, content }) {
   return (
-    <>
+    <ModalContainer>
       <div className="ns-bg-primary">
         <Container fluid={true} className="py-4 main-content">
           {header}
@@ -19,6 +20,6 @@ export default function PageLayout({ header, nav, content }) {
           </Col>
         </Row>
       </Container>
-    </>
+    </ModalContainer>
   );
 }
