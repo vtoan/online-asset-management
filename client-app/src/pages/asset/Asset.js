@@ -92,7 +92,7 @@ export default function Asset() {
   };
 
   const handleEdit = (item) => {
-    history.push("/assets/" + item.id);
+    history.push("/assets/" + item.assetId);
   };
 
   const handleDelete = (item) => {
