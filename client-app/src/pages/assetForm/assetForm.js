@@ -19,6 +19,25 @@ function _createQuery(params) {
   return "?" + queryStr;
 }
 
+function formatDate(date) {
+  if (date == null) {
+    date = Date.now();
+  }
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2)
+    month = '0' + month;
+  if (day.length < 2)
+    day = '0' + day;
+
+
+
+  return [year, month, day].join('-');
+}
+
 const stateAsset = [
   {
     id: 1,
@@ -38,58 +57,47 @@ const stateAsset = [
   },
 ];
 
-const asset = [
-  {
-    id: 1,
-    nameAsset: "Laptop Acer",
-    category: "Laptop",
-    specification: "The best laptop gaming.",
-    date: "2020-05-15",
-    state: 1,
-  },
-  {
-    id: 2,
-    nameAsset: "Laptop HP",
-    category: "Laptop",
-    specification: "The best laptop for UX/UI.",
-    date: "2020-05-20",
-    state: 2,
-  },
-];
-
 export default function AssetForm() {
   const { id } = useParams();
   const [dataEdit, setEdit] = React.useState(null);
   const [stateSelected, setStateSelected] = React.useState(null);
   const [stateCurrent, setStateCurrent] = React.useState([]);
+  const [dateCurrent, setDateCurrent] = React.useState([]);
   const [nameHeader, setnameHeader] = React.useState("");
   const [category, setCategory] = React.useState([]);
 
-  const _fetchData = () => {
+  const _fetchCateData = () => {
     http.get("/api/category").then(resp => {
       setCategory(resp.data);
     }).catch(err => console.log(err))
   };
 
+  const _fetchAssetData = (assetId) => {
+    http.get("/api/asset/" + assetId).then(resp => {
+      setEdit(resp.data);
+      setStateSelected(resp.data.state);
+      setDateCurrent(formatDate(resp.data.installedDate));
+      console.log(dateCurrent);
+    }).catch(err => console.log(err))
+  };
+
   React.useEffect(() => {
+    _fetchCateData();
     if (id) {
+      _fetchAssetData(id);
       setnameHeader("Edit Asset");
-      let data = asset.find((data) => data.id === Number(id));
-      setEdit(data);
-      setStateSelected(data.state);
       setStateCurrent(stateAsset);
-      console.log(data);
     } else {
-      setStateCurrent(stateAsset.splice(0, 2));
+      setStateCurrent(stateAsset.slice(0, 2));
       setnameHeader("Create New Asset");
     }
-    _fetchData();
   }, [id]);
 
   const handleSubmit = (event) => {
 
     event.preventDefault();
     const asset = {
+      assetId: id,
       assetName: String(event.target.nameAsset.value),
       categoryId: String(event.target.nameCategoryAsset.value),
       specification: String(event.target.specificationAsset.value),
@@ -97,13 +105,25 @@ export default function AssetForm() {
       state: Number(event.target.radioAvailable.value),
       locationid: params.locationid
     };
-    http.post("/api/asset" + _createQuery(params), asset).then(resp => {
-      console.log(asset);
-    }).catch(err => console.log(err))
+    if (id) {
+      http.put("/api/asset/" + id + _createQuery(params), asset).then(resp => {
+        console.log(asset);
+      }).catch(err => console.log(err))
+    }
+    else {
+      http.post("/api/asset" + _createQuery(params), asset).then(resp => {
+        console.log(asset);
+      }).catch(err => console.log(err))
+    }
   };
 
   const handleChangeState = (event) => {
     setStateSelected(Number(event.target.value));
+    console.log(event.target.value);
+  };
+
+  const handleChangeDate = (event) => {
+    setDateCurrent(event.target.value);
     console.log(event.target.value);
   };
 
@@ -118,7 +138,7 @@ export default function AssetForm() {
           <Col className="col-create-new">
             <input
               type="text"
-              defaultValue={dataEdit?.nameAsset ?? ""}
+              defaultValue={dataEdit?.assetName ?? ""}
               className="name-new-asset"
               name="nameAsset"
             />
@@ -129,14 +149,20 @@ export default function AssetForm() {
             <span>Category</span>
           </Col>
           <Col className="col-create-new">
-
             <select
               name="nameCategoryAsset"
-              defaultValue={dataEdit?.category ?? ""}
+              defaultValue={dataEdit?.categoryName ?? ""}
               className="category-asset"
+              disabled={id}
             >
-              {category && category.map((cate) =>
-                (<option value={cate.categoryId}>{cate.categoryName}</option>))
+              {
+                id ? <option value={dataEdit?.categoryName}> {dataEdit?.categoryName} </option> : (
+                  <>
+                    {
+                      category && category.map((cate) => (<option key={cate.categoryId} value={cate.categoryId}>{cate.categoryName}</option>))
+                    }
+                  </>
+                )
               }
             </select>
           </Col>
@@ -150,7 +176,7 @@ export default function AssetForm() {
               rows="5"
               cols="25"
               className="specification-asset"
-              Name="specificationAsset"
+              name="specificationAsset"
               defaultValue={dataEdit?.specification ?? ""}
             />
           </Col>
@@ -163,8 +189,10 @@ export default function AssetForm() {
             <input
               type="date"
               className="date-asset"
-              Name="dateAddAsset"
-              defaultValue={dataEdit?.date ?? ""}
+              name="dateAddAsset"
+              // value={formatDate(dataEdit?.installedDate)}
+              value={dateCurrent}
+              onChange={handleChangeDate}
             />
           </Col>
         </Row>
@@ -179,7 +207,7 @@ export default function AssetForm() {
                 <input
                   type="radio"
                   value={item.id}
-                  Name="radioAvailable"
+                  name="radioAvailable"
                   onChange={handleChangeState}
                   checked={stateSelected === item.id}
                 />

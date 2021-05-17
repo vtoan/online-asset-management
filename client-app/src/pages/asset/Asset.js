@@ -1,26 +1,26 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
 import { Row, Col } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import FilterState from "../../common/FilterState";
 
 const seedData = [
   {
-    id: "HD1111",
+    id: "LT100001",
     name: "Laptop asd ",
     category: "Laptop",
     status: 1,
   },
   {
-    id: "HD1112",
+    id: "LT100001",
     name: "Laptop asd ",
     category: "Laptop",
     status: 1,
   },
   {
-    id: "HD1113",
+    id: "LT100001",
     name: "Laptop asd ",
     category: "Laptop",
     status: 1,
@@ -30,6 +30,7 @@ const seedData = [
 export default function Asset() {
   const [assetDatas, setAssets] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  const history = useHistory();
 
   React.useEffect(() => {
     _fetchData();
@@ -54,7 +55,7 @@ export default function Asset() {
   };
 
   const handleEdit = (item) => {
-    console.log(item);
+    history.push("/assets/" + item.id);
   };
 
   const handleDelete = (item) => {
