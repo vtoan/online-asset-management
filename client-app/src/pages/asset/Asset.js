@@ -14,8 +14,9 @@ let params = {
   sortCate: 0,
   sortState: 0,
   query: "",
-  pagesize: 1,
+  pagesize: 4,
   page: null,
+  filter: null,
 };
 
 function refreshParams() {
@@ -85,12 +86,18 @@ export default function Asset() {
     console.log(item);
   };
 
+  const handleChecked = (item) => {
+    params.filter = item;
+    refreshParams();
+    _fetchData();
+  }
+
   return (
     <>
       <h5 className="name-list">Asset List</h5>
       <Row className="filter-bar">
         <Col>
-          <FilterState namefilter="State" />
+          <FilterState namefilter="State" onChecked ={handleChecked}/>
         </Col>
         <Col>
           <FilterState namefilter="Category" />
