@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,8 @@ namespace RookieOnlineAssetManagement
             services.AddIdentityConfig();
             services.AddRepositories();
             services.AddBusinessService();
-
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
             //other
             services.AddControllersWithViews();
             services.AddRazorPages();
