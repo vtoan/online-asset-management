@@ -1,7 +1,7 @@
 import React from "react";
 import UserTable from "./UserTable";
 import { Row, Col } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
@@ -9,6 +9,29 @@ import FilterState from "../../common/FilterState";
 import { _createQuery } from "../../ultis/requestHelper";
 import http from "../../ultis/httpClient.js";
 
+const seedData = [
+  {
+    code: "64a45518-ab96-44ad-88b3-a19f53bd4ce7",
+    fullName: "Laptop asd ",
+    userName: "Laptop",
+    joinedDate: "07/04/2021",
+    Type: "Staff",
+  },
+  {
+    code: "64a45518-ab96-44ad-88b3-a19f53bd4ce7",
+    fullName: "Laptop asd ",
+    userName: "Laptop",
+    joinedDate: "07/04/2021",
+    Type: "Staff",
+  },
+  {
+    code: "HD1111",
+    fullName: "Laptop asd ",
+    userName: "Laptop",
+    joinedDate: "07/04/2021",
+    Type: "Staff",
+  },
+];
 let params = {
   locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
   sortCode: 0,
@@ -31,6 +54,7 @@ function refreshParams() {
 export default function User() {
   const [userDatas, setUser] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  const history = useHistory();
   //modal
   const { modalLoading, modalConfirm } = useNSModals();
   modalConfirm.config({
@@ -67,7 +91,7 @@ export default function User() {
   };
 
   const handleEdit = (item) => {
-    console.log(item);
+    history.push("/users/" + item.code);
   };
 
   const handleDelete = (item) => {
@@ -89,7 +113,7 @@ export default function User() {
           <SearchBar />
         </Col>
         <Col style={{ textAlign: "right" }}>
-          <Link to="/users/1">
+          <Link to="/new-user">
             <CreateNew namecreate="Create new user" />
           </Link>
         </Col>
