@@ -44,10 +44,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 switch (sortFullName)
                 {
                     case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.FirstName).OrderBy(item => item.LastName);
+                        queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
                         break;
                     case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.FirstName).OrderBy(item => item.LastName);
+                        queryable = queryable.OrderByDescending(item => item.FirstName).ThenBy(x => x.LastName);
                         break;
                 }
             }
@@ -88,6 +88,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var list = await result.Sources.Select(x => new UserModel
             {
                 Id = x.Id,
+                StaffCode = x.StaffCode,
                 FullName = x.FirstName + " " + x.LastName,
                 UserName = x.UserName,
                 JoinedDate = x.JoinedDate,
@@ -107,14 +108,17 @@ namespace RookieOnlineAssetManagement.Repositories
             if (role == null) return null;
             var userdetail = new UserDetailModel
             {
-                Id = user.StaffCode,
+                Id = user.Id,
+                StaffCode = user.StaffCode,
                 FullName = user.FirstName + " " + user.LastName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 UserName = user.UserName,
                 DateOfBirth = user.DateOfBirth.Value,
                 Gender = user.Gender.Value,
                 JoinedDate = user.JoinedDate,
                 RoleName = role.NormalizedName,
-                Location = user.Location.LocationName
+                LocationName = user.Location.LocationName
             };
             return userdetail;
         }
@@ -193,12 +197,16 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
+            if (user.FirstName != userRequest.FirstName || user.LastName != userRequest.LastName)
+            {
+                return null;
+            }
+            // user.Id = userRequest.UserId;
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
             await _changeRoleUserAsync(user.Id, userRequest.Type);
             await _dbContext.SaveChangesAsync();
-
 
             return userRequest;
         }
@@ -207,6 +215,11 @@ namespace RookieOnlineAssetManagement.Repositories
         {
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
+            {
+                return false;
+            }
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.UserId == id);
+            if (assignment != null)
             {
                 return false;
             }
@@ -228,7 +241,5 @@ namespace RookieOnlineAssetManagement.Repositories
                 _dbContext.UserRoles.Remove(roleUser);
             _dbContext.UserRoles.Add(new IdentityUserRole<string>() { UserId = userId, RoleId = role.Id });
         }
-
-
     }
 }

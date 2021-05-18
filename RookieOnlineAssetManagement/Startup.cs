@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,8 @@ namespace RookieOnlineAssetManagement
             services.AddIdentityConfig();
             services.AddRepositories();
             services.AddBusinessService();
-
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
             //other
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -77,7 +79,7 @@ namespace RookieOnlineAssetManagement
 
             app.UseCors(b =>
             {
-                b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("total-pages").WithHeaders("total-pages");
             });
 
             app.UseHttpsRedirection();
