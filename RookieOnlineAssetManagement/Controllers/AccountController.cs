@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Models;
 using Microsoft.AspNetCore.Authorization;
 using RookieOnlineAssetManagement.Utils;
+using System.Security.Claims;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
@@ -32,31 +33,51 @@ namespace RookieOnlineAssetManagement.Controllers
             public string Password { get; set; }
         }
 
-        [HttpPost("/login")]
-        public async Task<ActionResult<UserModel>> LoginAsync(LoginModel loginModel)
+        [HttpPost("/check-login")]
+        public async Task<ActionResult<UserModel>> CheckLoginAsync()
         {
-            if (_signInManger.IsSignedIn(User)) return Ok();
-            if (!ModelState.IsValid) return BadRequest();
-            var re = await _signInManger.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, true);
-            if (re.IsLockedOut == true) return Forbid();
-            if (re.Succeeded)
+            if (_signInManger.IsSignedIn(User))
             {
-                var user = await _userManager.FindByNameAsync(loginModel.UserName);
-                var roles = await _userManager.GetRolesAsync(user);
-                if (user == null) return NotFound();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userCurr = await _userManager.FindByIdAsync(userId);
+                if (userCurr == null) return NotFound();
+                var roles = await _userManager.GetRolesAsync(userCurr);
                 return Ok(new UserModel
                 {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    FullName = $"{user.FirstName} {user.LastName}",
+                    Id = userCurr.Id,
+                    UserName = userCurr.UserName,
+                    FullName = $"{userCurr.FirstName} {userCurr.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
-                    LocationId = user.LocationId
+                    LocationId = userCurr.LocationId
                 });
             }
             return NotFound();
         }
 
-        [Authorize]
+
+        [HttpPost("/login")]
+        public async Task<ActionResult<UserModel>> LoginAsync(LoginModel loginModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            var re = await _signInManger.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, true);
+            if (re.IsLockedOut == true) return Forbid();
+            if (re.Succeeded)
+            {
+                var userCurr = await _userManager.FindByNameAsync(loginModel.UserName);
+                if (userCurr == null) return NotFound();
+                var roles = await _userManager.GetRolesAsync(userCurr);
+                return Ok(new UserModel
+                {
+                    Id = userCurr.Id,
+                    UserName = userCurr.UserName,
+                    FullName = $"{userCurr.FirstName} {userCurr.LastName}",
+                    RoleName = roles.Count > 0 ? roles[0] : "unknown",
+                    LocationId = userCurr.LocationId
+                });
+            }
+            return NotFound();
+        }
+
         [HttpPost("/logout")]
         public async Task<IActionResult> LogoutAsync()
         {
