@@ -109,13 +109,16 @@ namespace RookieOnlineAssetManagement.Repositories
             var userdetail = new UserDetailModel
             {
                 Id = user.Id,
-                FirstName=user.FirstName,
-                LastName=user.LastName,
+                StaffCode = user.StaffCode,
+                FullName = user.FirstName + " " + user.LastName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 UserName = user.UserName,
                 DateOfBirth = user.DateOfBirth.Value,
                 Gender = user.Gender.Value,
                 JoinedDate = user.JoinedDate,
                 RoleName = role.NormalizedName,
+                LocationName = user.Location.LocationName
             };
             return userdetail;
         }
