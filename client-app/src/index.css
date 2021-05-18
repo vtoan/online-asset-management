@@ -416,12 +416,23 @@ form.example button {
   width: 13%;
 }
 
+.specification-asset.form-control
+{
+  width: 200px;
+}
+
+.category-asset.form-control
+{
+  appearance: auto;
+  background-color: #ffffff !important;
+}
+
 /* --- UserCreate --- */
 
 .last-name-user,
 .first-name-user {
   width: 200px;
-  height: 27px;
+  height: 38px;
   border-radius: 7px;
 }
 
@@ -451,4 +462,9 @@ form.example button {
 
 .col-user {
   width: 11%;
+}
+
+.category-type.form-control{
+  appearance: auto;
+  background-color: #ffffff !important;
 }

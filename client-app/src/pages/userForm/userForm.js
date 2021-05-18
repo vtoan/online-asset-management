@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { Row, Col, Button } from "reactstrap";
+import { Row, Col, Button, Input } from "reactstrap";
 import http from '../../ultis/httpClient';
 
 let params = {
@@ -65,7 +65,7 @@ export default function UserForm() {
       setjoinedDate(formatDate(resp.data.joinedDate))
       selectType == "ADMIN" ? setTypeRole(roles) : setTypeRole(roles.reverse());
       console.log(dataEdit);
-      console.log(selectType);
+      // console.log(selectType);
     }).catch(err => console.log(err))
   };
 
@@ -75,6 +75,7 @@ export default function UserForm() {
       setnameHeader("Edit User");
     } else {
       setnameHeader("Create New User");
+      setTypeRole(roles)
     }
   }, [id]);
   const handleSubmit = (event) => {
@@ -126,7 +127,7 @@ export default function UserForm() {
             <span>First Name</span>
           </Col>
           <Col className="col-user-new">
-            <input
+            <Input
               type="text"
               className="first-name-user"
               name="firstName"
@@ -140,7 +141,7 @@ export default function UserForm() {
             <span>Last Name</span>
           </Col>
           <Col className="col-user-new">
-            <input
+            <Input
               type="text"
               className="last-name-user"
               name="lastName"
@@ -154,11 +155,11 @@ export default function UserForm() {
             <span>Date of Birth</span>
           </Col>
           <Col className="col-user-new">
-            <input
+            <Input
               type="date"
               className="date-user"
               name="dobUser"
-              value={dateOfBirth}
+              defaultValue={dateOfBirth}
               onChange={handleChangeDateBOB}
             />
           </Col>
@@ -170,7 +171,7 @@ export default function UserForm() {
           <Col className="col-user-new" style={{ display: "inline-flex" }}>
             <label className="container-radio">
               Female
-              <input
+              <Input
                 type="radio"
                 value="0"
                 name="gender"
@@ -181,7 +182,7 @@ export default function UserForm() {
             </label>
             <label className="container-radio">
               Male
-              <input
+              <Input
                 type="radio"
                 value="1"
                 name="gender"
@@ -197,11 +198,11 @@ export default function UserForm() {
             <span>Joined Date</span>
           </Col>
           <Col className="col-user-new">
-            <input
+            <Input
               type="date"
               className="date-user"
               name="dateAddUser"
-              value={joinedDate}
+              defaultValue={joinedDate}
               onChange={handleChangeDateJoined}
             />
           </Col>
@@ -211,16 +212,16 @@ export default function UserForm() {
             <span>Type</span>
           </Col>
           <Col className="col-user-new">
-            <select
+            <Input type="select"
               name="nameCategoryType"
               onChange={(e) => setSelectType(e.target.value)}
               className="category-type"
               defaultValue={selectType}
             >
               {typeRole.map((item) => (
-                <option value={item.id}>{item.name}</option>
+                <option ket={item.id} value={item.id}>{item.name}</option>
               ))}
-            </select>
+            </Input>
           </Col>
         </Row>
         <Row>
@@ -229,7 +230,7 @@ export default function UserForm() {
               <Button color="danger" type="submit">
                 Save
               </Button>
-              <Link to="/user">
+              <Link to="/users">
                 <Button
                   type="reset"
                   outline
