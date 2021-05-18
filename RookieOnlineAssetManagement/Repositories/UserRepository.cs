@@ -44,10 +44,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 switch (sortFullName)
                 {
                     case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.FirstName).OrderBy(item => item.LastName);
+                        queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
                         break;
                     case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.FirstName).OrderBy(item => item.LastName);
+                        queryable = queryable.OrderByDescending(item => item.FirstName).ThenBy(x => x.LastName);
                         break;
                 }
             }
