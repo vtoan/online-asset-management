@@ -33,7 +33,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
                 State = 1,
                 Specification = "test",
             };
-            mockAssetSer.Setup(m => m.CreateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(asset);
+            var assetmodel = new AssetModel();
+            mockAssetSer.Setup(m => m.CreateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
             var assetcontr = new AssetController(mockAssetSer.Object);
             var result = await assetcontr.CreateAsync(asset);
             Assert.NotNull(result);
@@ -52,7 +53,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
                 State = 1,
                 Specification = "test",
             };
-            mockAssetSer.Setup(x => x.UpdateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(asset);
+            var assetmodel = new AssetModel();
+            mockAssetSer.Setup(x => x.UpdateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
             var assetContr = new AssetController(mockAssetSer.Object);
             var result = await assetContr.UpdateAsync(asset);
             Assert.NotNull(result);
@@ -72,8 +74,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         {
             var mockAssetSer = new Mock<IAssetService>();
             string assetid = Guid.NewGuid().ToString();
-            AssetModel assetModel = new AssetModel();
-            mockAssetSer.Setup(x => x.GetAssetByIdAsync(It.IsAny<string>())).ReturnsAsync(assetModel);
+            AssetDetailModel assetdetailModel = new AssetDetailModel();
+            mockAssetSer.Setup(x => x.GetAssetByIdAsync(It.IsAny<string>())).ReturnsAsync(assetdetailModel);
             var assetContr = new AssetController(mockAssetSer.Object);
             var result = await assetContr.GetAsync(assetid);
             Assert.IsType<OkObjectResult>(result.Result);
