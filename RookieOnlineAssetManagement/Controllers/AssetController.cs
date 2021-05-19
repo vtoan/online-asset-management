@@ -27,7 +27,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(result.Datas);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<AssetModel>> GetAsync(string id)
+        public async Task<ActionResult<AssetDetailModel>> GetAsync(string id)
         {
             return Ok(await _assetService.GetAssetByIdAsync(id));
         }
