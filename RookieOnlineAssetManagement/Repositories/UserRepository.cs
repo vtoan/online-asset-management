@@ -124,7 +124,7 @@ namespace RookieOnlineAssetManagement.Repositories
             return userdetail;
         }
 
-        public async Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
+        public async Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
         {
             string username = userRequest.FirstName.ToLower();
             var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
@@ -133,6 +133,9 @@ namespace RookieOnlineAssetManagement.Repositories
 
             var UserExtension = await _dbContext.UserExtensions.FirstOrDefaultAsync(x => x.UserName == username);
             int number = _dbContext.UserExtensions.Sum(x => x.NumIncrease) + 1;
+
+            var usermodel = new UserModel();
+
             var transaction = _dbContext.Database.BeginTransaction();
             try
             {
@@ -180,6 +183,13 @@ namespace RookieOnlineAssetManagement.Repositories
                 {
                     return null;
                 }
+                usermodel.UserId = user.Id;
+                usermodel.StaffCode = user.StaffCode;
+                usermodel.FullName = user.FirstName + " " + user.LastName;
+                usermodel.UserName = user.UserName;
+                usermodel.JoinedDate = user.JoinedDate;
+                usermodel.RoleName = role;
+                usermodel.LocationId = user.LocationId;
 
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
@@ -188,10 +198,11 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
-            return userRequest;
+            
+            return usermodel;
         }
 
-        public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
+        public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
@@ -203,13 +214,25 @@ namespace RookieOnlineAssetManagement.Repositories
                 return null;
             }
             // user.Id = userRequest.UserId;
+            var role = userRequest.Type.ToString();
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
             await _changeRoleUserAsync(user.Id, userRequest.Type);
             await _dbContext.SaveChangesAsync();
 
-            return userRequest;
+            var usermodel = new UserModel
+            {
+                UserId = user.Id,
+                StaffCode = user.StaffCode,
+                FullName = user.FirstName + " " + user.LastName,
+                UserName = user.UserName,
+                JoinedDate = user.JoinedDate,
+                RoleName = role,
+                LocationId = user.LocationId
+            };
+
+            return usermodel;
         }
 
         public async Task<bool> DisableUserAsync(string id)
