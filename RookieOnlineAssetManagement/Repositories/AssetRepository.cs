@@ -55,18 +55,21 @@ namespace RookieOnlineAssetManagement.Repositories
             return true;
         }
 
-        public async Task<AssetModel> GetAssetByIdAsync(string id)
+        public async Task<AssetDetailModel> GetAssetByIdAsync(string id)
         {
-            var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
+            var asset = await _dbContext.Assets.Include(x => x.Category).Include(x => x.Location).FirstOrDefaultAsync(x => x.AssetId == id);
             if (asset == null)
             {
                 return null;
             }
-            var assetmodel = new AssetModel
+            var assetmodel = new AssetDetailModel
             {
                 AssetId = asset.AssetId,
                 AssetName = asset.AssetName,
                 CategoryName = asset.Category.CategoryName,
+                CategoryId = asset.CategoryId,
+                LocationId = asset.LocationId,
+                LocationName = asset.Location.LocationName,
                 Specification = asset.Specification,
                 InstalledDate = asset.InstalledDate.Value,
                 State = asset.State
@@ -123,8 +126,6 @@ namespace RookieOnlineAssetManagement.Repositories
                 AssetId = x.AssetId,
                 AssetName = x.AssetName,
                 CategoryName = x.Category.CategoryName,
-                Specification = x.Specification,
-                InstalledDate = x.InstalledDate.Value,
                 State = x.State
             }).ToListAsync();
             return (list, result.TotalPage);

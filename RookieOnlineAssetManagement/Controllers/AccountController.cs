@@ -44,7 +44,7 @@ namespace RookieOnlineAssetManagement.Controllers
                 var roles = await _userManager.GetRolesAsync(userCurr);
                 return Ok(new UserModel
                 {
-                    Id = userCurr.Id,
+                    UserId = userCurr.Id,
                     UserName = userCurr.UserName,
                     FullName = $"{userCurr.FirstName} {userCurr.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
@@ -68,7 +68,7 @@ namespace RookieOnlineAssetManagement.Controllers
                 var roles = await _userManager.GetRolesAsync(userCurr);
                 return Ok(new UserModel
                 {
-                    Id = userCurr.Id,
+                    UserId = userCurr.Id,
                     UserName = userCurr.UserName,
                     FullName = $"{userCurr.FirstName} {userCurr.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
