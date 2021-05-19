@@ -23,13 +23,13 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _assetRepository.GetAssetByIdAsync(id);
         }
-        public async Task<AssetRequestModel> CreateAssetAsync(AssetRequestModel assetRequest)
+        public async Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest)
         {
             return await _assetRepository.CreateAssetAsync(assetRequest);
         }
-        public async Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest)
+        public async Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {
-            return await _assetRepository.UpdateAssetAsync(assetRequest);
+            return await _assetRepository.UpdateAssetAsync(id,assetRequest);
         }
         public async Task<bool> DeleteAssetAsync(string id)
         {
