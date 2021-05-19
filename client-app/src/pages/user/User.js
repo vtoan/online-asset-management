@@ -91,7 +91,7 @@ export default function User() {
   };
 
   const handleEdit = (item) => {
-    history.push("/users/" + item.code);
+    history.push("/users/" + item.id);
   };
 
   const handleDelete = (item) => {
