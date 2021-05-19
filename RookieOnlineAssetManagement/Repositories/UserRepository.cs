@@ -87,7 +87,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var result = Paging<User>(queryable, pageSize, page);
             var list = await result.Sources.Select(x => new UserModel
             {
-                Id = x.Id,
+                UserId = x.Id,
                 StaffCode = x.StaffCode,
                 FullName = x.FirstName + " " + x.LastName,
                 UserName = x.UserName,
@@ -108,7 +108,7 @@ namespace RookieOnlineAssetManagement.Repositories
             if (role == null) return null;
             var userdetail = new UserDetailModel
             {
-                Id = user.Id,
+                UserId = user.Id,
                 StaffCode = user.StaffCode,
                 FullName = user.FirstName + " " + user.LastName,
                 FirstName = user.FirstName,
@@ -118,7 +118,8 @@ namespace RookieOnlineAssetManagement.Repositories
                 Gender = user.Gender.Value,
                 JoinedDate = user.JoinedDate,
                 RoleName = role.NormalizedName,
-                LocationName = user.Location.LocationName
+                LocationName = user.Location.LocationName,
+                LocationId = user.LocationId
             };
             return userdetail;
         }
