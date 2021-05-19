@@ -10,6 +10,7 @@ namespace RookieOnlineAssetManagement.ServiceExtensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAssignmentService, AssignmentService>();
             return services;
         }
     }
