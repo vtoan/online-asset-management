@@ -17,6 +17,11 @@ namespace RookieOnlineAssetManagement.Services
         }
         public async Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel)
         {
+            var checkassigneddate = CheckDateGreaterThan(DateTime.Now, assignmentRequestModel.AssignedDate.Value);
+            if (checkassigneddate == false)
+            {
+                throw new Exception("Assigned Date is smaller than Today");
+            }
             return await _assignmentRepository.CreateAssignmentAsync(assignmentRequestModel);
         }
         public async Task<AssignmentModel> UpdateAssignmentAsync(string id, AssignmentRequestModel assignmentRequestModel)
@@ -34,6 +39,18 @@ namespace RookieOnlineAssetManagement.Services
         public async Task<AssetDetailModel> GetAssignmentById(string id)
         {
             return await _assignmentRepository.GetAssignmentById(id);
+        }
+
+        public bool CheckDateGreaterThan(DateTime SmallDate, DateTime BigDate)
+        {
+            if (SmallDate > BigDate)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
