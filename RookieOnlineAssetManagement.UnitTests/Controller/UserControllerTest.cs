@@ -31,7 +31,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
                 LastName = "Test",
                 FirstName = "Category",
             };
-            mockUserSer.Setup(m => m.CreateUserAsync(It.IsAny<UserRequestModel>())).ReturnsAsync(UserTest);
+            var usermodel = new UserModel();
+            mockUserSer.Setup(m => m.CreateUserAsync(It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
             var Usercontr = new UsersController(mockUserSer.Object);
             var result = await Usercontr.CreateAsync(UserTest);
             Assert.NotNull(result);
@@ -51,7 +52,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
                 DateOfBirth = new DateTime(1999, 04, 27),
                 JoinedDate = new DateTime(2021, 04, 27),
             };
-            mockUserSer.Setup(x => x.UpdateUserAsync(It.IsAny<string>(), It.IsAny<UserRequestModel>())).ReturnsAsync(UserTest);
+            var usermodel = new UserModel();
+            mockUserSer.Setup(x => x.UpdateUserAsync(It.IsAny<string>(), It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
             var assetContr = new UsersController(mockUserSer.Object);
             var result = await assetContr.UpdateAsync(UserTest.UserId, UserTest);
             Assert.NotNull(result);
@@ -72,7 +74,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         {
             var mockUserSer = new Mock<IUserService>();
             string UserId = Guid.NewGuid().ToString();
-             var UserModel = new UserDetailModel();
+            var UserModel = new UserDetailModel();
             mockUserSer.Setup(x => x.GetUserByIdAsync(It.IsAny<string>())).ReturnsAsync(UserModel);
             var assetContr = new UsersController(mockUserSer.Object);
             var result = await assetContr.GetAsync(UserId);

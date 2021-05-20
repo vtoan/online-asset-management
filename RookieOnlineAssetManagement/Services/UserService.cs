@@ -28,7 +28,7 @@ namespace RookieOnlineAssetManagement.Services
             return await _userRepo.GetListUserAsync(locationId, type, query, sortCode, sortFullName, sortDate, sortType, page, pageSize);
         }
 
-        public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
+        public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
             return await _userRepo.UpdateUserAsync(id, userRequest);
         }
@@ -39,7 +39,7 @@ namespace RookieOnlineAssetManagement.Services
             return AccountHelper.GenerateAccountPass(user.UserName, user.DateOfBirth);
         }
 
-        public Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
+        public Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
         {
             DayOfWeek dayofweek;
             var checkage = CheckDateAgeGreaterThan(18, userRequest.DateOfBirth.Value);
