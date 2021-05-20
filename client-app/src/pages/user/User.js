@@ -9,29 +9,6 @@ import FilterState from "../../common/FilterState";
 import { _createQuery } from "../../ultis/requestHelper";
 import http from "../../ultis/httpClient.js";
 
-const seedData = [
-  {
-    code: "64a45518-ab96-44ad-88b3-a19f53bd4ce7",
-    fullName: "Laptop asd ",
-    userName: "Laptop",
-    joinedDate: "07/04/2021",
-    Type: "Staff",
-  },
-  {
-    code: "64a45518-ab96-44ad-88b3-a19f53bd4ce7",
-    fullName: "Laptop asd ",
-    userName: "Laptop",
-    joinedDate: "07/04/2021",
-    Type: "Staff",
-  },
-  {
-    code: "HD1111",
-    fullName: "Laptop asd ",
-    userName: "Laptop",
-    joinedDate: "07/04/2021",
-    Type: "Staff",
-  },
-];
 let params = {
   locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
   sortCode: 0,
