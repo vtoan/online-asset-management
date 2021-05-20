@@ -28,23 +28,23 @@ const tableTitles = [
 const stateOptions = [
   {
     label: "Assigned",
-    value: 1,
+    value: 0,
   },
   {
     label: "Avaiable",
-    value: 2,
+    value: 1,
   },
   {
     label: "NotAvaiable",
-    value: 3,
+    value: 2,
   },
   {
     label: "WatingRecycling",
-    value: 4,
+    value: 3,
   },
   {
     label: "Recycled",
-    value: 5,
+    value: 4,
   },
 ];
 
