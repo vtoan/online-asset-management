@@ -1,6 +1,6 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
-import { Row, Col, Input } from "reactstrap";
+import { Row, Col } from "reactstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";

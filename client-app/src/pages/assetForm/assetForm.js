@@ -60,6 +60,8 @@ export default function AssetForm() {
   const [dateCurrent, setDateCurrent] = React.useState([]);
   const [nameHeader, setnameHeader] = React.useState("");
   const [category, setCategory] = React.useState([]);
+  const [stateCate, setStateCate] = React.useState([]);
+  const [NewCate, setNewCate] = React.useState('');
 
   const _fetchCateData = () => {
     http
@@ -99,7 +101,7 @@ export default function AssetForm() {
     const asset = {
       assetId: id,
       assetName: String(event.target.nameAsset.value),
-      categoryId: String(event.target.nameCategoryAsset.value),
+      categoryId: stateCate,
       specification: String(event.target.specificationAsset.value),
       installedDate: String(event.target.dateAddAsset.value),
       state: Number(event.target.radioAvailable.value),
@@ -132,6 +134,45 @@ export default function AssetForm() {
     console.log(event.target.value);
   };
 
+  const handleChangeCate = event => {
+    setStateCate(String(event.target.value));
+    console.log(event.target.value);
+  };
+
+  var expanded = false;
+
+  function showCheckboxes() {
+    var checkboxes = document.getElementById('checkboxes');
+    if (!expanded) {
+      checkboxes.style.display = 'block';
+      expanded = true;
+    } else {
+      checkboxes.style.display = 'none';
+      expanded = false;
+    }
+  }
+
+  const handleChangeNewCate = event => {
+    setNewCate(String(event.target.value));
+  };
+
+  const CreateCate = event => {
+    event.preventDefault();
+    const cate = {
+      // name: String(event.target.nameCate.value),
+      // shortname: String(event.target.shortNameCate.value)
+      categoryName: document.getElementById('nameCate').value,
+      shortName: document.getElementById('shortname').value
+    };
+    http
+      .post("/api/category", cate)
+      .then((resp) => {
+        console.log(cate);
+      })
+      .catch((err) => console.log(err));
+    _fetchCateData()
+  };
+
   return (
     <>
       <h5 className="name-list">{nameHeader}</h5>
@@ -154,29 +195,49 @@ export default function AssetForm() {
             <span>Category</span>
           </Col>
           <Col className="col-create-new">
-            <Input
-              type="select"
-              name="nameCategoryAsset"
-              defaultValue={dataEdit?.categoryName ?? ""}
-              className="category-asset"
-              disabled={id}
-            >
-              {id ? (
-                <option value={dataEdit?.categoryName}>
-                  {" "}
-                  {dataEdit?.categoryName}{" "}
-                </option>
-              ) : (
-                <>
-                  {category &&
-                    category.map((cate) => (
-                      <option key={cate.categoryId} value={cate.categoryId}>
+            <div className="multiselect">
+              <div className="selectBox" onClick={showCheckboxes}>
+                <span className="fa fa-chevron-down" />
+                <select className="filter-cate">
+                  <option>{stateCate}</option>
+                </select>
+                <div className="overSelect" />
+              </div>
+              <div id="checkboxes" disabled={id}>
+                {category &&
+                  category.map(cate => (
+                    <label className="checkboxlist">
+                      <option
+                        key={cate.categoryId}
+                        value={cate.categoryName}
+                        id="mySelect"
+                        onClick={handleChangeCate}
+                        name="nameCategoryAsset"
+                      >
                         {cate.categoryName}
                       </option>
-                    ))}
-                </>
-              )}
-            </Input>
+                    </label>
+                  ))}
+                <hr />
+                <label className="checkboxlist" style={{ padding: 6 }}>
+                  <input
+                    type="text"
+                    placeholder="Blutooth Mouse"
+                    id="nameCate"
+                    name="nameCate"
+                    onChange={handleChangeNewCate}
+                  />
+                  <input
+                    type="text"
+                    placeholder="BM"
+                    id="shortname"
+                    name="shortNameCate"
+                  />
+                  <i className="fa fa-check" onClick={CreateCate} />
+                  <i className="fa fa-times" onClick={showCheckboxes} />
+                </label>
+              </div>
+            </div>
           </Col>
         </Row>
         <Row className="row-create-new">
