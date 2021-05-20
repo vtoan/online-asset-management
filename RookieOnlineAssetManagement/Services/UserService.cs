@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RookieOnlineAssetManagement.Data;
-using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Utils;
@@ -23,9 +21,9 @@ namespace RookieOnlineAssetManagement.Services
             return await _userRepo.DisableUserAsync(id);
         }
 
-        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
+        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas)
         {
-            return await _userRepo.GetListUserAsync(locationId, type, query, sortCode, sortFullName, sortDate, sortType, page, pageSize);
+            return await _userRepo.GetListUserAsync(userRequestParmas);
         }
 
         public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
@@ -48,17 +46,14 @@ namespace RookieOnlineAssetManagement.Services
             if (checkage == false)
             {
                 throw new Exception("Age is not valid");
-                // return Task.FromResult<UserRequestModel>(null);
             }
             if (checkjoineddate == true)
             {
                 throw new Exception("Joined Date is : " + dayofweek.ToString());
-                // return Task.FromResult<UserRequestModel>(null);
             }
             if (checkjoineddategreaterthanbirthofdate == false)
             {
                 throw new Exception("Joined Date is smaller tham Birth Of Date");
-                // return Task.FromResult<UserRequestModel>(null);
             }
             return _userRepo.CreateUserAsync(userRequest);
         }
@@ -68,37 +63,40 @@ namespace RookieOnlineAssetManagement.Services
         }
         public bool CheckDateGreaterThan(DateTime SmallDate, DateTime BigDate)
         {
-            if (SmallDate > BigDate)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            // if (SmallDate > BigDate)
+            // {
+            //     return false;
+            // }
+            // else
+            // {
+            //     return true;
+            // }
+            return !(SmallDate > BigDate);
         }
         public bool CheckDateAgeGreaterThan(int age, DateTime BirthOfDate)
         {
-            if (DateTime.Now.Year - BirthOfDate.Year >= 18)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            // if (DateTime.Now.Year - BirthOfDate.Year >= 18)
+            // {
+            //     return true;
+            // }
+            // else
+            // {
+            //     return false;
+            // }
+            return (DateTime.Now.Year - BirthOfDate.Year >= 18);
         }
         public bool CheckIsSaturdayOrSunday(DateTime JoinedDate, out DayOfWeek dayofweek)
         {
             dayofweek = JoinedDate.DayOfWeek;
-            if (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            // if (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday)
+            // {
+            //     return true;
+            // }
+            // else
+            // {
+            //     return false;
+            // }
+            return (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday);
         }
 
 

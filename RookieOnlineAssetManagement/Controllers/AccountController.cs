@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Models;
 using Microsoft.AspNetCore.Authorization;
 using RookieOnlineAssetManagement.Utils;
-using System.Security.Claims;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
@@ -38,9 +37,9 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             if (_signInManger.IsSignedIn(User))
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userCurr = await _userManager.FindByIdAsync(userId);
+                var userCurr = await _userManager.GetUserAsync(User);
                 if (userCurr == null) return NotFound();
+                RequestHelper.SetLocationSession(HttpContext, userCurr.LocationId);
                 var roles = await _userManager.GetRolesAsync(userCurr);
                 return Ok(new UserModel
                 {
@@ -65,6 +64,7 @@ namespace RookieOnlineAssetManagement.Controllers
             {
                 var userCurr = await _userManager.FindByNameAsync(loginModel.UserName);
                 if (userCurr == null) return NotFound();
+                RequestHelper.SetLocationSession(HttpContext, userCurr.LocationId);
                 var roles = await _userManager.GetRolesAsync(userCurr);
                 return Ok(new UserModel
                 {
@@ -102,22 +102,24 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
             var user = await _userManager.GetUserAsync(User);
+            var isPassValid = await _signInManger.CheckPasswordSignInAsync(user, userModel.OldPassword, false);
+            if (!isPassValid.Succeeded) return BadRequest("Password incorrect");
             var changePassword = await _userManager.ChangePasswordAsync(user, userModel.OldPassword, userModel.NewPassword);
             if (changePassword.Succeeded) return Ok();
-            return NotFound();
+            return Problem("Can't change password");
         }
 
         [Authorize]
         [HttpPost("/change-password-first/{id}")]
-        public async Task<IActionResult> ChangePasswordFirstAsync(string id, [FromBody] string newPassword)
+        public async Task<IActionResult> ChangePasswordFirstAsync([FromBody] string newPassword)
         {
-            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(newPassword)) return BadRequest();
-            var user = await _userManager.FindByIdAsync(id);
+            if (string.IsNullOrEmpty(newPassword)) return BadRequest();
+            var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
             var defaultPass = AccountHelper.GenerateAccountPass(user.UserName, user.DateOfBirth.Value);
             var changePassword = await _userManager.ChangePasswordAsync(user, defaultPass, newPassword);
             if (changePassword.Succeeded) return Ok();
-            return NotFound();
+            return Problem("Can't change password");
         }
 
     }
