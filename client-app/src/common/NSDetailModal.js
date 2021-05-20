@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Modal, ModalBody, ModalHeader, Button } from "reactstrap";
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
 
-let message = null;
+let contentModal = null;
 let titleModal = null;
-export function useNSAlertModal() {
+export function useNSDetailModal() {
   const [modal, setModal] = useState(false);
   return {
     modal: modal,
-    show: ({ title, msg }) => {
-      message = msg;
+    show: ({ title, content }) => {
+      contentModal = content;
       titleModal = title;
       setModal(true);
     },
@@ -16,23 +16,20 @@ export function useNSAlertModal() {
   };
 }
 
-export default function NSAlertModal({ hook }) {
-  const handleCancel = () => {
-    hook.close();
-  };
-
+export default function NSDetailModal({ hook }) {
+  const toggle = () => hook.close();
   return (
     <>
       {hook != null && (
         <Modal centered isOpen={hook.modal}>
-          <ModalHeader>{titleModal && titleModal}</ModalHeader>
+          <ModalHeader toggle={toggle}>{titleModal && titleModal}</ModalHeader>
           <ModalBody className="py-5" style={{ textAlign: "center" }}>
-            <p className="mb-4"> {message && message}</p>
-            <div style={{ textAlign: "right" }}>
+            <p className="mb-4"> {contentModal && contentModal}</p>
+            {/* <div style={{ textAlign: "right" }}>
               <Button outline onClick={handleCancel}>
                 Close
               </Button>
-            </div>
+            </div> */}
           </ModalBody>
         </Modal>
       )}
