@@ -71,6 +71,12 @@ export default function User() {
     _fetchData();
   };
 
+  const handleSearch = (target) => {
+    console.log();
+    params.query = target;
+    _refreshParams();
+    _fetchData();
+  }
   const handleEdit = (item) => {
     history.push("/users/" + item.code);
   };
@@ -91,7 +97,7 @@ export default function User() {
           <FilterState namefilter="Type" />
         </Col>
         <Col>
-          <SearchBar />
+          <SearchBar onSearch = {handleSearch}/>
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-user">
