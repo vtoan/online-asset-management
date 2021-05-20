@@ -60,6 +60,9 @@ export default function AssetForm() {
   const [dateCurrent, setDateCurrent] = React.useState([]);
   const [nameHeader, setnameHeader] = React.useState("");
   const [category, setCategory] = React.useState([]);
+  const [stateCate, setStateCate] = React.useState([]);
+  const [stateCateId, setStateCateId] = React.useState([]);
+  const [NewCate, setNewCate] = React.useState('');
 
   const _fetchCateData = () => {
     http
@@ -94,18 +97,75 @@ export default function AssetForm() {
     }
   }, [id]);
 
+  const handleChangeState = (event) => {
+    setStateSelected(Number(event.target.value));
+    console.log(event.target.value);
+  };
+
+  const handleChangeDate = (event) => {
+    setDateCurrent(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const handleChangeCate = event => {
+    setStateCate(String(event.target.value));
+    let cateId = category.find(cate => cate.categoryName == event.target.value)
+    setStateCateId(cateId.categoryId)
+    console.log(cateId.categoryId);
+    console.log(event.target.value);
+  };
+
+  var expanded = false;
+
+  function showCheckboxes() {
+    var checkboxes = document.getElementById('checkboxes');
+    if (!expanded) {
+      checkboxes.style.display = 'block';
+      expanded = true;
+    } else {
+      checkboxes.style.display = 'none';
+      expanded = false;
+    }
+  }
+
+  const handleChangeNewCate = event => {
+    setNewCate(String(event.target.value));
+  };
+
+  const CreateCate = event => {
+    event.preventDefault();
+    const cate = {
+      categoryName: document.getElementById('nameCate').value,
+      shortName: document.getElementById('shortname').value
+    };
+
+    if (cate.categoryName == "" && cate.shortName == "") { alert("Enter category's infomations, please!") }
+    else if (cate.categoryName == "") { alert("Enter category's name, please!") }
+    else if (cate.shortName == "") { alert("Enter category's short name, please!") }
+
+    http
+      .post("/api/category", cate)
+      .then((resp) => {
+        console.log(cate);
+        _fetchCateData()
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const asset = {
       assetId: id,
       assetName: String(event.target.nameAsset.value),
-      categoryId: String(event.target.nameCategoryAsset.value),
+      categoryId: stateCateId,
       specification: String(event.target.specificationAsset.value),
       installedDate: String(event.target.dateAddAsset.value),
       state: Number(event.target.radioAvailable.value),
       locationid: params.locationid,
     };
     if (id) {
+      let cateId = category.find(cate => cate.categoryName == dataEdit.categoryName)
+      asset.categoryId = cateId.categoryId;
       http
         .put("/api/asset/" + id + _createQuery(params), asset)
         .then((resp) => {
@@ -120,16 +180,6 @@ export default function AssetForm() {
         })
         .catch((err) => console.log(err));
     }
-  };
-
-  const handleChangeState = (event) => {
-    setStateSelected(Number(event.target.value));
-    console.log(event.target.value);
-  };
-
-  const handleChangeDate = (event) => {
-    setDateCurrent(event.target.value);
-    console.log(event.target.value);
   };
 
   return (
@@ -154,29 +204,62 @@ export default function AssetForm() {
             <span>Category</span>
           </Col>
           <Col className="col-create-new">
-            <Input
-              type="select"
-              name="nameCategoryAsset"
-              defaultValue={dataEdit?.categoryName ?? ""}
-              className="category-asset"
-              disabled={id}
-            >
-              {id ? (
-                <option value={dataEdit?.categoryName}>
-                  {" "}
-                  {dataEdit?.categoryName}{" "}
-                </option>
-              ) : (
-                <>
-                  {category &&
-                    category.map((cate) => (
-                      <option key={cate.categoryId} value={cate.categoryId}>
-                        {cate.categoryName}
-                      </option>
-                    ))}
-                </>
-              )}
-            </Input>
+            {id ? (
+              <div className="multiselect" disabled>
+                <div className="selectBox">
+                  <select className="filter-cate" style={{ backgroundColor: "lightgrey" }}>
+                    <option>{dataEdit?.categoryName ?? ""}</option>
+                  </select>
+                  <div className="overSelect" />
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="multiselect">
+                  <div className="selectBox" onClick={showCheckboxes}>
+                    <span className="fa fa-chevron-down" />
+                    <select className="filter-cate">
+                      <option>{stateCate}</option>
+                    </select>
+                    <div className="overSelect" />
+                  </div>
+                  <div id="checkboxes" disabled={id}>
+                    {category &&
+                      category.map(cate => (
+                        <label className="checkboxlist">
+                          <option
+                            key={cate.categoryId}
+                            value={cate.categoryName}
+                            id="mySelect"
+                            onClick={handleChangeCate}
+                            name="nameCategoryAsset"
+                          >
+                            {cate.categoryName}
+                          </option>
+                        </label>
+                      ))}
+                    <hr />
+                    <label className="checkboxlist" style={{ padding: 6 }}>
+                      <input
+                        type="text"
+                        placeholder="Blutooth Mouse"
+                        id="nameCate"
+                        name="nameCate"
+                        onChange={handleChangeNewCate}
+                      />
+                      <input
+                        type="text"
+                        placeholder="BM"
+                        id="shortname"
+                        name="shortNameCate"
+                      />
+                      <i className="fa fa-check" onClick={CreateCate} />
+                      <i className="fa fa-times" onClick={showCheckboxes} />
+                    </label>
+                  </div>
+                </div>
+              </>
+            )}
           </Col>
         </Row>
         <Row className="row-create-new">
