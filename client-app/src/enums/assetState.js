@@ -8,7 +8,7 @@ export const stateOptions = [
     value: 2,
   },
   {
-    label: "NotAvaiable",
+    label: "Not Avaiable",
     value: 3,
   },
   {

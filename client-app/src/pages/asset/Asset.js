@@ -7,7 +7,7 @@ import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import AssetFilterState from "./AssetFilterState.js";
 import AssetFilterCategory from "./AssetFilterCategory";
-import { _createQuery } from "../../ultis/requestHelper";
+import { _createQuery } from "../../ultis/helper";
 import http from "../../ultis/httpClient.js";
 
 let params = {};

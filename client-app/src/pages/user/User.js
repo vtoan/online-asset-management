@@ -6,7 +6,7 @@ import { useNSModals } from "../../containers/ModalContainer";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import FilterState from "../../common/FilterState";
-import { _createQuery } from "../../ultis/requestHelper";
+import { _createQuery } from "../../ultis/helper";
 import http from "../../ultis/httpClient.js";
 
 let params = {
