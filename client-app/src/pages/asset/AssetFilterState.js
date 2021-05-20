@@ -1,28 +1,6 @@
 import React from "react";
 import MultiSelect from "react-multi-select-component";
-
-const stateOptions = [
-  {
-    label: "Assigned",
-    value: 1,
-  },
-  {
-    label: "Avaiable",
-    value: 2,
-  },
-  {
-    label: "NotAvaiable",
-    value: 3,
-  },
-  {
-    label: "WatingRecycling",
-    value: 4,
-  },
-  {
-    label: "Recycled",
-    value: 5,
-  },
-];
+import { stateOptions } from "../../enums/assetState";
 
 export default function AssetFilterState({ onChange }) {
   const [itemsSeleted, setItemsSeleted] = React.useState([]);

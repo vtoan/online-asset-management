@@ -3,6 +3,7 @@ import { TiDeleteOutline } from "react-icons/ti";
 import { BsPencil } from "react-icons/bs";
 import TableItem from "../../common/TableItem";
 import NSTable from "../../common/NSTable";
+import { stateOptions } from "../../enums/assetState";
 
 const tableTitles = [
   {
@@ -22,29 +23,6 @@ const tableTitles = [
   {
     title: "State",
     nameSort: "sortState",
-  },
-];
-
-const stateOptions = [
-  {
-    label: "Assigned",
-    value: 0,
-  },
-  {
-    label: "Avaiable",
-    value: 1,
-  },
-  {
-    label: "NotAvaiable",
-    value: 2,
-  },
-  {
-    label: "WatingRecycling",
-    value: 3,
-  },
-  {
-    label: "Recycled",
-    value: 4,
   },
 ];
 
