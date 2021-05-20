@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Models
 {
-    public class AssignmentDetailModel
+    public class AssignmentDetailModel : AssignmentModel
     {
         public string Specification { get; set; }
         public string Note { get; set; }
