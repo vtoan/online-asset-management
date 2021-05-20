@@ -48,7 +48,8 @@ namespace RookieOnlineAssetManagement.Controllers
                     UserName = userCurr.UserName,
                     FullName = $"{userCurr.FirstName} {userCurr.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
-                    LocationId = userCurr.LocationId
+                    LocationId = userCurr.LocationId,
+                    Status = userCurr.IsChange.Value
                 });
             }
             return NotFound();
@@ -72,7 +73,9 @@ namespace RookieOnlineAssetManagement.Controllers
                     UserName = userCurr.UserName,
                     FullName = $"{userCurr.FirstName} {userCurr.LastName}",
                     RoleName = roles.Count > 0 ? roles[0] : "unknown",
-                    LocationId = userCurr.LocationId
+                    LocationId = userCurr.LocationId,
+                    Status = userCurr.IsChange.Value
+
                 });
             }
             return NotFound();
