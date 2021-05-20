@@ -164,6 +164,8 @@ export default function AssetForm() {
       locationid: params.locationid,
     };
     if (id) {
+      let cateId = category.find(cate => cate.categoryName == dataEdit.categoryName)
+      asset.categoryId = cateId.categoryId;
       http
         .put("/api/asset/" + id + _createQuery(params), asset)
         .then((resp) => {
@@ -202,49 +204,62 @@ export default function AssetForm() {
             <span>Category</span>
           </Col>
           <Col className="col-create-new">
-            <div className="multiselect">
-              <div className="selectBox" onClick={showCheckboxes}>
-                <span className="fa fa-chevron-down" />
-                <select className="filter-cate">
-                  <option>{stateCate}</option>
-                </select>
-                <div className="overSelect" />
+            {id ? (
+              <div className="multiselect" disabled>
+                <div className="selectBox">
+                  <select className="filter-cate" style={{ backgroundColor: "lightgrey" }}>
+                    <option>{dataEdit?.categoryName ?? ""}</option>
+                  </select>
+                  <div className="overSelect" />
+                </div>
               </div>
-              <div id="checkboxes" disabled={id}>
-                {category &&
-                  category.map(cate => (
-                    <label className="checkboxlist">
-                      <option
-                        key={cate.categoryId}
-                        value={cate.categoryName}
-                        id="mySelect"
-                        onClick={handleChangeCate}
-                        name="nameCategoryAsset"
-                      >
-                        {cate.categoryName}
-                      </option>
+            ) : (
+              <>
+                <div className="multiselect">
+                  <div className="selectBox" onClick={showCheckboxes}>
+                    <span className="fa fa-chevron-down" />
+                    <select className="filter-cate">
+                      <option>{stateCate}</option>
+                    </select>
+                    <div className="overSelect" />
+                  </div>
+                  <div id="checkboxes" disabled={id}>
+                    {category &&
+                      category.map(cate => (
+                        <label className="checkboxlist">
+                          <option
+                            key={cate.categoryId}
+                            value={cate.categoryName}
+                            id="mySelect"
+                            onClick={handleChangeCate}
+                            name="nameCategoryAsset"
+                          >
+                            {cate.categoryName}
+                          </option>
+                        </label>
+                      ))}
+                    <hr />
+                    <label className="checkboxlist" style={{ padding: 6 }}>
+                      <input
+                        type="text"
+                        placeholder="Blutooth Mouse"
+                        id="nameCate"
+                        name="nameCate"
+                        onChange={handleChangeNewCate}
+                      />
+                      <input
+                        type="text"
+                        placeholder="BM"
+                        id="shortname"
+                        name="shortNameCate"
+                      />
+                      <i className="fa fa-check" onClick={CreateCate} />
+                      <i className="fa fa-times" onClick={showCheckboxes} />
                     </label>
-                  ))}
-                <hr />
-                <label className="checkboxlist" style={{ padding: 6 }}>
-                  <input
-                    type="text"
-                    placeholder="Blutooth Mouse"
-                    id="nameCate"
-                    name="nameCate"
-                    onChange={handleChangeNewCate}
-                  />
-                  <input
-                    type="text"
-                    placeholder="BM"
-                    id="shortname"
-                    name="shortNameCate"
-                  />
-                  <i className="fa fa-check" onClick={CreateCate} />
-                  <i className="fa fa-times" onClick={showCheckboxes} />
-                </label>
-              </div>
-            </div>
+                  </div>
+                </div>
+              </>
+            )}
           </Col>
         </Row>
         <Row className="row-create-new">

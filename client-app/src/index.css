@@ -364,6 +364,7 @@ form.example button {
   text-overflow: '';
   padding-left: 10px;
   border-radius: 5px;
+  border-color: gainsboro;
 }
 
 .multiselect {
