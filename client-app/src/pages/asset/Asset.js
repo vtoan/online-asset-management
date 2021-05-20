@@ -1,6 +1,6 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
-import { Row, Col } from "reactstrap";
+import { Row, Col, ListGroup, ListGroupItem } from "reactstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
@@ -9,6 +9,11 @@ import AssetFilterState from "./AssetFilterState.js";
 import AssetFilterCategory from "./AssetFilterCategory";
 import { _createQuery } from "../../ultis/helper";
 import http from "../../ultis/httpClient.js";
+import NSConfirmModal, {
+  useNSConfirmModal,
+} from "../../common/NSConfirmModal.js";
+
+import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 
 let params = {};
 
@@ -26,12 +31,14 @@ export default function Asset() {
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const history = useHistory();
   //modal
-  const { modalAlert, modalLoading, modalConfirm } = useNSModals();
+  const modalConfirm = useNSConfirmModal();
+  const modalDetail = useNSDetailModal();
+  const { modalAlert, modalLoading } = useNSModals();
   modalConfirm.config({
     message: "Do you want to delete this asset?",
     btnName: "Delete",
     onSubmit: (item) => {
-      modalLoading.show("Processing ...");
+      modalLoading.show();
       http
         .delete("/api/asset/" + item.assetId)
         .then((resp) => {
@@ -123,10 +130,29 @@ export default function Asset() {
     _fetchData();
   };
 
+  const handleShowDetail = (item) => {
+    console.log("object");
+    modalDetail.show({
+      title: "Detailed Asset Information",
+      content: (
+        <>
+          <p>Item {item.assetId}</p>
+          <ListGroup>
+            <ListGroupItem>Cras justo odio</ListGroupItem>
+            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
+            <ListGroupItem>Morbi leo risus</ListGroupItem>
+            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
+            <ListGroupItem>Vestibulum at eros</ListGroupItem>
+          </ListGroup>
+        </>
+      ),
+    });
+  };
+
   return (
     <>
       <h5 className="name-list">Asset List</h5>
-      <Row className="filter-bar">
+      <Row className="filter-bar mb-3">
         <Col xs={2}>
           <AssetFilterState onChange={handleFilterState} />
         </Col>
@@ -150,7 +176,10 @@ export default function Asset() {
         onDelete={handleDelete}
         totalPage={totalPages}
         pageSelected={pageCurrent}
+        onShowDetail={handleShowDetail}
       />
+      <NSConfirmModal hook={modalConfirm} />
+      <NSDetailModal hook={modalDetail} />
     </>
   );
 }
