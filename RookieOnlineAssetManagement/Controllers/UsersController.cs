@@ -38,7 +38,7 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserRequestModel>> UpdateAsync(string id, UserRequestModel userRequest)
+        public async Task<ActionResult<UserModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
             if (!ModelState.IsValid) return BadRequest(userRequest);
             return Ok(await _userSer.UpdateUserAsync(id, userRequest));
@@ -51,7 +51,7 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserRequestModel>> CreateAsync(UserRequestModel userRequestModel)
+        public async Task<ActionResult<UserModel>> CreateAsync(UserRequestModel userRequestModel)
         {
             if (!ModelState.IsValid) return BadRequest();
             var result = await _userSer.CreateUserAsync(userRequestModel);

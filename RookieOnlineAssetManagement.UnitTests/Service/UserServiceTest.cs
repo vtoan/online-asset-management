@@ -33,7 +33,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
                 DateOfBirth = new DateTime(1999,04,27),
                 JoinedDate = new DateTime(2021, 04, 27),
             };
-            mockUserRepo.Setup(m => m.CreateUserAsync(It.IsAny<UserRequestModel>())).ReturnsAsync(UserTest);
+            var usermodel = new UserModel();
+            mockUserRepo.Setup(m => m.CreateUserAsync(It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
             var userService = new UserService(mockUserRepo.Object);
             var result = await userService.CreateUserAsync(UserTest);
             Assert.NotNull(result);
@@ -74,7 +75,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
                 DateOfBirth = new DateTime(1999, 04, 27),
                 JoinedDate = new DateTime(2021, 04, 27),
             };
-            mockUserRepo.Setup(x => x.UpdateUserAsync(It.IsAny<string>(), It.IsAny<UserRequestModel>())).ReturnsAsync(UserTest);
+            var usermodel = new UserModel();
+            mockUserRepo.Setup(x => x.UpdateUserAsync(It.IsAny<string>(), It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
             var assetSer = new UserService(mockUserRepo.Object);
             var result = await assetSer.UpdateUserAsync(UserTest.UserId, UserTest);
             Assert.NotNull(result);

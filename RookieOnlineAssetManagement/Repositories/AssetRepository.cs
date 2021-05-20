@@ -17,7 +17,7 @@ namespace RookieOnlineAssetManagement.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<AssetRequestModel> CreateAssetAsync(AssetRequestModel assetRequest)
+        public async Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest)
         {
             var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryId == assetRequest.CategoryId);
             assetRequest.AssetId = category.ShortName + (100000 + category.NumIncrease + 1).ToString();
@@ -31,12 +31,19 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = assetRequest.State,
                 LocationId = assetRequest.LocationId
             };
+            var assetmodel = new AssetModel
+            {
+                AssetId = asset.AssetId,
+                AssetName = asset.AssetName,
+                CategoryName = category.CategoryName,
+                State = asset.State
+            };
             var transaction = _dbContext.Database.BeginTransaction();
             _dbContext.Assets.Add(asset);
             category.NumIncrease = category.NumIncrease + 1;
             await _dbContext.SaveChangesAsync();
             transaction.Commit();
-            return assetRequest;
+            return assetmodel;
         }
         public async Task<bool> DeleteAssetAsync(string id)
         {
@@ -131,24 +138,31 @@ namespace RookieOnlineAssetManagement.Repositories
             return (list, result.TotalPage);
         }
 
-        public async Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest)
+        public async Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {
-            var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
+            var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
             if (asset == null)
             {
-                return (AssetRequestModel)(null);
+                return (AssetModel)(null);
             }
             if (assignment != null)
             {
-                return (AssetRequestModel)(null);
+                return (AssetModel)(null);
             }
             asset.AssetName = assetRequest.AssetName;
             asset.Specification = assetRequest.Specification;
             asset.InstalledDate = assetRequest.InstalledDate.Value;
             asset.State = assetRequest.State;
+            var assetmodel = new AssetModel
+            {
+                AssetId = asset.AssetId,
+                AssetName = asset.AssetName,
+                CategoryName = asset.Category.CategoryName,
+                State = asset.State
+            };
             await _dbContext.SaveChangesAsync();
-            return assetRequest;
+            return assetmodel;
         }
     }
 }

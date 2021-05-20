@@ -14,13 +14,10 @@ namespace RookieOnlineAssetManagement.Repositories
 
         Task<AssetDetailModel> GetAssetByIdAsync(string id);
 
-        Task<AssetRequestModel> CreateAssetAsync(AssetRequestModel assetRequest);
+        Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest);
 
-        Task<AssetRequestModel> UpdateAssetAsync(AssetRequestModel assetRequest);
+        Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest);
 
         Task<bool> DeleteAssetAsync(string id);
-
-
-
     }
 }
