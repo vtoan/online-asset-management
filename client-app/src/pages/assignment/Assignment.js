@@ -1,6 +1,7 @@
 import React from "react";
 import AssignmentTable from "./AssignmentTable";
 import { Row, Col } from "reactstrap";
+import { Link } from "react-router-dom";
 import SelectDate from "../../common/SelectDate";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
@@ -75,7 +76,7 @@ export default function Assignment() {
       <h5 className="name-list">Assignment List</h5>
       <Row className="filter-bar">
         <Col>
-          <FilterState namefilter="State" />
+          {/* <FilterState namefilter="State" /> */}
         </Col>
         <Col>
           <SelectDate namedate="Assigned Date" />
@@ -84,7 +85,9 @@ export default function Assignment() {
           <SearchBar />
         </Col>
         <Col style={{ textAlign: "right" }}>
-          <CreateNew namecreate="Create new assignment" />
+          <Link to="/new-assignments">
+            <CreateNew namecreate="Create new assignment" />
+          </Link>
         </Col>
       </Row>
       <AssignmentTable
