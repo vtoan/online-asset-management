@@ -54,9 +54,9 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
                 Specification = "test",
             };
             var assetmodel = new AssetModel();
-            mockAssetSer.Setup(x => x.UpdateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
+            mockAssetSer.Setup(x => x.UpdateAssetAsync(It.IsAny<string>(), It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
             var assetContr = new AssetController(mockAssetSer.Object);
-            var result = await assetContr.UpdateAsync(asset);
+            var result = await assetContr.UpdateAsync(asset.AssetId, asset);
             Assert.NotNull(result);
         }
         [Fact]
