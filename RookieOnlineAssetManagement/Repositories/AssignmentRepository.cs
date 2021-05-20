@@ -83,7 +83,6 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             assignment.Note = assignmentRequestModel.Note;
             assignment.AssignedDate = assignmentRequestModel.AssignedDate;
-            assignment.State = assignmentRequestModel.State;
             var result = await _dbContext.SaveChangesAsync();
             if (result > 0)
             {
