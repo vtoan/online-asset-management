@@ -61,6 +61,7 @@ export default function AssetForm() {
   const [nameHeader, setnameHeader] = React.useState("");
   const [category, setCategory] = React.useState([]);
   const [stateCate, setStateCate] = React.useState([]);
+  const [stateCateId, setStateCateId] = React.useState([]);
   const [NewCate, setNewCate] = React.useState('');
 
   const _fetchCateData = () => {
@@ -96,34 +97,6 @@ export default function AssetForm() {
     }
   }, [id]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const asset = {
-      assetId: id,
-      assetName: String(event.target.nameAsset.value),
-      categoryId: stateCate,
-      specification: String(event.target.specificationAsset.value),
-      installedDate: String(event.target.dateAddAsset.value),
-      state: Number(event.target.radioAvailable.value),
-      locationid: params.locationid,
-    };
-    if (id) {
-      http
-        .put("/api/asset/" + id + _createQuery(params), asset)
-        .then((resp) => {
-          console.log(asset);
-        })
-        .catch((err) => console.log(err));
-    } else {
-      http
-        .post("/api/asset" + _createQuery(params), asset)
-        .then((resp) => {
-          console.log(asset);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
   const handleChangeState = (event) => {
     setStateSelected(Number(event.target.value));
     console.log(event.target.value);
@@ -136,6 +109,9 @@ export default function AssetForm() {
 
   const handleChangeCate = event => {
     setStateCate(String(event.target.value));
+    let cateId = category.find(cate => cate.categoryName == event.target.value)
+    setStateCateId(cateId.categoryId)
+    console.log(cateId.categoryId);
     console.log(event.target.value);
   };
 
@@ -159,18 +135,49 @@ export default function AssetForm() {
   const CreateCate = event => {
     event.preventDefault();
     const cate = {
-      // name: String(event.target.nameCate.value),
-      // shortname: String(event.target.shortNameCate.value)
       categoryName: document.getElementById('nameCate').value,
       shortName: document.getElementById('shortname').value
     };
+
+    if (cate.categoryName == "" && cate.shortName == "") { alert("Enter category's infomations, please!") }
+    else if (cate.categoryName == "") { alert("Enter category's name, please!") }
+    else if (cate.shortName == "") { alert("Enter category's short name, please!") }
+
     http
       .post("/api/category", cate)
       .then((resp) => {
         console.log(cate);
+        _fetchCateData()
       })
       .catch((err) => console.log(err));
-    _fetchCateData()
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const asset = {
+      assetId: id,
+      assetName: String(event.target.nameAsset.value),
+      categoryId: stateCateId,
+      specification: String(event.target.specificationAsset.value),
+      installedDate: String(event.target.dateAddAsset.value),
+      state: Number(event.target.radioAvailable.value),
+      locationid: params.locationid,
+    };
+    if (id) {
+      http
+        .put("/api/asset/" + id + _createQuery(params), asset)
+        .then((resp) => {
+          console.log(asset);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      http
+        .post("/api/asset" + _createQuery(params), asset)
+        .then((resp) => {
+          console.log(asset);
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
