@@ -51,7 +51,7 @@ namespace RookieOnlineAssetManagement.Services
 
         public bool CheckDateGreaterThan(DateTime SmallDate, DateTime BigDate)
         {
-            if (SmallDate > BigDate)
+            if (SmallDate.Date > BigDate.Date)
             {
                 return false;
             }
