@@ -1,7 +1,7 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
 import { Row, Col, ListGroup, ListGroupItem } from "reactstrap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
@@ -25,11 +25,13 @@ function _refreshParams() {
   params.page = 1;
 }
 
-export default function Asset() {
+export default function Asset(props) {
   const [assetDatas, setAssets] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const history = useHistory();
+  const location = useLocation();
+  console.log(location);
   //modal
   const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
@@ -132,21 +134,7 @@ export default function Asset() {
 
   const handleShowDetail = (item) => {
     console.log("object");
-    modalDetail.show({
-      title: "Detailed Asset Information",
-      content: (
-        <>
-          <p>Item {item.assetId}</p>
-          <ListGroup>
-            <ListGroupItem>Cras justo odio</ListGroupItem>
-            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-            <ListGroupItem>Morbi leo risus</ListGroupItem>
-            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-            <ListGroupItem>Vestibulum at eros</ListGroupItem>
-          </ListGroup>
-        </>
-      ),
-    });
+    modalDetail.show();
   };
 
   return (
@@ -179,7 +167,18 @@ export default function Asset() {
         onShowDetail={handleShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
-      <NSDetailModal hook={modalDetail} />
+      <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
+        <>
+          {/* <p>Item {item.assetId}</p> */}
+          <ListGroup>
+            <ListGroupItem>Cras justo odio</ListGroupItem>
+            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
+            <ListGroupItem>Morbi leo risus</ListGroupItem>
+            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
+            <ListGroupItem>Vestibulum at eros</ListGroupItem>
+          </ListGroup>
+        </>
+      </NSDetailModal>
     </>
   );
 }
