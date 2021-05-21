@@ -3,6 +3,9 @@ import NSTable from "../../common/NSTable";
 
 const tableTitles = [
     {
+        hr: 'none'
+    },
+    {
         title: "Staff Code",
         nameSort: "sortCode",
     },
@@ -14,12 +17,22 @@ const tableTitles = [
     {
         title: "Type",
         nameSort: "sortType",
+        width: "20%",
     },
 ];
 
 export default function UserTable({ datas, onChangeSort, }) {
     const itemRender = (item) => (
         <>
+            <td>
+                <label className="container-radio">
+                    <input
+                        type="radio"
+                        value="0"
+                    />
+                    <span className="checkmark" style={{ marginTop: 8 }} />
+                </label>
+            </td>
             <td>
                 <TableItem>{item.staffCode}</TableItem>
             </td>

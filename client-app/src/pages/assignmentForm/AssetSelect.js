@@ -4,6 +4,9 @@ import NSTable from "../../common/NSTable";
 
 const tableTitles = [
     {
+
+    },
+    {
         title: "Asset Code",
         nameSort: "sortCodeA",
     },
@@ -25,7 +28,14 @@ export default function AssetTable({
 }) {
     const itemRender = (asset) => (
         <>
-            <td>
+            <label className="container-radio">
+                <input
+                    type="radio"
+                    value="0"
+                />
+                <span className="checkmark" style={{ marginTop: 8 }} />
+            </label>
+            <td className="modal-asset">
                 <TableItem>{asset.assetId}</TableItem>
             </td>
             <td>

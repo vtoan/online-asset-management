@@ -139,7 +139,7 @@ export default function UserForm() {
                         <span>User</span>
                     </Col>
                     <Col className="col-assignment-new" xs={3}>
-                        <div class="searchBox" onClick={handleShowDetailAsset}>
+                        <div class="searchBox" onClick={handleShowDetailUser}>
                             <span class="fa fa-search" id="searchIcon" />
                             <Input
                                 type="text"
@@ -155,7 +155,7 @@ export default function UserForm() {
                         <span>Asset</span>
                     </Col>
                     <Col className="col-assignment-new" xs={3}>
-                        <div class="searchBox" onClick={handleShowDetailUser}>
+                        <div class="searchBox" onClick={handleShowDetailAsset}>
                             <span class="fa fa-search" id="searchIcon" />
                             <Input
                                 type="text"
@@ -199,7 +199,7 @@ export default function UserForm() {
                             <Button color="danger" type="submit">
                                 Save
                             </Button>
-                            <Link to="/assignment">
+                            <Link to="/assignments">
                                 <Button
                                     type="reset"
                                     outline
@@ -218,10 +218,12 @@ export default function UserForm() {
             </form>
             <NSDetailModal hook={modalDetailAsset} title="Select Asset">
                 <SearchBar onSearch={handleSearch} />
+                <h5 className="title-modal">Select Asset</h5>
                 <AssetSelect datas={assetDatas} onChangeSort={handleChangeSort} />
             </NSDetailModal>
             <NSDetailModal hook={modalDetailUser} title="Select User">
                 <SearchBar onSearch={handleSearch} />
+                <h5 className="title-modal">Select User</h5>
                 <UserSelect datas={userDatas} onChangeSort={handleChangeSort} />
             </NSDetailModal>
         </>
