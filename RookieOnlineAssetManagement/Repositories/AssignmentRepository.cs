@@ -228,11 +228,6 @@ namespace RookieOnlineAssetManagement.Repositories
             }).ToListAsync();
             return list;
         }
-        public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(StateAssignment[] StateAssignments, string AssignedDateAssignment, string query, SortBy AssetId, SortBy AssetName, SortBy AssignedTo, SortBy AssignedBy, SortBy AssignedDate, SortBy State, int page, int pageSize)
-        {
-            return (null, 0, 0);
-            return true;
-        }
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
         {
             var queryable = _dbContext.Assignments.Include(x => x.Location).Where(x => x.LocationId == assignmentRequestParams.LocationId);
