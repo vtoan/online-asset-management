@@ -32,16 +32,16 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assetService.GetAssetByIdAsync(id));
         }
         [HttpPost]
-        public async Task<ActionResult<AssetRequestModel>> CreateAsync(AssetRequestModel assetRequestModel)
+        public async Task<ActionResult<AssetModel>> CreateAsync(AssetRequestModel assetRequestModel)
         {
             if (!ModelState.IsValid) return BadRequest(assetRequestModel);
             return Ok(await _assetService.CreateAssetAsync(assetRequestModel));
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<AssetRequestModel>> UpdateAsync(AssetRequestModel assetRequestModel)
+        public async Task<ActionResult<AssetModel>> UpdateAsync(string id, AssetRequestModel assetRequestModel)
         {
             if (!ModelState.IsValid) return BadRequest(assetRequestModel);
-            return Ok(await _assetService.UpdateAssetAsync(assetRequestModel));
+            return Ok(await _assetService.UpdateAssetAsync(id, assetRequestModel));
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)

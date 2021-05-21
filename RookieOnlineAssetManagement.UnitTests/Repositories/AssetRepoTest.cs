@@ -71,17 +71,16 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var assetTestNew = new AssetRequestModel()
             {
                 AssetId = assetNew.AssetId,
-                CategoryId=assetNew.CategoryId,
+                CategoryId = assetTest.CategoryId,
                 LocationId = locationId,
                 AssetName = "Asset Test Update",
                 InstalledDate = DateTime.Now
             };
-            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew);
+            var assetupdate = await assetRepo.UpdateAssetAsync(assetNew.AssetId, assetTestNew);
             Assert.NotNull(assetupdate);
             Assert.True(assetNew.AssetId.Equals(assetupdate.AssetId));
             Assert.True(assetupdate.AssetName.Equals(assetTestNew.AssetName));
-            Assert.True(assetupdate.CategoryId.Equals(assetNew.CategoryId));
-            Assert.False(assetupdate.LocationId.Equals(assetNew.LocationId));
+            Assert.True(assetupdate.CategoryName.Equals(assetNew.CategoryName));
         }
         [Fact]
         public async Task UpdateAsset_Failed()
@@ -116,7 +115,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssetName = "Asset Test Update",
                 InstalledDate = DateTime.Now
             };
-            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew);
+            var assetupdate = await assetRepo.UpdateAssetAsync(assetNew.AssetId, assetTestNew);
 
             Assert.Null(assetupdate);
         }
@@ -202,7 +201,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
 
             Assert.True(asset.AssetId.Equals(assetNew.AssetId));
             Assert.NotNull(asset);
-            Assert.IsType<AssetModel>(asset);
+            Assert.IsType<AssetDetailModel>(asset);
         }
         [Fact]
         public async Task GetAssetById_Failed()

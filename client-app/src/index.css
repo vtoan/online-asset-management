@@ -294,7 +294,7 @@ form.example button {
 /* --- assetForm --- */
 
 .name-new-asset {
-  width: 200px;
+  /* width: 200px; */
   /* height: 27px; */
   border-radius: 7px;
 }
@@ -325,7 +325,7 @@ form.example button {
 
 .submit-create-asset {
   float: right;
-  padding-right: 40px;
+  padding-right: 30px;
 }
 
 .btn-cancel {
@@ -352,34 +352,34 @@ form.example button {
 
 .fa.fa-chevron-down {
   position: absolute;
-  left: 83%;
+  left: 85%;
   padding: 8px;
   z-index: 1;
-  top: 1%;
+  top: 10%;
 }
 
 .filter-cate {
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 1px;
-  text-overflow: '';
+  text-overflow: "";
   padding-left: 10px;
   border-radius: 5px;
   border-color: gainsboro;
 }
 
 .multiselect {
-  width: 200px;
+  width: 100%;
 }
 
 .selectBox {
   position: relative;
+  width: 100%;
 }
 
 .selectBox .filter-cate {
-  font-size: 15px;
-  width: 200px;
-  height: 34px;
+  width: 100%;
+  height: 2.5em;
 }
 
 .overSelect {
@@ -392,12 +392,12 @@ form.example button {
 
 #checkboxes {
   border: 1px #dadada solid;
-  width: 200px;
+  width: 310px;
   display: none;
   background-color: rgb(245, 245, 245);
   padding-top: 10px;
-   position: absolute;
-    z-index: 1;
+  position: absolute;
+  z-index: 1;
 }
 
 #checkboxes label {
@@ -479,6 +479,20 @@ hr {
   border: none;
   background-color: white;
   font-size: 1.4em;
+}
+.modal-dialog .modal-header,
+.modal-dialog .modal-body {
+  padding-left: 3em !important;
+  padding-right: 3em !important;
+}
+
+.modal-dialog .modal-header {
+  color: var(--clr-primary);
+  background-color: var(--clr-secondary);
+}
+.modal-dialog .modal-body {
+  padding-top: 2em;
+  padding-bottom: 2em;
 }
 
 /* customer form */

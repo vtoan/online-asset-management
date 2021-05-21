@@ -7,12 +7,12 @@ namespace RookieOnlineAssetManagement.Services
 {
     public interface IUserService
     {
-        Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize);
+        Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas);
 
-        Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest);
+        Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest);
 
         Task<bool> DisableUserAsync(string id);
-        Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest);
+        Task<UserModel> CreateUserAsync(UserRequestModel userRequest);
         Task<UserDetailModel> GetUserByIdAsync(string id);
         Task<string> GetDefaultPassword(string id);
     }

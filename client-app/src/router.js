@@ -4,9 +4,8 @@ import Asset from "./pages/asset/Asset";
 import Assignment from "./pages/assignment/Assignment";
 import Request from "./pages/request/Request";
 import Report from "./pages/report/Report";
-import AssetForm from "./pages/assetForm/assetForm";
-import UserForm from "./pages/userForm/userForm";
-import AssignmentForm from "./pages/assignmentForm/AssignmentForm";
+import AssetDetail from "./pages/assetForm/AssetDetail";
+import userForm from "./pages/userForm/userForm";
 
 export const routePaths = [
   {
@@ -47,12 +46,12 @@ export const routePaths = [
   {
     path: "/new-asset",
     title: "Manage Asset > Create New Asset",
-    component: AssetForm,
+    component: AssetDetail,
   },
   {
     path: "/assets/:id",
     title: "Manage Asset > Edit Asset",
-    component: AssetForm,
+    component: AssetDetail,
   },
   {
     path: "/new-user",
