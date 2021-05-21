@@ -61,7 +61,6 @@ namespace RookieOnlineAssetManagement.Repositories
             _dbContext.SaveChanges();
             return true;
         }
-
         public async Task<AssetDetailModel> GetAssetByIdAsync(string id)
         {
             var asset = await _dbContext.Assets.Include(x => x.Category).Include(x => x.Location).FirstOrDefaultAsync(x => x.AssetId == id);
@@ -83,7 +82,6 @@ namespace RookieOnlineAssetManagement.Repositories
             };
             return assetmodel;
         }
-
         public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(StateAsset[] state, string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize)
         {
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
@@ -137,7 +135,57 @@ namespace RookieOnlineAssetManagement.Repositories
             }).ToListAsync();
             return (list, result.TotalPage);
         }
+        public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currentassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
+        {
+            var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
+            var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
+            queryable = queryable.Where(x => x.LocationId == locationid);
+            queryable = queryable.Where(x => x.State == (short)StateAsset.Avaiable);
+            if (!string.IsNullOrEmpty(query))
+                queryable = queryable.Where(x => x.AssetId.Contains(query) || x.AssetName.Contains(query) || x.Category.CategoryName.Contains(query));
+            var list = await queryable.Select(x => new AssetModel
+            {
+                AssetId = x.AssetId,
+                AssetName = x.AssetName,
+                CategoryName = x.Category.CategoryName,
+                State = x.State
+            }).ToListAsync();
+            var currentassetmodel = new AssetModel
+            {
+                AssetId = currentasset.AssetId,
+                AssetName = currentasset.AssetName,
+                CategoryName = currentasset.Category.CategoryName,
+                State = currentasset.State
+            };
+            list.Add(currentassetmodel);
 
+            if (AssetIdSort.HasValue)
+            {
+                if (AssetIdSort.Value == SortBy.ASC)
+                    list = list.OrderBy(x => x.AssetId).ToList();
+                else
+                    list = list.OrderByDescending(x => x.AssetId).ToList();
+            }
+            else if (AssetNameSort.HasValue)
+            {
+                if (AssetNameSort.Value == SortBy.ASC)
+                    list = list.OrderBy(x => x.AssetName).ToList();
+                else
+                    list = list.OrderByDescending(x => x.AssetName).ToList();
+            }
+            else if (CategoryNameSort.HasValue)
+            {
+                if (CategoryNameSort.Value == SortBy.ASC)
+                    list = list.OrderBy(x => x.CategoryName).ToList();
+                else
+                    list = list.OrderByDescending(x => x.CategoryName).ToList();
+            }
+            else
+            {
+                list = list.OrderBy(x => x.AssetId).ToList();
+            }
+            return list;
+        }
         public async Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {
             var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
