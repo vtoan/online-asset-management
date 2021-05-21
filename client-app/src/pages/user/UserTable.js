@@ -6,41 +6,41 @@ import { TiDeleteOutline } from "react-icons/ti";
 const tableTitles = [
     {
         title: "Staff Code",
-        nameSort: "sort StaffCode",
+        nameSort: "sortCode",
     },
     {
         title: "Full Name",
-        nameSort: "sort FullName",
+        nameSort: "sortFullName",
     },
     {
         title: "User Name",
-        nameSort: "sort UserName",
+        nameSort: "sortUserName",
     },
     {
         title: "Joined Date",
-        nameSort: "sort JoinedDate",
+        nameSort: "sortDate",
     },
     {
         title: "Type",
-        nameSort: "sort Type",
+        nameSort: "sortType",
     },
 ]
 
 function formatDate(date) {
     if (date == null) {
-      date = Date.now();
+        date = Date.now();
     }
     var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
-  
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
     if (month.length < 2)
-      month = '0' + month;
+        month = '0' + month;
     if (day.length < 2)
-      day = '0' + day;
+        day = '0' + day;
     return [year, month, day].join('-');
-  }
+}
 
 export default function UserTable({
     datas,
@@ -62,10 +62,10 @@ export default function UserTable({
                 <TableItem>{item.fullName}</TableItem>
             </td>
             <td>
-                <TableItem>{item.roleName}</TableItem>
+                <TableItem>{formatDate(item.joinedDate)}</TableItem>
             </td>
             <td>
-                <TableItem>{formatDate(item.joinedDate)}</TableItem>
+                <TableItem>{item.roleName}</TableItem>
             </td>
             <td className="table-actions">
                 <span className="table-icon" onClick={() => onEdit && onEdit(item)}>

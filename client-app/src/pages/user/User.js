@@ -12,18 +12,18 @@ import http from "../../ultis/httpClient.js";
 let params = {
   locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
   sortCode: 0,
-  sortName: 0,
-  sortCate: 0,
-  sortState: 0,
+  sortFullName: 0,
+  sortDate: 0,
+  sortType: 0,
   query: "",
   pagesize: 4,
   page: null,
   filter: null,
 };
 
-function refreshParams() {
+function _refreshParams() {
   params.sortCode = 0;
-  params.sortName = 0;
+  params.sortFullName = 0;
   params.sortCate = 0;
   params.sortState = 0;
 }
@@ -64,9 +64,19 @@ export default function User() {
 
   const handleChangeSort = (target) => {
     console.log(target);
+    console.log(params)
+    _refreshParams();
+    params = { ...params, ...target };
+    if (target < 0) return (params.sortCode = null);
     _fetchData();
   };
 
+  const handleSearch = (target) => {
+    console.log();
+    params.query = target;
+    _refreshParams();
+    _fetchData();
+  }
   const handleEdit = (item) => {
     history.push("/users/" + item.code);
   };
@@ -87,7 +97,7 @@ export default function User() {
           <FilterState namefilter="Type" />
         </Col>
         <Col>
-          <SearchBar />
+          <SearchBar onSearch = {handleSearch}/>
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-user">
