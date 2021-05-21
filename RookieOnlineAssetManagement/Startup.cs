@@ -39,7 +39,7 @@ namespace RookieOnlineAssetManagement
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSwaggerGen();
-
+            services.AddSession();
             //spa
             // In production, the React files will be served from this directory
             // services.AddSpaStaticFiles(configuration =>
@@ -76,7 +76,7 @@ namespace RookieOnlineAssetManagement
             //     app.UseStatusCodePages();
             //     app.UseHsts();
             // }
-
+            app.UseSession();
             app.UseCors(b =>
             {
                 b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("total-pages").WithHeaders("total-pages");
@@ -90,6 +90,9 @@ namespace RookieOnlineAssetManagement
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<CheckLocationMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -97,6 +100,7 @@ namespace RookieOnlineAssetManagement
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
 
             // app.UseSpa(spa =>
             // {

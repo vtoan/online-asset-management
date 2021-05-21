@@ -22,15 +22,15 @@ namespace RookieOnlineAssetManagement.Repositories
             _userManager = userManager;
         }
 
-        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
+        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas)
         {
-            var queryable = _dbContext.Users.Where(item => item.LocationId == locationId);
-            if (!string.IsNullOrEmpty(query))
+            var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.locationId);
+            if (!string.IsNullOrEmpty(userRequestParmas.query))
             {
-                queryable = queryable.Where(x => x.Id.Contains(query) || x.UserName.Contains(query));
+                queryable = queryable.Where(x => x.Id.Contains(userRequestParmas.query) || x.UserName.Contains(userRequestParmas.query));
             }
-            if (sortCode != null)
-                switch (sortCode)
+            if (userRequestParmas.sortCode != null)
+                switch (userRequestParmas.sortCode)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.StaffCode);
@@ -39,9 +39,9 @@ namespace RookieOnlineAssetManagement.Repositories
                         queryable = queryable.OrderByDescending(item => item.StaffCode);
                         break;
                 }
-            if (sortFullName.HasValue)
+            if (userRequestParmas.sortFullName.HasValue)
             {
-                switch (sortFullName)
+                switch (userRequestParmas.sortFullName)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
@@ -51,9 +51,9 @@ namespace RookieOnlineAssetManagement.Repositories
                         break;
                 }
             }
-            else if (sortDate.HasValue)
+            else if (userRequestParmas.sortDate.HasValue)
             {
-                switch (sortDate)
+                switch (userRequestParmas.sortDate)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.JoinedDate);
@@ -66,14 +66,14 @@ namespace RookieOnlineAssetManagement.Repositories
             //include role
             queryable.Include(item => item.Roles);
 
-            if (type.Length > 0)
+            if (userRequestParmas.type?.Length > 0)
             {
-                var stringType = type.Select(x => x.ToString()).ToArray();
+                var stringType = userRequestParmas.type.Select(x => x.ToString()).ToArray();
                 queryable = queryable.Where(x => x.Roles.Any(r => stringType.Contains(r.NormalizedName)));
             }
-            if (sortType.HasValue)
+            if (userRequestParmas.sortType.HasValue)
             {
-                switch (sortType)
+                switch (userRequestParmas.sortType)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.Roles.First());
@@ -84,7 +84,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
             }
 
-            var result = Paging<User>(queryable, pageSize, page);
+            var result = Paging<User>(queryable, userRequestParmas.pageSize, userRequestParmas.page);
             var list = await result.Sources.Select(x => new UserModel
             {
                 UserId = x.Id,
@@ -124,7 +124,7 @@ namespace RookieOnlineAssetManagement.Repositories
             return userdetail;
         }
 
-        public async Task<UserRequestModel> CreateUserAsync(UserRequestModel userRequest)
+        public async Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
         {
             string username = userRequest.FirstName.ToLower();
             var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
@@ -133,6 +133,9 @@ namespace RookieOnlineAssetManagement.Repositories
 
             var UserExtension = await _dbContext.UserExtensions.FirstOrDefaultAsync(x => x.UserName == username);
             int number = _dbContext.UserExtensions.Sum(x => x.NumIncrease) + 1;
+
+            var usermodel = new UserModel();
+
             var transaction = _dbContext.Database.BeginTransaction();
             try
             {
@@ -180,6 +183,13 @@ namespace RookieOnlineAssetManagement.Repositories
                 {
                     return null;
                 }
+                usermodel.UserId = user.Id;
+                usermodel.StaffCode = user.StaffCode;
+                usermodel.FullName = user.FirstName + " " + user.LastName;
+                usermodel.UserName = user.UserName;
+                usermodel.JoinedDate = user.JoinedDate;
+                usermodel.RoleName = role;
+                usermodel.LocationId = user.LocationId;
 
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
@@ -188,10 +198,11 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
-            return userRequest;
+
+            return usermodel;
         }
 
-        public async Task<UserRequestModel> UpdateUserAsync(string id, UserRequestModel userRequest)
+        public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
@@ -203,13 +214,25 @@ namespace RookieOnlineAssetManagement.Repositories
                 return null;
             }
             // user.Id = userRequest.UserId;
+            var role = userRequest.Type.ToString();
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
             await _changeRoleUserAsync(user.Id, userRequest.Type);
             await _dbContext.SaveChangesAsync();
 
-            return userRequest;
+            var usermodel = new UserModel
+            {
+                UserId = user.Id,
+                StaffCode = user.StaffCode,
+                FullName = user.FirstName + " " + user.LastName,
+                UserName = user.UserName,
+                JoinedDate = user.JoinedDate,
+                RoleName = role,
+                LocationId = user.LocationId
+            };
+
+            return usermodel;
         }
 
         public async Task<bool> DisableUserAsync(string id)

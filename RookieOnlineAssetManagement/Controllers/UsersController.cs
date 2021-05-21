@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using RookieOnlineAssetManagement.Data;
-using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -25,9 +22,10 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> GetListAsync(string locationId, [FromQuery] TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
+        public async Task<ActionResult<IEnumerable<UserModel>>> GetListAsync([FromQuery] UserRequestParmas userRequestParmas)
         {
-            var result = await _userSer.GetListUserAsync(locationId, type, query, sortCode, sortFullName, sortDate, sortType, page, pageSize);
+            userRequestParmas.locationId = RequestHelper.GetLocationSession(HttpContext);
+            var result = await _userSer.GetListUserAsync(userRequestParmas);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
         }
@@ -38,7 +36,7 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserRequestModel>> UpdateAsync(string id, UserRequestModel userRequest)
+        public async Task<ActionResult<UserModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
             if (!ModelState.IsValid) return BadRequest(userRequest);
             return Ok(await _userSer.UpdateUserAsync(id, userRequest));
@@ -51,13 +49,12 @@ namespace RookieOnlineAssetManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserRequestModel>> CreateAsync(UserRequestModel userRequestModel)
+        public async Task<ActionResult<UserModel>> CreateAsync(UserRequestModel userRequestModel)
         {
             if (!ModelState.IsValid) return BadRequest();
             var result = await _userSer.CreateUserAsync(userRequestModel);
             if (result == null) return BadRequest();
             return Ok(result);
         }
-
     }
 }
