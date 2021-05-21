@@ -39,6 +39,11 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             return Ok( await _assignmentService.DeleteAssignmentAsync(id));
         }
+        [HttpGet("myassignments")]
+        public async Task<ActionResult<MyAssigmentModel>> GetMyListAsync(string userid, string locationid, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort)
+        {
+            return Ok(await _assignmentService.GetListMyAssignmentAsync(userid, locationid, AssetIdSort, AssetNameSort, CategoryNameSort, AssignedDateSort, StateSort));
+        }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AssignmentModel>>> GetListAsync([FromQuery] StateAssignment[] StateAssignments, [FromQuery] string AssignedDateAssignment, string query, SortBy AssetId, SortBy AssetName, SortBy AssignedTo, SortBy AssignedBy, SortBy AssignedDate, SortBy State, int page, int pageSize)
         {
