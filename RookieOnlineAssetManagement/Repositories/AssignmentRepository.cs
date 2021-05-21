@@ -127,6 +127,65 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             return false;
         }
+        public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(string userid, string locationid, SortBy? AssetIdSort,SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort)
+        {
+            var queryable = _dbContext.Assignments.Where(x => x.LocationId == locationid && x.UserId == userid).AsQueryable();
+            queryable = queryable.Include(x => x.Asset).ThenInclude(x => x.Category);
+            if (AssetIdSort.HasValue)
+            {
+                if (AssetIdSort.Value == SortBy.ASC)
+                    queryable = queryable.OrderBy(x => x.AssetId);
+                else
+                    queryable = queryable.OrderByDescending(x => x.AssetId);
+            }
+            else if (AssetNameSort.HasValue)
+            {
+                if (AssetNameSort.Value == SortBy.ASC)
+                    queryable = queryable.OrderBy(x => x.AssetName);
+                else
+                    queryable = queryable.OrderByDescending(x => x.AssetName);
+            }
+            else if (CategoryNameSort.HasValue)
+            {
+                if (CategoryNameSort.Value == SortBy.ASC)
+                    queryable = queryable.OrderBy(x => x.Asset.Category.CategoryName);
+                else
+                    queryable = queryable.OrderByDescending(x => x.Asset.Category.CategoryName);
+            }
+            else if(AssignedDateSort.HasValue)
+            {
+                if (AssignedDateSort.Value == SortBy.ASC)
+                    queryable = queryable.OrderBy(x => x.AssignedDate);
+                else
+                    queryable = queryable.OrderByDescending(x => x.AssignedDate);
+            }
+            else if(StateSort.HasValue)
+            {
+                if (StateSort.Value == SortBy.ASC)
+                    queryable = queryable.OrderBy(x => x.State);
+                else
+                    queryable = queryable.OrderByDescending(x => x.State);
+            }
+            else
+            {
+                queryable = queryable.OrderBy(x => x.AssetId);
+            }
+            var list = await queryable.Select(x => new MyAssigmentModel
+            {
+                AssignmentId = x.AssignmentId,
+                UserId = x.UserId,
+                AssignedTo = x.AssignTo,
+                AssetId = x.AssetId,
+                AdminId = x.AdminId,
+                AssignedBy = x.AssignBy,
+                LocationId = x.LocationId,
+                AssetName = x.AssetName,
+                AssignedDate = x.AssignedDate,
+                State = x.State,
+                CategoryName = x.Asset.Category.CategoryName
+            }).ToListAsync();
+            return list;
+        }
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(StateAssignment[] StateAssignments, string AssignedDateAssignment, string query, SortBy AssetId, SortBy AssetName, SortBy AssignedTo, SortBy AssignedBy, SortBy AssignedDate, SortBy State, int page, int pageSize)
         {
             return (null, 0, 0);
