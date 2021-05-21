@@ -28,6 +28,10 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _assignmentRepository.UpdateAssignmentAsync(id, assignmentRequestModel);
         }
+        public async Task<bool> ChangeStateAssignmentAsync(string id, StateAssignment state)
+        {
+            return await _assignmentRepository.ChangeStateAssignmentAsync(id, state);
+        }
         public async Task<bool> DeleteAssignmentAsync(string id)
         {
             return await _assignmentRepository.DeleteAssignmentAsync(id);

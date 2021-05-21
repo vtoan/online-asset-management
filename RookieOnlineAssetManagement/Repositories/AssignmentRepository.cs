@@ -103,10 +103,21 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             return null;
         }
+        public async Task<bool> ChangeStateAssignmentAsync(string id, StateAssignment state)
+        {
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
+            assignment.State = (int)state;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return true;
+            }
+            return false;
+        }
         public async Task<bool> DeleteAssignmentAsync(string id)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
-            if (!assignment.State.Equals((int)StateAssignment.WatingForAcceptance))
+            if (assignment.State.Equals((int)StateAssignment.Accepted))
             { return false; }
             _dbContext.Assignments.Remove(assignment);
             var result = await _dbContext.SaveChangesAsync();
