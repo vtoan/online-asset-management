@@ -26,6 +26,11 @@ namespace RookieOnlineAssetManagement.Controllers
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
         }
+        [HttpGet("assignmentasset")]
+        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListForAssignmentAsync(string currenassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
+        {
+            return Ok(await _assetService.GetListAssetForAssignmentAsync(currenassetid, locationid, query, AssetIdSort, AssetNameSort, CategoryNameSort));
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<AssetDetailModel>> GetAsync(string id)
         {
