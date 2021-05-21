@@ -36,26 +36,42 @@ namespace RookieOnlineAssetManagement.Repositories
                 LocationId = assignmentRequestModel.LocationId,
                 State = (int)StateAssignment.WatingForAcceptance,
             };
-            var create = _dbContext.Assignments.Add(assignment);
-            var result = await _dbContext.SaveChangesAsync();
-            if (result > 0)
+            var transaction = _dbContext.Database.BeginTransaction();
+            try
             {
-                var assignmentmodel = new AssignmentModel
+                Asset.State = (short)StateAsset.Assigned;
+
+                var create = _dbContext.Assignments.Add(assignment);
+                var result = await _dbContext.SaveChangesAsync();
+
+                if (result > 0)
                 {
-                    AssignmentId = create.Entity.AssignmentId,
-                    UserId = create.Entity.UserId,
-                    AssignedTo = create.Entity.AssignTo,
-                    AssetId = create.Entity.AssetId,
-                    AssetName = create.Entity.AssetName,
-                    AdminId = create.Entity.AdminId,
-                    AssignedBy = create.Entity.AssignBy,
-                    LocationId = create.Entity.LocationId,
-                    AssignedDate = create.Entity.AssignedDate,
-                    State = create.Entity.State
-                };
-                return assignmentmodel;
+                    var assignmentmodel = new AssignmentModel
+                    {
+                        AssignmentId = create.Entity.AssignmentId,
+                        UserId = create.Entity.UserId,
+                        AssignedTo = create.Entity.AssignTo,
+                        AssetId = create.Entity.AssetId,
+                        AssetName = create.Entity.AssetName,
+                        AdminId = create.Entity.AdminId,
+                        AssignedBy = create.Entity.AssignBy,
+                        LocationId = create.Entity.LocationId,
+                        AssignedDate = create.Entity.AssignedDate,
+                        State = create.Entity.State
+                    };
+                    transaction.Commit();
+                    return assignmentmodel;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            return null;
+            catch
+            {
+                return null;
+            }
+            
         }
         public async Task<AssignmentModel> UpdateAssignmentAsync(string id, AssignmentRequestModel assignmentRequestModel)
         {
@@ -63,45 +79,59 @@ namespace RookieOnlineAssetManagement.Repositories
             { return null; }
 
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
-            if (assignment.UserId != assignmentRequestModel.UserId)
+
+            var transaction = _dbContext.Database.BeginTransaction();
+            try
             {
-                var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
-                assignment.UserId = assignmentRequestModel.UserId;
-                assignment.AssignTo = AssignToUserId.UserName;
-            }
-            if (assignment.AdminId != assignmentRequestModel.AdminId)
-            {
-                var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
-                assignment.AdminId = assignmentRequestModel.AdminId;
-                assignment.AssignBy = AssignByAdminId.UserName;
-            }
-            if (assignment.AssetId != assignmentRequestModel.AssetId)
-            {
-                var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
-                assignment.AssetId = assignmentRequestModel.AssetId;
-                assignment.AssetName = Asset.AssetName;
-            }
-            assignment.Note = assignmentRequestModel.Note;
-            assignment.AssignedDate = assignmentRequestModel.AssignedDate;
-            var result = await _dbContext.SaveChangesAsync();
-            if (result > 0)
-            {
-                var assignmentmodel = new AssignmentModel
+                if (assignment.UserId != assignmentRequestModel.UserId)
                 {
-                    AssignmentId = assignment.AssignmentId,
-                    UserId = assignment.UserId,
-                    AssignedTo = assignment.AssignTo,
-                    AssetId = assignment.AssetId,
-                    AssetName = assignment.AssetName,
-                    AdminId = assignment.AdminId,
-                    AssignedBy = assignment.AssignBy,
-                    LocationId = assignment.LocationId,
-                    AssignedDate = assignment.AssignedDate,
-                    State = assignment.State
-                };
-                return assignmentmodel;
+                    var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
+                    assignment.UserId = assignmentRequestModel.UserId;
+                    assignment.AssignTo = AssignToUserId.UserName;
+                }
+                if (assignment.AdminId != assignmentRequestModel.AdminId)
+                {
+                    var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
+                    assignment.AdminId = assignmentRequestModel.AdminId;
+                    assignment.AssignBy = AssignByAdminId.UserName;
+                }
+                if (assignment.AssetId != assignmentRequestModel.AssetId)
+                {
+                    var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
+                    var AssetOld = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
+                    AssetOld.State = (int)StateAsset.Avaiable;
+                    Asset.State = (int)StateAsset.Assigned;
+                    assignment.AssetId = assignmentRequestModel.AssetId;
+                    assignment.AssetName = Asset.AssetName;
+                }
+                assignment.Note = assignmentRequestModel.Note;
+                assignment.AssignedDate = assignmentRequestModel.AssignedDate;
+                var result = await _dbContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    var assignmentmodel = new AssignmentModel
+                    {
+                        AssignmentId = assignment.AssignmentId,
+                        UserId = assignment.UserId,
+                        AssignedTo = assignment.AssignTo,
+                        AssetId = assignment.AssetId,
+                        AssetName = assignment.AssetName,
+                        AdminId = assignment.AdminId,
+                        AssignedBy = assignment.AssignBy,
+                        LocationId = assignment.LocationId,
+                        AssignedDate = assignment.AssignedDate,
+                        State = assignment.State
+                    };
+                    transaction.Commit();
+                    return assignmentmodel;
+                }
+                else
+                    return null;
             }
-            return null;
+            catch
+            {
+                return null;
+            }
         }
         public async Task<bool> ChangeStateAssignmentAsync(string id, StateAssignment state)
         {
@@ -119,18 +149,29 @@ namespace RookieOnlineAssetManagement.Repositories
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
             if (assignment.State.Equals((int)StateAssignment.Accepted))
             { return false; }
-            _dbContext.Assignments.Remove(assignment);
-            var result = await _dbContext.SaveChangesAsync();
-            if (result > 0)
+            var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
+            var transaction = _dbContext.Database.BeginTransaction();
+            try
             {
-                return true;
+                asset.State = (int)StateAsset.Avaiable;
+                _dbContext.Assignments.Remove(assignment);
+                var result = await _dbContext.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return true;
+                }
+                else return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
         public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(string userid, string locationid, SortBy? AssetIdSort,SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort)
         {
             var queryable = _dbContext.Assignments.Where(x => x.LocationId == locationid && x.UserId == userid).AsQueryable();
             queryable = queryable.Include(x => x.Asset).ThenInclude(x => x.Category);
+            queryable = queryable.Where(x => x.AssignedDate.Value.Date <= DateTime.Now.Date);
             if (AssetIdSort.HasValue)
             {
                 if (AssetIdSort.Value == SortBy.ASC)
