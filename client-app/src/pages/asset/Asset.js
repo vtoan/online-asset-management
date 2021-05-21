@@ -29,6 +29,7 @@ export default function Asset(props) {
   const [assetDatas, setAssets] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
+  const [itemDetail,setItemDetail] = React.useState(null);
   const history = useHistory();
   const location = useLocation();
   console.log(location);
@@ -134,6 +135,11 @@ export default function Asset(props) {
 
   const handleShowDetail = (item) => {
     console.log("object");
+    console.log(item);
+    http.get('/api/Asset/'+item.assetId).then(response => {
+      setItemDetail(response.data);
+
+    })
     modalDetail.show();
   };
 
@@ -167,16 +173,43 @@ export default function Asset(props) {
         onShowDetail={handleShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
+
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
         <>
           {/* <p>Item {item.assetId}</p> */}
-          <ListGroup>
-            <ListGroupItem>Cras justo odio</ListGroupItem>
-            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-            <ListGroupItem>Morbi leo risus</ListGroupItem>
-            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-            <ListGroupItem>Vestibulum at eros</ListGroupItem>
-          </ListGroup>
+          <Table>
+      <tbody>
+        <tr>
+          <td>Asset Code : </td>
+          <td>{itemDetail?.assetId}</td>
+        </tr>
+        <tr>
+          <td>Asset Name : </td>
+          <td>{itemDetail?.assetName}</td>
+        </tr>
+        <tr>
+          <td>Category :</td>
+          <td>{itemDetail?.categoryName}</td>
+        </tr>
+
+        <tr>
+          <td>Installed Date : </td>
+          <td>{itemDetail?.installedDate}</td>
+        </tr>
+        <tr>
+          <td>State : </td>
+          <td>{itemDetail?.state}</td>
+        </tr>
+        <tr>
+          <td>Location : </td>
+          <td>{itemDetail?.locationName}</td>
+        </tr>
+        <tr>
+          <td>Specification :</td>
+          <td>{itemDetail?.specification}</td>
+        </tr>
+      </tbody>
+    </Table>
         </>
       </NSDetailModal>
     </>
