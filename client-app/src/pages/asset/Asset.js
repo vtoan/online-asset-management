@@ -1,14 +1,14 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
-import { Row, Col, Input } from "reactstrap";
+import { Row, Col } from "reactstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
-import { _createQuery } from "../../ultis/requestHelper";
-import http from "../../ultis/httpClient.js";
 import AssetFilterState from "./AssetFilterState.js";
 import AssetFilterCategory from "./AssetFilterCategory";
+import { _createQuery } from "../../ultis/helper";
+import http from "../../ultis/httpClient.js";
 
 let params = {};
 
@@ -47,6 +47,18 @@ export default function Asset() {
     },
   });
 
+  const showDisableDeleteModal = (itemId) => {
+    let msg = (
+      <>
+        Cannot delete the asset because it belongs to one or more historical
+        assignments.If the asset is not able to be used anymore, please update
+        its state in
+        <Link to={"/asset/" + itemId}>To Edit Page</Link>
+      </>
+    );
+    modalAlert.show({ title: "Can't delete asset", msg: msg });
+  };
+  //handle
   React.useEffect(() => {
     params = {
       locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
@@ -109,18 +121,6 @@ export default function Asset() {
     _refreshParams();
     params.categoryid = items;
     _fetchData();
-  };
-
-  const showDisableDeleteModal = (itemId) => {
-    let msg = (
-      <>
-        Cannot delete the asset because it belongs to one or more historical
-        assignments.If the asset is not able to be used anymore, please update
-        its state in
-        <Link to={"/asset/" + itemId}>To Edit Page</Link>
-      </>
-    );
-    modalAlert.show({ title: "Can't delete asset", msg: msg });
   };
 
   return (

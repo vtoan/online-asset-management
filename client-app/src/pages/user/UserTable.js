@@ -53,7 +53,7 @@ export default function UserTable({
     const itemRender = (item) => (
         <>
             <td>
-                <TableItem>{item.id}</TableItem>
+                <TableItem>{item.staffCode}</TableItem>
             </td>
             <td>
                 <TableItem>{item.userName}</TableItem>
