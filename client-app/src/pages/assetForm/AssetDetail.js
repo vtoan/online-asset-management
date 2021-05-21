@@ -4,6 +4,7 @@ import http from "../../ultis/httpClient";
 import AssetForm from "./AssetForm";
 import { stateOptions } from "../../enums/assetState";
 import { useNSModals } from "../../containers/ModalContainer";
+import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
 
 let params = {
   locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
@@ -14,14 +15,15 @@ const stateAssetCreate = stateOptions.filter(
   (item) => item.value === 2 || item.value === 3
 );
 
-export default function AssetDetail() {
+export default function AssetDetail(props) {
   const { id } = useParams();
   const [dataEdit, setEdit] = React.useState(null);
   const [nameHeader, setnameHeader] = React.useState("");
   const [stateForm, setStateForm] = React.useState([]);
   const history = useHistory();
   //modal
-  const { modalConfirm, modalLoading } = useNSModals();
+  const modalConfirm = useNSConfirmModal();
+  const { modalLoading } = useNSModals();
   modalConfirm.config({
     message: "Save changed infomation of asset",
     btnName: "Ok",
@@ -33,7 +35,13 @@ export default function AssetDetail() {
         http
           .put("/api/asset/" + id, asset)
           .then((resp) => {
-            history.push("/assets");
+            console.log(resp.data);
+            history.push({
+              pathname: "/assets",
+              state: {
+                data: resp.data,
+              },
+            });
           })
           .catch((err) => console.log(err))
           .finally(() => {
@@ -43,7 +51,7 @@ export default function AssetDetail() {
         http
           .post("/api/asset", asset)
           .then((resp) => {
-            history.push("/assets");
+            props.history.push("/assets");
           })
           .catch((err) => console.log(err))
           .finally(() => {
@@ -74,6 +82,7 @@ export default function AssetDetail() {
   };
 
   const handleSubmit = (asset) => {
+    console.log(asset);
     modalConfirm.show(asset);
   };
 
@@ -85,6 +94,7 @@ export default function AssetDetail() {
         listState={stateForm}
         onSubmit={handleSubmit}
       />
+      <NSConfirmModal hook={modalConfirm} />
     </>
   );
 }

@@ -34,6 +34,7 @@ export default function AssetTable({
   onEdit,
   onDelete,
   pageSelected,
+  onShowDetail,
 }) {
   const itemRender = (asset) => (
     <>
@@ -46,7 +47,10 @@ export default function AssetTable({
       <td>
         <TableItem>{asset.categoryName}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(asset)}
+      >
         <TableItem>
           {stateOptions.find((item) => item.value === asset.state)?.label ??
             "Unknown"}
