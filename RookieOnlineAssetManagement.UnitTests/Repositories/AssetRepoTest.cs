@@ -76,7 +76,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssetName = "Asset Test Update",
                 InstalledDate = DateTime.Now
             };
-            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew.AssetId, assetTestNew);
+            var assetupdate = await assetRepo.UpdateAssetAsync(assetNew.AssetId, assetTestNew);
             Assert.NotNull(assetupdate);
             Assert.True(assetNew.AssetId.Equals(assetupdate.AssetId));
             Assert.True(assetupdate.AssetName.Equals(assetTestNew.AssetName));
@@ -115,7 +115,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssetName = "Asset Test Update",
                 InstalledDate = DateTime.Now
             };
-            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew.AssetId, assetTestNew);
+            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew);
 
             Assert.Null(assetupdate);
         }

@@ -9,7 +9,9 @@ namespace RookieOnlineAssetManagement.Repositories
     {
         Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel);
         Task<AssignmentModel> UpdateAssignmentAsync(string id, AssignmentRequestModel assignmentRequestModel);
+        Task<bool> ChangeStateAssignmentAsync(string id, StateAssignment state);
         Task<bool> DeleteAssignmentAsync(string id);
+        Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(string userid, string locationid, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort);
         Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams);
         Task<AssignmentDetailModel> GetAssignmentById(string id);
     }
