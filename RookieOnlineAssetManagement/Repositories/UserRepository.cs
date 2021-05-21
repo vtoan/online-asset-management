@@ -22,15 +22,15 @@ namespace RookieOnlineAssetManagement.Repositories
             _userManager = userManager;
         }
 
-        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize)
+        public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas)
         {
-            var queryable = _dbContext.Users.Where(item => item.LocationId == locationId);
-            if (!string.IsNullOrEmpty(query))
+            var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.locationId);
+            if (!string.IsNullOrEmpty(userRequestParmas.query))
             {
-                queryable = queryable.Where(x => x.Id.Contains(query) || x.UserName.Contains(query));
+                queryable = queryable.Where(x => x.Id.Contains(userRequestParmas.query) || x.UserName.Contains(userRequestParmas.query));
             }
-            if (sortCode != null)
-                switch (sortCode)
+            if (userRequestParmas.sortCode != null)
+                switch (userRequestParmas.sortCode)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.StaffCode);
@@ -39,9 +39,9 @@ namespace RookieOnlineAssetManagement.Repositories
                         queryable = queryable.OrderByDescending(item => item.StaffCode);
                         break;
                 }
-            if (sortFullName.HasValue)
+            if (userRequestParmas.sortFullName.HasValue)
             {
-                switch (sortFullName)
+                switch (userRequestParmas.sortFullName)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
@@ -51,9 +51,9 @@ namespace RookieOnlineAssetManagement.Repositories
                         break;
                 }
             }
-            else if (sortDate.HasValue)
+            else if (userRequestParmas.sortDate.HasValue)
             {
-                switch (sortDate)
+                switch (userRequestParmas.sortDate)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.JoinedDate);
@@ -66,14 +66,14 @@ namespace RookieOnlineAssetManagement.Repositories
             //include role
             queryable.Include(item => item.Roles);
 
-            if (type.Length > 0)
+            if (userRequestParmas.type?.Length > 0)
             {
-                var stringType = type.Select(x => x.ToString()).ToArray();
+                var stringType = userRequestParmas.type.Select(x => x.ToString()).ToArray();
                 queryable = queryable.Where(x => x.Roles.Any(r => stringType.Contains(r.NormalizedName)));
             }
-            if (sortType.HasValue)
+            if (userRequestParmas.sortType.HasValue)
             {
-                switch (sortType)
+                switch (userRequestParmas.sortType)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.Roles.First());
@@ -84,7 +84,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
             }
 
-            var result = Paging<User>(queryable, pageSize, page);
+            var result = Paging<User>(queryable, userRequestParmas.pageSize, userRequestParmas.page);
             var list = await result.Sources.Select(x => new UserModel
             {
                 UserId = x.Id,
@@ -198,7 +198,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return null;
             }
-            
+
             return usermodel;
         }
 

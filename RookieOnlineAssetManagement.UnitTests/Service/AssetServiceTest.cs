@@ -54,9 +54,9 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
                 Specification = "test",
             };
             var assetmodel = new AssetModel();
-            mockAssetRepo.Setup(x => x.UpdateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
+            mockAssetRepo.Setup(x => x.UpdateAssetAsync(It.IsAny<string>(), It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
             var assetSer = new AssetService(mockAssetRepo.Object);
-            var result = await assetSer.UpdateAssetAsync(asset);
+            var result = await assetSer.UpdateAssetAsync(asset.AssetId, asset);
             Assert.NotNull(result);
         }
         [Fact]

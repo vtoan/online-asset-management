@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  FormGroup,
+  Col,
+} from "reactstrap";
 
 let itemSeleted = null;
 let msg = "";
@@ -43,15 +50,23 @@ export default function NSConfirmModal({ hook }) {
       {hook != null && (
         <Modal centered isOpen={hook.modal}>
           <ModalHeader>Are you sure ?</ModalHeader>
-          <ModalBody>{hook.message}</ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={hook.handleSubmit}>
-              {hook.btnSubmit}
-            </Button>
-            <Button color="secondary" onClick={hook.handleCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
+          <ModalBody>
+            <div className="pt-2 pb-4">{hook.message}</div>
+            <FormGroup row style={{ textAlign: "right" }}>
+              <Col>
+                <Button
+                  color="danger"
+                  style={{ marginRight: "1em" }}
+                  onClick={hook.handleSubmit}
+                >
+                  {hook.btnSubmit}
+                </Button>
+                <Button outline onClick={hook.handleCancel}>
+                  Cancel
+                </Button>
+              </Col>
+            </FormGroup>
+          </ModalBody>
         </Modal>
       )}
     </>
