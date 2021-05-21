@@ -11,17 +11,20 @@ export default function LableItems({ title, nameSort, reset, onChanged }) {
   const handleClick = () => {
     setSort(sortState !== "" ? "" : "rotate(180deg)");
     let target = {};
+    if (!nameSort) return;
     target[nameSort] = sortState === "" ? "1" : "2";
     onChanged(target);
   };
-  
+
   return (
     <div style={{ cursor: "pointer", fontWeight: 700 }} onClick={handleClick}>
       <span>{title}</span>
-      <BsArrowDownShort
-        className="lable-arrow"
-        style={{ transform: sortState, fontSize: "1.5em" }}
-      />
+      {nameSort && (
+        <BsArrowDownShort
+          className="lable-arrow"
+          style={{ transform: sortState, fontSize: "1.5em" }}
+        />
+      )}
     </div>
   );
 }

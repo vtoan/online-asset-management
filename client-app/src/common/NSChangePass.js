@@ -4,7 +4,7 @@ import { Col, Form, FormGroup, Label, Input } from "reactstrap";
 
 let handleSubmit = null;
 let msgError = null;
-export function useNSLoginModal() {
+export function useNSChangePass() {
   const [modal, setModal] = useState(false);
   return {
     modal: modal,
@@ -22,68 +22,80 @@ export function useNSLoginModal() {
   };
 }
 
-export default function NSLoginModal({ hook }) {
-  const [userInput, setUserInput] = React.useState();
-  const [passInput, setpassInput] = React.useState();
-  const handleChagenUser = (event) => {
+export default function NSChangePass({ hook }) {
+  const [oldPassInput, setOldPassInput] = React.useState();
+  const [newPassInput, setNewPassInput] = React.useState();
+
+  const handleChagenOldPass = (event) => {
     msgError = "";
-    setUserInput(event.target.value);
+    setOldPassInput(event.target.value);
   };
-  const handleChagenPass = (event) => {
+  const handleChagenNewPass = (event) => {
     msgError = "";
-    setpassInput(event.target.value);
+    setNewPassInput(event.target.value);
   };
 
   const handleLogin = () => {
     if (hook) {
       hook.handleSubmit &&
         hook.handleSubmit({
-          userName: userInput,
-          password: passInput,
+          oldPassword: oldPassInput,
+          newPassword: newPassInput,
         });
     }
+  };
+
+  const handleCancel = () => {
+    hook.close();
   };
 
   return (
     <>
       {hook != null && (
-        <Modal centered isOpen={hook.modal} keyboard>
-          <ModalHeader>Welcome to Online Asset Management</ModalHeader>
-          <ModalBody>
+        <Modal centered isOpen={hook.modal}>
+          <ModalHeader>Change Password</ModalHeader>
+          <ModalBody className="p-5">
             <Form>
               <FormGroup row className="mb-4">
-                <Label for="userName" sm={4}>
-                  User name <span className="ns-text-primary">*</span>
-                </Label>
-                <Col sm={8}>
-                  <Input
-                    value={userInput}
-                    onChange={handleChagenUser}
-                    type="type"
-                    name="userName"
-                    id="userName"
-                  />
-                </Col>
-              </FormGroup>
-              <FormGroup row className="mb-4">
                 <Label for="password" sm={4}>
-                  Password <span className="ns-text-primary">*</span>
+                  Old Password
                 </Label>
                 <Col sm={8}>
                   <Input
-                    value={passInput}
-                    onChange={handleChagenPass}
+                    value={oldPassInput}
+                    onChange={handleChagenOldPass}
                     type="password"
                     name="password"
                     id="password"
                   />
                 </Col>
+                {msgError && <div className="text-danger">{msgError}</div>}
               </FormGroup>
-              {msgError && <div className="mt-3 text-danger">{msgError}</div>}
+              <FormGroup row className="mb-4">
+                <Label for="new-password" sm={4}>
+                  New Password
+                </Label>
+                <Col sm={8}>
+                  <Input
+                    value={newPassInput}
+                    onChange={handleChagenNewPass}
+                    type="password"
+                    name="password"
+                    id="new-password"
+                  />
+                </Col>
+              </FormGroup>
               <FormGroup row style={{ textAlign: "right" }}>
                 <Col>
-                  <Button color="danger" onClick={handleLogin}>
-                    Login
+                  <Button
+                    color="danger"
+                    style={{ marginRight: "1em" }}
+                    onClick={handleLogin}
+                  >
+                    Save
+                  </Button>
+                  <Button outline onClick={handleCancel}>
+                    Cancel
                   </Button>
                 </Col>
               </FormGroup>

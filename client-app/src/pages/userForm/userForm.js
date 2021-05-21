@@ -65,7 +65,7 @@ export default function UserForm() {
       setjoinedDate(formatDate(resp.data.joinedDate))
       selectType == "ADMIN" ? setTypeRole(roles) : setTypeRole(roles.reverse());
       console.log(dataEdit);
-      // console.log(selectType);
+      console.log(selectType);
     }).catch(err => console.log(err))
   };
 
@@ -131,7 +131,7 @@ export default function UserForm() {
               type="text"
               className="first-name-user"
               name="firstName"
-              value={dataEdit?.userName ?? ""}
+              value={dataEdit?.firstName ?? ""}
               disabled={id}
             />
           </Col>
@@ -145,7 +145,7 @@ export default function UserForm() {
               type="text"
               className="last-name-user"
               name="lastName"
-              value={dataEdit?.fullName ?? ""}
+              value={dataEdit?.lastName ?? ""}
               disabled={id}
             />
           </Col>

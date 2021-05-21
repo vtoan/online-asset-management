@@ -1,8 +1,8 @@
 import React from "react";
 import MultiSelect from "react-multi-select-component";
-import { stateOptions } from "../../enums/assetState";
+import { userType } from "../../enums/userType";
 
-export default function AssetFilterState({ onChange }) {
+export default function UserFilterState({ onChange }) {
   const [itemsSeleted, setItemsSeleted] = React.useState([]);
 
   const handleSelected = (val) => {
@@ -13,7 +13,7 @@ export default function AssetFilterState({ onChange }) {
   return (
     <MultiSelect
       disableSearch
-      options={stateOptions}
+      options={userType}
       value={itemsSeleted}
       onChange={handleSelected}
       labelledBy="Select State"

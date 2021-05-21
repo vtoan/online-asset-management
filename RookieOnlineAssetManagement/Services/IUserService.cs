@@ -7,7 +7,7 @@ namespace RookieOnlineAssetManagement.Services
 {
     public interface IUserService
     {
-        Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(string locationId, TypeUser[] type, string query, SortBy? sortCode, SortBy? sortFullName, SortBy? sortDate, SortBy? sortType, int page, int pageSize);
+        Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas);
 
         Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest);
 
