@@ -39,10 +39,17 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = asset.State
             };
             var transaction = _dbContext.Database.BeginTransaction();
-            _dbContext.Assets.Add(asset);
-            category.NumIncrease = category.NumIncrease + 1;
-            await _dbContext.SaveChangesAsync();
-            transaction.Commit();
+            try
+            {
+                _dbContext.Assets.Add(asset);
+                category.NumIncrease = category.NumIncrease + 1;
+                await _dbContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch
+            {
+                return null;
+            }
             return assetmodel;
         }
         public async Task<bool> DeleteAssetAsync(string id)
