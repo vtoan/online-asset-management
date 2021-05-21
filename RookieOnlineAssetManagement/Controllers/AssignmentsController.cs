@@ -45,15 +45,15 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.GetListMyAssignmentAsync(userid, locationid, AssetIdSort, AssetNameSort, CategoryNameSort, AssignedDateSort, StateSort));
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AssignmentModel>>> GetListAsync([FromQuery] StateAssignment[] StateAssignments, [FromQuery] string AssignedDateAssignment, string query, SortBy AssetId, SortBy AssetName, SortBy AssignedTo, SortBy AssignedBy, SortBy AssignedDate, SortBy State, int page, int pageSize)
+        public async Task<ActionResult<IEnumerable<AssignmentModel>>> GetListAsync([FromQuery] AssignmentRequestParams assignmentRequestParams)
         {
-            var result = await _assignmentService.GetListAssignmentAsync(StateAssignments, AssignedDateAssignment, query, AssetId, AssetName, AssignedTo, AssignedBy, AssignedDate, State, page, pageSize);
+            var result = await _assignmentService.GetListAssignmentAsync(assignmentRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             HttpContext.Response.Headers.Add("total-item", result.TotalItem.ToString());
             return Ok(result.Datas);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<AssetDetailModel>> GetAssignmentById(string id)
+        public async Task<ActionResult<AssignmentDetailModel>> GetAssignmentById(string id)
         {
             return Ok(await _assignmentService.GetAssignmentById(id));
         }
