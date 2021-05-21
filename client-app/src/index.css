@@ -320,7 +320,6 @@ form.example button {
 .area-button {
   margin-top: 10px;
   padding-right: 10px;
-  width: 37%;
 }
 
 .submit-create-asset {
@@ -338,10 +337,6 @@ form.example button {
 
 .col-asset {
   width: 13%;
-}
-
-.specification-asset.form-control {
-  width: 200px;
 }
 
 .category-asset.form-control {
@@ -513,7 +508,7 @@ hr {
   float: right;
   margin-top: 20px;
   padding-right: 20px;
-  width: 32%;
+  width: 38%;
 
 }
 
@@ -531,9 +526,9 @@ hr {
 
 #searchIcon {
   position: absolute;
-  left: 90%;
+  left: 85%;
   padding: 8px;
-  color: grey;
+  color: black;
   top: 3px;
 }
 

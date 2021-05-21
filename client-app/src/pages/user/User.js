@@ -12,7 +12,7 @@ import UserFilterState from "./UserFilterType";
 import { _createQuery } from "../../ultis/helper";
 
 let params = {
-  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+  locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
   sortCode: 0,
   sortFullName: 0,
   sortDate: 0,

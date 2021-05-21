@@ -17,7 +17,7 @@ export default function NSDetailModal({ hook, children, title }) {
   return (
     <>
       {hook != null && (
-        <Modal centered isOpen={hook.modal}>
+        <Modal centered isOpen={hook.modal} size="lg" style={{ maxWidth: '55%', width: '100%' }}>
           <ModalHeader toggle={toggle}>{title}</ModalHeader>
           <ModalBody>
             {/* <p className="mb-4"> {contentModal && contentModal}</p> */}
