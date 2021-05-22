@@ -4,9 +4,6 @@ import NSTable from "../../common/NSTable";
 
 const tableTitles = [
     {
-
-    },
-    {
         title: "Asset Code",
         nameSort: "sortCodeA",
     },

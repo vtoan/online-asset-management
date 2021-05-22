@@ -551,3 +551,16 @@ hr {
   width: 200px;
   height: 27px;
 }
+
+/* --- Search bar in Modal*/
+
+div.input-group
+{
+  width: 50%;
+  float: right;
+}
+
+.title-modal
+{
+  color: red;
+}
