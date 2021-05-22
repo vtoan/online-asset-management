@@ -35,7 +35,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, state));
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteAssignmentAsync(string id)
+        public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
             return Ok( await _assignmentService.DeleteAssignmentAsync(id));
         }
