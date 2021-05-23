@@ -509,3 +509,8 @@ hr {
   background-color: var(--clr-primary);
   border-color: var(--clr-primary);
 }
+
+/**/
+.table-detailed tbody tr td:first-child {
+  width: 40%;
+}

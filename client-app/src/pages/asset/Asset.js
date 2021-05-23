@@ -174,7 +174,7 @@ export default function Asset(props) {
       <NSConfirmModal hook={modalConfirm} />
 
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
-        <Table borderless>
+        <Table borderless className="table-detailed ">
           <tbody>
             <tr>
               <td>Asset Code : </td>

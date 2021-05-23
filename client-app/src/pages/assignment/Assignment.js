@@ -188,7 +188,7 @@ export default function Assignment() {
       />
       <NSConfirmModal hook={modalConfirm} />
       <NSDetailModal hook={modalDetail} title="Detailed Assignment Information">
-        <Table borderless>
+        <Table borderless className="table-detailed ">
           <tbody>
             <tr>
               <td>Asset Code : </td>
@@ -211,7 +211,7 @@ export default function Assignment() {
               <td>{itemDetail?.assignedBy}</td>
             </tr>
             <tr>
-              <td>Assigned Date : </td>
+              <td>Assigned Date :</td>
               <td>{formatDate(itemDetail?.assignedDate)}</td>
             </tr>
             <tr>
