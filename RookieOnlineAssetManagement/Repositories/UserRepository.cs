@@ -29,6 +29,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 queryable = queryable.Where(x => x.Id.Contains(userRequestParmas.query) || x.UserName.Contains(userRequestParmas.query));
             }
+            queryable = queryable.Where(x => x.LockoutEnabled == false);
             if (userRequestParmas.sortCode != null)
                 switch (userRequestParmas.sortCode)
                 {
