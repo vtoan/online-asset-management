@@ -173,6 +173,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var queryable = _dbContext.Assignments.Where(x => x.LocationId == locationid && x.UserId == userid).AsQueryable();
             queryable = queryable.Include(x => x.Asset).ThenInclude(x => x.Category);
             queryable = queryable.Where(x => x.AssignedDate.Value.Date <= DateTime.Now.Date);
+            queryable = queryable.Where(x => x.State != (int)StateAssignment.Completed);
             if (AssetIdSort.HasValue)
             {
                 if (AssetIdSort.Value == SortBy.ASC)
@@ -231,6 +232,7 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
         {
             var queryable = _dbContext.Assignments.Include(x => x.Location).Where(x => x.LocationId == assignmentRequestParams.LocationId);
+            queryable = queryable.Where(x => x.State != (int)StateAssignment.Completed);
             if (assignmentRequestParams.StateAssignments != null)
             {
                 var StateNum = Array.ConvertAll(assignmentRequestParams.StateAssignments, value => (int)value);
