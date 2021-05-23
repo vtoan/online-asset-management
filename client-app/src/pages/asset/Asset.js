@@ -144,7 +144,7 @@ export default function Asset(props) {
 
   return (
     <>
-      <h5 className="name-list">Asset List</h5>
+      <h5 className="name-list mb-4">Asset List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <AssetFilterState onChange={handleFilterState} />

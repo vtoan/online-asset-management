@@ -88,7 +88,7 @@ export default function AssetDetail(props) {
 
   return (
     <>
-      <h5 className="name-list">{nameHeader}</h5>
+      <h5 className="name-list mb-4">{nameHeader}</h5>
       <AssetForm
         data={dataEdit}
         listState={stateForm}

@@ -156,7 +156,7 @@ export default function User() {
 
   return (
     <>
-      <h5 className="name-list">User List</h5>
+      <h5 className="name-list mb-4">User List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <UserFilterState onChange={handleFilterType} />

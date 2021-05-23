@@ -160,7 +160,7 @@ export default function Assignment() {
 
   return (
     <>
-      <h5 className="name-list">Assignment List</h5>
+      <h5 className="name-list mb-4">Assignment List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <AssignmenttFilterState onChange={handleFilterState} />
