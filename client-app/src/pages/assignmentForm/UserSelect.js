@@ -1,5 +1,7 @@
+import React, { useCallback } from 'react';
 import TableItem from "../../common/TableItem";
-import NSTable from "../../common/NSTable";
+// import NSTable from "../../common/NSTable";
+import NSTableModal from "../../common/NSTableModal";
 
 const tableTitles = [
     {
@@ -18,18 +20,33 @@ const tableTitles = [
     },
 ];
 
-export default function UserTable({ datas, onChangeSort, }) {
+export default function UserTable({ datas, onChangeSort, parentCallback }) {
+    const [selectUser, setSelectUser] = React.useState([]);
+    const [nameUser, setNameUser] = React.useState('');
+
+    const handleSelectUser = (event) => {
+        setSelectUser(event.target.value);
+        console.log(event.target.value);
+    };
+
     const itemRender = (item) => (
         <>
-            <td>
-                <label className="container-radio">
-                    <input
-                        type="radio"
-                        value="0"
-                    />
-                    <span className="checkmark" style={{ marginTop: 8 }} />
-                </label>
-            </td>
+
+            <label className="container-radio">
+                <input
+                    type="radio"
+                    value={item.userId}
+                    onChange={handleSelectUser}
+                    name="checked-radio"
+                    onClick={() => {
+                        setNameUser((item.userId));
+                        parentCallback(item.userId)
+                    }}
+
+                />
+                <span className="checkmark" style={{ marginTop: 8 }} />
+            </label>
+
             <td>
                 <TableItem>{item.staffCode}</TableItem>
             </td>
@@ -42,7 +59,7 @@ export default function UserTable({ datas, onChangeSort, }) {
         </>
     );
     return (
-        <NSTable
+        <NSTableModal
             titles={tableTitles}
             datas={datas}
             itemRender={itemRender}

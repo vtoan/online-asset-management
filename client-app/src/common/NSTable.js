@@ -65,7 +65,6 @@ export default function NSTable({
       <Table borderless>
         <thead>
           <tr>
-            <td style={{ width: "1%" }}></td>
             {titles &&
               titles.map((item, index) => (
                 <td

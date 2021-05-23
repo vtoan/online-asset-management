@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import TableItem from "../../common/TableItem";
-import NSTable from "../../common/NSTable";
+// import NSTable from "../../common/NSTable";
+import NSTableModal from "../../common/NSTableModal";
 
 const tableTitles = [
     {
@@ -19,19 +20,31 @@ const tableTitles = [
     },
 ];
 
-export default function AssetTable({
-    datas,
-    onChangeSort,
-}) {
+export default function AssetTable({ datas, onChangeSort, parentCallback }) {
+    const [selectUser, setSelectUser] = React.useState([]);
+    const [nameAsset, setNameAsset] = React.useState('');
+
+    const handleSelectAsset = (event) => {
+        setSelectUser(event.target.value);
+        console.log(event.target.value);
+    };
+
     const itemRender = (asset) => (
         <>
-            <label className="container-radio">
+            <td><label className="container-radio">
                 <input
                     type="radio"
-                    value="0"
+                    value={asset.assetId}
+                    onChange={handleSelectAsset}
+                    name="checked-radio"
+                    onClick={() => {
+                        setNameAsset((asset.assetId));
+                        parentCallback(asset.assetId)
+                    }}
+
                 />
                 <span className="checkmark" style={{ marginTop: 8 }} />
-            </label>
+            </label></td>
             <td className="modal-asset">
                 <TableItem>{asset.assetId}</TableItem>
             </td>
@@ -45,7 +58,7 @@ export default function AssetTable({
     );
 
     return (
-        <NSTable
+        <NSTableModal
             titles={tableTitles}
             datas={datas}
             itemRender={itemRender}

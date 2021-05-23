@@ -25,7 +25,7 @@ export default function NSDetailModal({ hook, children, title }) {
             <FormGroup row style={{ float: "right" }}>
               <Col xs={4} className="area-button-assignment">
                 <div className="submit-create-assignment" style={{ display: "inline-flex" }}>
-                  <Button color="danger" type="submit">
+                  <Button color="danger" type="submit" onClick={toggle}>
                     Save
                     </Button>
                   <Button

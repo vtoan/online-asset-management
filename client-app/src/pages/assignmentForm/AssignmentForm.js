@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Col, Button, Input, FormGroup, ListGroup, ListGroupItem } from 'reactstrap';
@@ -11,6 +11,7 @@ import SearchBar from "../../common/SearchBar";
 
 let params = {
     locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+    adminid: "92dd342c-7bc1-46c1-9c23-097887727a55",
     sortCode: 0,
     sortFullName: 0,
     sortType: 0,
@@ -51,6 +52,25 @@ export default function UserForm() {
     const [nameHeader, setnameHeader] = React.useState('');
     const [userDatas, setUser] = React.useState([]);
     const [assetDatas, setAsset] = React.useState([]);
+    const [getAssetId, setGetAssetId] = React.useState('');
+    const [getUserId, setGetUserId] = React.useState('');
+    const [findNameAsset, setFindNameAsset] = React.useState('');
+    const [findNameUser, setFindNameUser] = React.useState('');
+
+    const callbackAsset = useCallback((nameAsset) => {
+        setGetAssetId(nameAsset);
+        let asset = assetDatas.find(x => x.assetId == nameAsset).assetName
+        setFindNameAsset(asset);
+        console.log(asset)
+
+    }, []);
+
+    const callbackUser = useCallback((nameUser) => {
+        setGetUserId(nameUser);
+        let user = userDatas.find(x => x.userId == nameUser).fullName
+        setFindNameUser(user);
+        console.log(user);
+    }, []);
 
     //modal
     const modalDetailAsset = useNSDetailModal();
@@ -72,6 +92,7 @@ export default function UserForm() {
     React.useEffect(() => {
         params = {
             locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+            adminid: "92dd342c-7bc1-46c1-9c23-097887727a55",
             sortCode: 0,
             sortFullName: 0,
             sortType: 0,
@@ -92,15 +113,31 @@ export default function UserForm() {
         }
     }, [id]);
     const handleSubmit = event => {
-        const myObj = {
-            username: event.target.userName.value,
-            assetname: event.target.assetName.value,
-            assigned_date: event.target.assignedDate.value,
-            note: event.target.noteAssignment.value
+        const assignment = {
+            userId: String(getUserId),
+            assetId: String(getAssetId),
+            adminId: params.adminid,
+            assignedDate: event.target.assignedDate.value,
+            note: event.target.noteAssignment.value,
+            locationId: params.locationid,
         };
 
+        if (assignment.userId == "") alert("Don' t empty user' s name, please!")
+        else if (assignment.assetId == "") alert("Don' t empty asset's name, please!")
+        else if (assignment.assignedDate == "") alert("Don' t forget set assinged date")
+
+        if (id) {
+            http.put("/api/assignments/" + id + _createQuery(params), assignment).then(resp => {
+                console.log(assignment);
+            }).catch(err => console.log(err))
+        }
+        else {
+            http.post("/api/assignments" + _createQuery(params), assignment).then(resp => {
+                console.log(assignment);
+            }).catch(err => console.log(err))
+        }
+
         event.preventDefault();
-        console.log(myObj);
     };
 
     const handleChangeSort = (target) => {
@@ -120,13 +157,11 @@ export default function UserForm() {
     };
 
 
-    const handleShowDetailAsset = (item) => {
-        console.log("object");
+    const handleShowDetailAsset = () => {
         modalDetailAsset.show();
     };
 
-    const handleShowDetailUser = (item) => {
-        console.log("object");
+    const handleShowDetailUser = () => {
         modalDetailUser.show();
     };
 
@@ -145,7 +180,8 @@ export default function UserForm() {
                                 type="text"
                                 className="name-new-asset"
                                 name="userName"
-                                defaultValue={dataEdit?.username ?? ''}
+                                // defaultValue={dataEdit?.username ?? ''}
+                                value={findNameUser}
                             />
                         </div>
                     </Col>
@@ -161,7 +197,8 @@ export default function UserForm() {
                                 type="text"
                                 className="name-new-asset"
                                 name="assetName"
-                                defaultValue={dataEdit?.assetname ?? ''}
+                                // defaultValue={dataEdit?.assetname ?? ''}
+                                value={findNameAsset}
                             />
                         </div>
                     </Col>
@@ -219,12 +256,12 @@ export default function UserForm() {
             <NSDetailModal hook={modalDetailAsset} title="Select Asset">
                 <SearchBar onSearch={handleSearch} />
                 <h5 className="title-modal">Select Asset</h5>
-                <AssetSelect datas={assetDatas} onChangeSort={handleChangeSort} />
+                <AssetSelect datas={assetDatas} onChangeSort={handleChangeSort} parentCallback={callbackAsset} />
             </NSDetailModal>
             <NSDetailModal hook={modalDetailUser} title="Select User">
                 <SearchBar onSearch={handleSearch} />
                 <h5 className="title-modal">Select User</h5>
-                <UserSelect datas={userDatas} onChangeSort={handleChangeSort} />
+                <UserSelect datas={userDatas} onChangeSort={handleChangeSort} parentCallback={callbackUser} />
             </NSDetailModal>
         </>
     );
