@@ -36,9 +36,9 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _assignmentRepository.DeleteAssignmentAsync(id);
         }
-        public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(string userid, string locationid, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort)
+        public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(MyAssignmentRequestParams myAssignmentRequestParams)
         {
-            return await _assignmentRepository.GetListMyAssignmentAsync(userid, locationid, AssetIdSort, AssetNameSort, CategoryNameSort, AssignedDateSort, StateSort);
+            return await _assignmentRepository.GetListMyAssignmentAsync(myAssignmentRequestParams);
         }
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
         {

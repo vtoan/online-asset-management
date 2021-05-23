@@ -9,5 +9,6 @@ namespace RookieOnlineAssetManagement.Models
     {
         public string Specification { get; set; }
         public string Note { get; set; }
+        public string FullNameUser { get; set; }
     }
 }

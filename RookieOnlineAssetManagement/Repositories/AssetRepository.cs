@@ -197,6 +197,21 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             return list;
         }
+        public async Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId)
+        {
+            var assetHistoryModel = await _dbContext.Assignments
+                .Where(x => x.AssetId == assetId && x.State == (int)StateAssignment.Completed)
+                .Include(x => x.ReturnRequest)
+                .Select(x => new AssetHistoryModel
+                {
+                    AssignmentId = x.AssignmentId,
+                    Date = x.AssignedDate.Value,
+                    AssignedTo = x.AssignTo,
+                    AssignedBy = x.AssignBy,
+                    ReturnedDate = x.ReturnRequest.ReturnDate.Value
+                }).ToListAsync();
+            return assetHistoryModel;
+        }
         public async Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {
             var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
