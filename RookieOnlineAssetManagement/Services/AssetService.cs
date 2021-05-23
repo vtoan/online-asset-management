@@ -23,6 +23,10 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _assetRepository.GetListAssetForAssignmentAsync(currenassetid, locationid, query, AssetIdSort, AssetNameSort, CategoryNameSort);
         }
+        public async Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId)
+        {
+            return await _assetRepository.GetListAssetHistoryAsync(assetId);
+        }
         public async Task<AssetDetailModel> GetAssetByIdAsync(string id)
         {
             return await _assetRepository.GetAssetByIdAsync(id);
