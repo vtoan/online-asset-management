@@ -144,7 +144,6 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currentassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
         {
-            var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == locationid);
             queryable = queryable.Where(x => x.State == (short)StateAsset.Avaiable);
@@ -157,14 +156,19 @@ namespace RookieOnlineAssetManagement.Repositories
                 CategoryName = x.Category.CategoryName,
                 State = x.State
             }).ToListAsync();
-            var currentassetmodel = new AssetModel
+
+            if (!string.IsNullOrEmpty(currentassetid))
             {
-                AssetId = currentasset.AssetId,
-                AssetName = currentasset.AssetName,
-                CategoryName = currentasset.Category.CategoryName,
-                State = currentasset.State
-            };
-            list.Add(currentassetmodel);
+                var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
+                var currentassetmodel = new AssetModel
+                {
+                    AssetId = currentasset.AssetId,
+                    AssetName = currentasset.AssetName,
+                    CategoryName = currentasset.Category.CategoryName,
+                    State = currentasset.State
+                };
+                list.Add(currentassetmodel);
+            }
 
             if (AssetIdSort.HasValue)
             {
