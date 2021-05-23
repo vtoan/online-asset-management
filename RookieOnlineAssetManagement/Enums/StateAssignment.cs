@@ -10,5 +10,6 @@ namespace RookieOnlineAssetManagement.Enums
         Accepted = 1,
         WatingForAcceptance = 2,
         Decline = 3,
+        Completed = 4
     }
 }
