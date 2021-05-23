@@ -24,9 +24,9 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.CreateReturnRequestAsync(assignmentId, requestedUserId));
         }
         [HttpPut]
-        public async Task<ActionResult<bool>> ChangeStateAsync(bool state, string assignmentId)
+        public async Task<ActionResult<bool>> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId)
         {
-            return Ok(await _returnRequestService.ChangeStateAsync(state, assignmentId));
+            return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReturnRequestModel>>> GetListAsync([FromQuery] ReturnRequestParams returnRequestParams)

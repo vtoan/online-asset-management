@@ -7,7 +7,7 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class ReturnRequestModel
     {
-        public long AssignmentId { get; set; }
+        public string AssignmentId { get; set; }
         public string AssetId { get; set; }
         public string AssetName { get; set; }
         public string AcceptedUserId { get; set; }

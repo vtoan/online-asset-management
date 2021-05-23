@@ -7,7 +7,7 @@ namespace RookieOnlineAssetManagement.Services
     public interface IReturnRequestService
     {
         Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId);
-        Task<bool> ChangeStateAsync(bool state, string assignmentId);
+        Task<bool> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId);
         Task<ICollection<ReturnRequestModel>> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams);
     }
 }
