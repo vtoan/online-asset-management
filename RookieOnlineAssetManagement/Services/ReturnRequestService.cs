@@ -18,9 +18,9 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _returnRequestRepository.CreateReturnRequestAsync(assignmentId, requestedUserId);
         }
-        public async Task<bool> ChangeStateAsync(bool state, string assignmentId)
+        public async Task<bool> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId)
         {
-            return await _returnRequestRepository.ChangeStateAsync(state, assignmentId);
+            return await _returnRequestRepository.ChangeStateAsync(accept, assignmentId, acceptedUserId);
         }
         public async Task<ICollection<ReturnRequestModel>> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
