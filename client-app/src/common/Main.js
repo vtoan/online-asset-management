@@ -40,9 +40,9 @@ export default function Main() {
       .then(() => modalLoading.close());
   });
   React.useEffect(() => {
-    if (appContext.user?.status) {
-      modalChangeFirst.show();
-    }
+    // if (appContext.user?.status) {
+    //   modalChangeFirst.show();
+    // }
   }, []);
 
   return (
