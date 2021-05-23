@@ -26,7 +26,7 @@ export default function AssetTable({ datas, onChangeSort, parentCallback }) {
 
     const handleSelectAsset = (event) => {
         setSelectUser(event.target.value);
-        console.log(event.target.value);
+        // console.log(event.target.value);
     };
 
     const itemRender = (asset) => (

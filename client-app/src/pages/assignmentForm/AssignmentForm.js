@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Col, Button, Input, FormGroup, ListGroup, ListGroupItem } from 'reactstrap';
 import NSDetailModal, { useNSDetailModal } from '../../common/NSDetailModal';
-import { _createQuery } from "../../ultis/helper";
+import { _createQuery, formatDate } from "../../ultis/helper";
 import UserSelect from './UserSelect';
 import AssetSelect from './AssetSelect';
 import http from "../../ultis/httpClient.js";
@@ -29,22 +29,22 @@ function _refreshParams() {
     params.sortCate = 0;
 }
 
-const assigment = [
-    {
-        id: 1,
-        username: 'Nobita-kun',
-        assetname: 'Laptop',
-        assigned_date: '2020-05-20',
-        note: 'The best laptop gaming.'
-    },
-    {
-        id: 2,
-        username: 'Laptop Acer',
-        assetname: 'Moniter',
-        assigned_date: '2020-10-15',
-        note: 'The best sony moniter.'
-    }
-];
+// const assigment = [
+//     {
+//         id: 1,
+//         username: 'Nobita-kun',
+//         assetname: 'Laptop',
+//         assigned_date: '2020-05-20',
+//         note: 'The best laptop gaming.'
+//     },
+//     {
+//         id: 2,
+//         username: 'Laptop Acer',
+//         assetname: 'Moniter',
+//         assigned_date: '2020-10-15',
+//         note: 'The best sony moniter.'
+//     }
+// ];
 
 export default function UserForm() {
     const { id } = useParams();
@@ -52,6 +52,7 @@ export default function UserForm() {
     const [nameHeader, setnameHeader] = React.useState('');
     const [userDatas, setUser] = React.useState([]);
     const [assetDatas, setAsset] = React.useState([]);
+    const [date, setDate] = React.useState([]);
     const [getAssetId, setGetAssetId] = React.useState('');
     const [getUserId, setGetUserId] = React.useState('');
     const [findNameAsset, setFindNameAsset] = React.useState('');
@@ -78,13 +79,26 @@ export default function UserForm() {
 
     const _fetchDataUser = () => {
         http.get("/api/Users" + _createQuery(params)).then((resp) => {
-            setUser(resp.data);;
+            setUser(resp.data);
+            // console.log(resp.data);
         });
+    };
+
+    const _fetchDataAssignment = (id) => {
+        http.get
+            ("/api/Assignments/" + id + _createQuery(params)).then((resp) => {
+                setEdit(resp.data);
+                setDate(formatDate(resp.data.assignedDate));
+                setFindNameUser(resp.data.fullNameUser);
+                setFindNameAsset(resp.data.nameAsset);
+                console.log(resp.data);
+            });
     };
 
     const _fetchDataAsset = () => {
         http.get("/api/Asset" + _createQuery(params)).then((resp) => {
-            setAsset(resp.data);;
+            setAsset(resp.data);
+            console.log(resp.data);
         });
     };
 
@@ -105,20 +119,20 @@ export default function UserForm() {
         _fetchDataAsset();
         if (id) {
             setnameHeader('Edit Assignment');
-            let data = assigment.find(data => data.id === Number(id));
-            setEdit(data);
-            console.log(data);
+            _fetchDataAssignment(id);
         } else {
             setnameHeader('Create New Assignment');
         }
     }, [id]);
     const handleSubmit = event => {
         const assignment = {
+            // assignmentId: id,
             userId: String(getUserId),
             assetId: String(getAssetId),
             adminId: params.adminid,
             assignedDate: event.target.assignedDate.value,
             note: event.target.noteAssignment.value,
+            // state: Number(dataEdit.state),
             locationId: params.locationid,
         };
 
@@ -127,7 +141,12 @@ export default function UserForm() {
         else if (assignment.assignedDate == "") alert("Don' t forget set assinged date")
 
         if (id) {
-            http.put("/api/assignments/" + id + _createQuery(params), assignment).then(resp => {
+            assignment = {
+                assignmentId: id,
+                state: Number(dataEdit.state),
+                ...assignment
+            }
+            http.put("/api/assignments/" + id + ")" + _createQuery(params), assignment).then(resp => {
                 console.log(assignment);
             }).catch(err => console.log(err))
         }
@@ -180,8 +199,8 @@ export default function UserForm() {
                                 type="text"
                                 className="name-new-asset"
                                 name="userName"
-                                // defaultValue={dataEdit?.username ?? ''}
                                 value={findNameUser}
+                            // value={findNameUser}
                             />
                         </div>
                     </Col>
@@ -197,8 +216,8 @@ export default function UserForm() {
                                 type="text"
                                 className="name-new-asset"
                                 name="assetName"
-                                // defaultValue={dataEdit?.assetname ?? ''}
                                 value={findNameAsset}
+                            // value={findNameAsset}
                             />
                         </div>
                     </Col>
@@ -212,7 +231,8 @@ export default function UserForm() {
                             type="date"
                             className="name-new-asset"
                             name="assignedDate"
-                            defaultValue={dataEdit?.assigned_date ?? ''}
+                            // defaultValue={dataEdit?.assignedDate ?? ''}
+                            defaultValue={date}
                         />
                     </Col>
                 </FormGroup >

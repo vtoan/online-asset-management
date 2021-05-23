@@ -26,7 +26,7 @@ export default function UserTable({ datas, onChangeSort, parentCallback }) {
 
     const handleSelectUser = (event) => {
         setSelectUser(event.target.value);
-        console.log(event.target.value);
+        // console.log(event.target.value);
     };
 
     const itemRender = (item) => (
