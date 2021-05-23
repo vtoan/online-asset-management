@@ -499,3 +499,13 @@ hr {
   box-shadow: none;
   border-width: 2px;
 }
+
+/* pagingation */
+.page-link {
+  color: var(--clr-primary);
+}
+
+.page-item.active .page-link {
+  background-color: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
