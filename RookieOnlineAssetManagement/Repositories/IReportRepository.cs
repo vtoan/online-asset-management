@@ -6,7 +6,7 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public interface IReportRepository
     {
-        Task<bool> ExportReportAsync(string locationId);
+        Task<ICollection<ReportModel>> ExportReportAsync(string locationId);
         Task<ICollection<ReportModel>> GetListReportAsync(string locationId);
     }
 }
