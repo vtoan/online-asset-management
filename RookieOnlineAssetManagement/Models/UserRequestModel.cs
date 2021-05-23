@@ -9,7 +9,7 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class UserRequestModel
     {
-        [Required]
+        // [Required]
         public string UserId { get; set; }
         [Required(ErrorMessage = "First Name cannot null")]
         public string FirstName { get; set; }

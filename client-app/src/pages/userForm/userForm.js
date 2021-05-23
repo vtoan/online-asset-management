@@ -50,7 +50,7 @@ export default function UserForm() {
   const [nameHeader, setnameHeader] = React.useState("");
   const [selectType, setSelectType] = React.useState("");
   const [typeRole, setTypeRole] = React.useState([]);
-  const [joinedDate, setjoinedDate] = React.useState([]);
+  const [joinedDate, setjoinedDate] = React.useState(formatDate(Date.now()));
   const [dateOfBirth, setDateOfBirth] = React.useState([]);
   const [gender, setGender] = React.useState(0);
 
@@ -63,7 +63,7 @@ export default function UserForm() {
         setSelectType(resp.data.roleName);
         setDateOfBirth(formatDate(resp.data.dateOfBirth));
         setjoinedDate(formatDate(resp.data.joinedDate));
-        selectType == "ADMIN"
+        selectType === "ADMIN"
           ? setTypeRole(roles)
           : setTypeRole(roles.reverse());
         console.log(dataEdit);
@@ -80,6 +80,7 @@ export default function UserForm() {
       setnameHeader("Create New User");
       setTypeRole(roles);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -138,7 +139,7 @@ export default function UserForm() {
               type="text"
               className="first-name-user"
               name="firstName"
-              value={dataEdit?.firstName ?? ""}
+              defaultValue={dataEdit?.firstName ?? ""}
               disabled={id}
             />
           </Col>
@@ -152,7 +153,7 @@ export default function UserForm() {
               type="text"
               className="last-name-user"
               name="lastName"
-              value={dataEdit?.lastName ?? ""}
+              defaultValue={dataEdit?.lastName ?? ""}
               disabled={id}
             />
           </Col>
