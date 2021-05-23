@@ -14,7 +14,7 @@ namespace RookieOnlineAssetManagement.Services
         {
             _reportRepository = reportRepository;
         }
-        public async Task<bool> ExportReportAsync(string locationId)
+        public async Task<ICollection<ReportModel>> ExportReportAsync(string locationId)
         {
             return await _reportRepository.ExportReportAsync(locationId);
         }
