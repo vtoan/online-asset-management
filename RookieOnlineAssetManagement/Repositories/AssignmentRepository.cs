@@ -309,7 +309,7 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<AssignmentDetailModel> GetAssignmentById(string id)
         {
-            var assignment = await _dbContext.Assignments.Include(x=>x.Asset).Include(x =>x.Location).FirstOrDefaultAsync(x => x.AssignmentId == id);
+            var assignment = await _dbContext.Assignments.Include(x => x.Asset).Include(x => x.Location).Include(x => x.User).FirstOrDefaultAsync(x => x.AssignmentId == id);
             if(assignment == null)
             {
                 return null;
@@ -325,9 +325,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = assignment.State,
                 Note = assignment.Note,
                 LocationId = assignment.Location.LocationName,
-                UserId= assignment.UserId,
+                UserId = assignment.UserId,
+                FullNameUser = assignment.User.FirstName + " " + assignment.User.LastName,
                 AdminId = assignment.AdminId,
-                AssignmentId= assignment.AssignmentId,
+                AssignmentId = assignment.AssignmentId,
             };
             return assignmentModel;
         }
