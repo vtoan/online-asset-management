@@ -238,53 +238,53 @@ namespace RookieOnlineAssetManagement.Repositories
                 var StateNum = Array.ConvertAll(assignmentRequestParams.StateAssignments, value => (int)value);
                 queryable = queryable.Where(x => StateNum.Contains(x.State));
             }
-            if (!string.IsNullOrEmpty(assignmentRequestParams.AssignedDateAssignment))
+            if (!string.IsNullOrEmpty(assignmentRequestParams.AssignedDate))
             {
-                var DateNum = Convert.ToDateTime(assignmentRequestParams.AssignedDateAssignment);
+                var DateNum = Convert.ToDateTime(assignmentRequestParams.AssignedDate);
                 queryable = queryable.Where(x => DateNum.Day == x.AssignedDate.Value.Day && DateNum.Month == x.AssignedDate.Value.Month && DateNum.Year == x.AssignedDate.Value.Year);
             }
             if (!string.IsNullOrEmpty(assignmentRequestParams.query))
             {
                 queryable = queryable.Where(x => x.AssetId.Contains(assignmentRequestParams.query) || x.AssetName.Contains(assignmentRequestParams.query)|| x.AssignTo.Contains(assignmentRequestParams.query));
             }
-            if (assignmentRequestParams.AssetId.HasValue)
+            if (assignmentRequestParams.sortAssetId.HasValue)
             {
-                if (assignmentRequestParams.AssetId.Value == SortBy.ASC)
+                if (assignmentRequestParams.sortAssetId.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AssetId);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssetId);
             }
-            else if (assignmentRequestParams.AssetName.HasValue)
+            else if (assignmentRequestParams.sortAssetName.HasValue)
             {
-                if (assignmentRequestParams.AssetName.Value == SortBy.ASC)
+                if (assignmentRequestParams.sortAssetName.Value == SortBy.ASC)
                   queryable = queryable.OrderBy(x => x.AssetName);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssetName);
             }
-            else if (assignmentRequestParams.AssignedBy.HasValue)
+            else if (assignmentRequestParams.sortAssignedBy.HasValue)
             {
-                if (assignmentRequestParams.AssignedBy.Value == SortBy.ASC)
+                if (assignmentRequestParams.sortAssignedBy.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AssignBy);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssignBy);
             }
-            else if (assignmentRequestParams.AssignedTo.HasValue)
+            else if (assignmentRequestParams.sortAssignedTo.HasValue)
             {
-                if (assignmentRequestParams.AssignedTo.Value == SortBy.ASC)
+                if (assignmentRequestParams.sortAssignedTo.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AssignTo);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssignTo);
             }
-            else if (assignmentRequestParams.AssignedDate.HasValue)
+            else if (assignmentRequestParams.sortAssignedDate.HasValue)
             {
-                if (assignmentRequestParams.AssignedDate.Value == SortBy.ASC)
+                if (assignmentRequestParams.sortAssignedDate.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AssignedDate);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssignedDate);
             }
-            else if (assignmentRequestParams.State.HasValue)
+            else if (assignmentRequestParams.sortState.HasValue)
             {
-                if (assignmentRequestParams.State.Value == SortBy.ASC)
+                if (assignmentRequestParams.sortState.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.State);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssignTo);
