@@ -206,8 +206,8 @@ export default function UserForm() {
           </Col>
         </FormGroup>
         <FormGroup row>
-          <Col xs={5} className="area-button-user">
-            <div className="submit-create-user">
+          <Col xs={5} className="area-button-assignment">
+            <div className="submit-create-user" style={{ marginRight: "1em" }}>
               <Button color="danger" type="submit">
                 Save
               </Button>
