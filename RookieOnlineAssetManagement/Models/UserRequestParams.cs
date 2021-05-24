@@ -9,15 +9,15 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class UserRequestParmas
     {
-        // [BindNever]
-        public string locationId { get; set; }
-        public TypeUser[] type { get; set; }
-        public string query { get; set; }
-        public SortBy? sortCode { get; set; }
-        public SortBy? sortFullName { get; set; }
-        public SortBy? sortDate { get; set; }
-        public SortBy? sortType { get; set; }
-        public int page { get; set; }
-        public int pageSize { get; set; }
+        [BindNever]
+        public string LocationId { get; set; }
+        public TypeUser[] Type { get; set; }
+        public string Query { get; set; }
+        public SortBy? SortCode { get; set; }
+        public SortBy? SortFullName { get; set; }
+        public SortBy? SortDate { get; set; }
+        public SortBy? SortType { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
     }
 }

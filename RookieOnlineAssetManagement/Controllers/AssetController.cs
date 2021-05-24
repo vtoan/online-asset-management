@@ -20,18 +20,18 @@ namespace RookieOnlineAssetManagement.Controllers
             _assetService = assetService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListAsync([FromQuery] StateAsset[] state, [FromQuery] string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize)
+        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListAsync([FromQuery] AssetRequestParams assetRequestParams)
         {
-            var result = await _assetService.GetListAssetAsync(state, categoryid, query, sortCode, sortName, sortCate, sortState, locationid, page, pageSize);
+            var result = await _assetService.GetListAssetAsync(assetRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
         }
-        [HttpGet("assignmentasset")]
-        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListForAssignmentAsync(string currenassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
+        [HttpGet("assignment-asset")]
+        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListForAssignmentAsync(string currentAssetId, string locationId, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
         {
-            return Ok(await _assetService.GetListAssetForAssignmentAsync(currenassetid, locationid, query, AssetIdSort, AssetNameSort, CategoryNameSort));
+            return Ok(await _assetService.GetListAssetForAssignmentAsync(currentAssetId, locationId, query, AssetIdSort, AssetNameSort, CategoryNameSort));
         }
-        [HttpGet("historyasset")]
+        [HttpGet("history-asset")]
         public async Task<ActionResult<IEnumerable<AssetHistoryModel>>> GetListHistoryAsync(string assetId)
         {
             return Ok(await _assetService.GetListAssetHistoryAsync(assetId));
