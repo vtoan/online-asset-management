@@ -9,7 +9,7 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class UserRequestParmas
     {
-        [BindNever]
+        //[BindNever]
         public string locationId { get; set; }
         public TypeUser[] type { get; set; }
         public string query { get; set; }

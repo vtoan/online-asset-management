@@ -3,7 +3,7 @@ import AssignmentTable from "./AssignmentTable";
 import { Row, Col, Table } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
 import { useNSModals } from "../../containers/ModalContainer";
 import { _createQuery, formatDate } from "../../ultis/helper";
@@ -172,7 +172,10 @@ export default function Assignment() {
           <SearchBar onSearch={handleSearch} />
         </Col>
         <Col style={{ textAlign: "right" }}>
-          <CreateNew namecreate="Create new assignment" />
+          <Link to="/new-assignments">
+            <CreateNew namecreate="Create new assignment" />
+          </Link>
+
         </Col>
       </Row>
       <AssignmentTable

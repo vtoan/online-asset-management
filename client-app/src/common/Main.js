@@ -58,7 +58,7 @@ export default function Main() {
           </Switch>
         }
       />
-      <NSChangePassFirst hook={modalChangeFirst} />
+      {/* <NSChangePassFirst hook={modalChangeFirst} /> */}
       <NSLoadingModal hook={modalLoading} />
       <NSAlertModal hook={modalAlert} />
     </BrowserRouter>

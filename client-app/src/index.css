@@ -339,10 +339,6 @@ form.example button {
   width: 13%;
 }
 
-.specification-asset.form-control {
-  width: 200px;
-}
-
 .category-asset.form-control {
   appearance: auto;
   background-color: #ffffff !important;
@@ -454,6 +450,7 @@ hr {
   float: right;
   margin-top: 20px;
   padding-right: 10px;
+  width: 29.5%;
 }
 
 .submit-create-user {
@@ -500,6 +497,73 @@ hr {
   border-width: 2px;
 }
 
+
+/* --- Assignment Form --- */
+
+.col-create-assingment-note {
+  margin-left: 0px;
+}
+
+.area-button-assignment {
+  float: right;
+  margin-top: 20px;
+  padding-right: 20px;
+  width: 38%;
+
+}
+
+.submit-create-assignment {
+  float: right;
+}
+
+.form-assignment {
+  margin-top: 40px;
+}
+
+.col-assignment {
+  width: 12.5%;
+}
+
+#searchIcon {
+  position: absolute;
+  left: 85%;
+  padding: 8px;
+  color: black;
+  top: 3px;
+}
+
+.searchName {
+  padding-left: 10px;
+  border-radius: 5px 5px 5px 5px;
+  border: 1px solid grey;
+}
+
+.wrapBox {
+  width: 185px;
+}
+
+.searchBox {
+  position: relative;
+}
+
+.searchBox .searchName {
+  font-size: 15px;
+  width: 200px;
+  height: 27px;
+}
+
+/* --- Search bar in Modal*/
+
+div.input-group
+{
+  width: 50%;
+  float: right;
+}
+
+.title-modal
+{
+  color: red;
+}
 /* pagingation */
 .page-link {
   color: var(--clr-primary);
