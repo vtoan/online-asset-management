@@ -24,12 +24,12 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             return Ok(await _assignmentService.CreateAssignmentAsync(assignmentRequestModel));
         }
-        [HttpPut("{id})")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<AssignmentModel>> UpdateAsync(string id,AssignmentRequestModel assignmentRequestModel)
         {
             return Ok(await _assignmentService.UpdateAssignmentAsync(id, assignmentRequestModel));
         }
-        [HttpPut("changestate/{id}")]
+        [HttpPut("change-state/{id}")]
         public async Task<ActionResult<bool>> ChangeStateAsync(string id, StateAssignment state)
         {
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, state));
@@ -39,7 +39,7 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             return Ok( await _assignmentService.DeleteAssignmentAsync(id));
         }
-        [HttpGet("myassignments")]
+        [HttpGet("my-assignments")]
         public async Task<ActionResult<MyAssigmentModel>> GetMyListAsync([FromQuery] MyAssignmentRequestParams myAssignmentRequestParams)
         {
             return Ok(await _assignmentService.GetListMyAssignmentAsync(myAssignmentRequestParams));
