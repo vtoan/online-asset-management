@@ -1,9 +1,9 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import AssignmentTable from "./AssignmentTable";
 import { Row, Col, Table } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
 import { useNSModals } from "../../containers/ModalContainer";
 import { _createQuery, formatDate } from "../../ultis/helper";
@@ -16,12 +16,13 @@ import { assignmentOptions } from "../../enums/assignmentState";
 let params = {};
 
 function _refreshParams() {
-  params.AssetId = 0;
-  params.AssetName = 0;
-  params.AssignedTo = 0;
-  params.AssignedBy = 0;
-  params.AssignedDate = 0;
-  params.State = 0;
+  // params.sortNo = 1;
+  params.sortAssetId = 1;
+  params.sortAssetName = 0;
+  params.sortAssignedTo = 0;
+  params.sortAssignedBy = 0;
+  params.sortAssignedDate = 0;
+  params.sortState = 0;
   params.page = 1;
 }
 
@@ -30,6 +31,7 @@ export default function Assignment() {
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
+  const [sortNo, setSortNo] = React.useState(0);
   const history = useHistory();
   //modal
   const modalConfirm = useNSConfirmModal();
@@ -39,12 +41,13 @@ export default function Assignment() {
   React.useEffect(() => {
     params = {
       locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
-      assetId: 0,
-      AssetName: 0,
-      AssignedTo: 0,
-      AssignedBy: 0,
-      AssignedDate: 0,
-      State: 0,
+      sortNo: 1,
+      sortAssetId: 1,
+      sortAssetName: 0,
+      sortAssignedTo: 0,
+      sortAssignedBy: 0,
+      sortAssignedDate: 0,
+      sortState: 0,
       query: "",
       pageSize: 8,
       page: 1,
@@ -55,11 +58,28 @@ export default function Assignment() {
   }, []);
 
   const _fetchData = () => {
-    http.get("/api/assignments" + _createQuery(params)).then((resp) => {
-      setAssignment(resp.data);
-      let totalPages = resp.headers["total-pages"];
-      setTotalPages(totalPages > 0 ? totalPages : 0);
-      setPageCurrent(params.page);
+    http
+      .get("/api/assignments" + _createQuery(params))
+      .then(({ data, headers }) => {
+        let totalPages = headers["total-pages"];
+        let totalItems = headers["total-item"];
+        _addFieldNo(data, params.page, totalItems);
+        setAssignment(data);
+        setTotalPages(totalPages > 0 ? totalPages : 0);
+        setPageCurrent(params.page);
+      });
+  };
+
+  const _addFieldNo = (data, page, totalItems) => {
+    let offset = page - 1;
+    let intialNumber = offset * params.pageSize;
+    if (Number(params.sortNo) === 2) {
+      intialNumber = totalItems - intialNumber;
+    }
+    if (Number(params.sortNo) !== 2) intialNumber++;
+    data.forEach((elm) => {
+      elm.no = intialNumber;
+      Number(params.sortNo) === 2 ? intialNumber-- : intialNumber++;
     });
   };
 
@@ -71,6 +91,11 @@ export default function Assignment() {
 
   const handleChangeSort = (target) => {
     _refreshParams();
+    if ("sortNumber" in target) {
+      params.sortNo = target.sortNumber;
+      setSortNo(target.sortNumber);
+      target = { sortAssetId: target.sortNumber };
+    }
     params = { ...params, ...target };
     if (target < 0) return (params.sortCode = null);
     _fetchData();
@@ -87,7 +112,7 @@ export default function Assignment() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete("/api/Assignments/" + item.assignmentId)
+          .delete("/api/assignments/" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
@@ -100,31 +125,30 @@ export default function Assignment() {
           });
       },
     });
-
     modalConfirm.show(item);
   };
 
   const handleReturn = (item) => {
-    // modalConfirm.config({
-    //   message: "Do you want to create a returning request for this asset?",
-    //   btnName: "Yes",
-    //   onSubmit: (item) => {
-    //     modalLoading.show();
-    //     http
-    //       .delete("/api/Assignments/" + item.assignmentId)
-    //       .then((resp) => {
-    //         _refreshParams();
-    //         _fetchData();
-    //       })
-    //       .catch((err) => {
-    //         showDisableDeleteModal();
-    //       })
-    //       .finally(() => {
-    //         modalLoading.close();
-    //       });
-    //   },
-    // });
-    // modalConfirm.show(item);
+    modalConfirm.config({
+      message: "Do you want to create a returning request for this asset?",
+      btnName: "Yes",
+      onSubmit: (item) => {
+        // modalLoading.show();
+        // http
+        //   .delete("/api/Assignments/" + item.assignmentId)
+        //   .then((resp) => {
+        //     _refreshParams();
+        //     _fetchData();
+        //   })
+        //   .catch((err) => {
+        //     showDisableDeleteModal();
+        //   })
+        //   .finally(() => {
+        //     modalLoading.close();
+        //   });
+      },
+    });
+    modalConfirm.show(item);
   };
 
   const showDisableDeleteModal = () => {
@@ -148,7 +172,7 @@ export default function Assignment() {
 
   const handleFilterDate = (date) => {
     _refreshParams();
-    params.AssignedDateAssignment = date;
+    params.AssignedDate = date;
     _fetchData();
   };
 
@@ -161,7 +185,7 @@ export default function Assignment() {
 
   return (
     <>
-      <h5 className="name-list">Assignment List</h5>
+      <h5 className="name-list mb-4">Assignment List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <AssignmenttFilterState onChange={handleFilterState} />
@@ -173,7 +197,9 @@ export default function Assignment() {
           <SearchBar onSearch={handleSearch} />
         </Col>
         <Col style={{ textAlign: "right" }}>
-          <CreateNew namecreate="Create new assignment" />
+          <Link to="/new-assignments">
+            <CreateNew namecreate="Create new assignment" />
+          </Link>
         </Col>
       </Row>
       <AssignmentTable
@@ -188,8 +214,8 @@ export default function Assignment() {
         onShowDetail={handleShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
-      <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
-        <Table borderless>
+      <NSDetailModal hook={modalDetail} title="Detailed Assignment Information">
+        <Table borderless className="table-detailed ">
           <tbody>
             <tr>
               <td>Asset Code : </td>
@@ -212,7 +238,7 @@ export default function Assignment() {
               <td>{itemDetail?.assignedBy}</td>
             </tr>
             <tr>
-              <td>Assigned Date : </td>
+              <td>Assigned Date :</td>
               <td>{formatDate(itemDetail?.assignedDate)}</td>
             </tr>
             <tr>
