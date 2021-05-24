@@ -10,8 +10,9 @@ namespace RookieOnlineAssetManagement.Repositories
 {
     public interface IAssetRepository
     {
-        Task<(ICollection<AssetModel> Datas ,int TotalPage)> GetListAssetAsync(StateAsset[] state, string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize);
+        Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(AssetRequestParams assetRequestParams);
         Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currenassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort);
+        Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId);
         Task<AssetDetailModel> GetAssetByIdAsync(string id);
         Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest);
         Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest);

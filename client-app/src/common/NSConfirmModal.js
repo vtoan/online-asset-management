@@ -34,12 +34,12 @@ export function useNSConfirmModal() {
     message: msg,
     btnSubmit: btnSubmit,
     handleSubmit: () => {
-      setModal(false);
       handleSubmit && handleSubmit(itemSeleted);
+      setModal(false);
     },
     handleCancel: () => {
-      setModal(false);
       handleCancel && handleCancel();
+      setModal(false);
     },
   };
 }

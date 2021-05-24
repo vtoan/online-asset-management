@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -20,11 +20,10 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             _userSer = userSer;
         }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserModel>>> GetListAsync([FromQuery] UserRequestParmas userRequestParmas)
         {
-            userRequestParmas.locationId = RequestHelper.GetLocationSession(HttpContext);
+            userRequestParmas.LocationId = RequestHelper.GetLocationSession(HttpContext);
             var result = await _userSer.GetListUserAsync(userRequestParmas);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);

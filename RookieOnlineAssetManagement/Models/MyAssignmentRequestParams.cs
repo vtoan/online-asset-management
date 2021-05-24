@@ -6,20 +6,14 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Models
 {
-    public class ReturnRequestParams
+    public class MyAssignmentRequestParams
     {
-        public bool[] StateReturnRequests { get; set; }
-        public string ReturnedDate { get; set; }
+        public string UserId { get; set; }
         public string LocationId { get; set; }
-        public string Query { get; set; }
         public SortBy? SortAssetId { get; set; }
         public SortBy? SortAssetName { get; set; }
-        public SortBy? SortRequestedBy { get; set; }
-        public SortBy? SortAcceptedBy { get; set; }
+        public SortBy? SortCategoryName { get; set; }
         public SortBy? SortAssignedDate { get; set; }
-        public SortBy? SortReturnedDate { get; set; }
         public SortBy? SortState { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
     }
 }
