@@ -3,7 +3,7 @@ export function _createQuery(params) {
   let queryStr = "";
   for (const key in params) {
     if (!params[key]) continue;
-    console.log(key);
+    // console.log(key);
     if (Array.isArray(params[key])) {
       if (!params[key].length) continue;
       if (queryStr) queryStr += "&";

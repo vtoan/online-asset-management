@@ -71,7 +71,7 @@ export default function Request() {
 
   return (
     <>
-      <h5 className="name-list">Request List</h5>
+      <h5 className="name-list mb-4">Request List</h5>
       <Row className="filter-bar">
         <Col>
           <FilterState namefilter="State" />

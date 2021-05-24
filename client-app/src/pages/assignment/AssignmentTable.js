@@ -3,6 +3,7 @@ import TableItem from "../../common/TableItem";
 import { TiDeleteOutline, TiRefresh } from "react-icons/ti";
 import NSTable from "../../common/NSTable";
 import { assignmentOptions } from "../../enums/assignmentState";
+import { formatDate } from "../../ultis/helper";
 
 const tableTitles = [
   {
@@ -11,32 +12,32 @@ const tableTitles = [
   },
   {
     title: "Code",
-    nameSort: "AssetId",
+    nameSort: "sortAssetId",
     width: "10%",
   },
   {
     title: "Asset Name",
-    nameSort: "AssetName",
+    nameSort: "sortAssetName",
     width: "20%",
   },
   {
     title: "Assigned to",
-    nameSort: "AssignedTo",
+    nameSort: "sortAssignedTo",
     width: "10%",
   },
   {
     title: "Assignedby",
-    nameSort: "AssignedBy",
+    nameSort: "sortAssignedBy",
     width: "10%",
   },
   {
     title: "Asset Assigned Date",
-    nameSort: "AssignedDate",
+    nameSort: "sortAssignedDate",
     width: "15%",
   },
   {
-    title: "Asset Status",
-    nameSort: "State",
+    title: "State",
+    nameSort: "sortState",
   },
 ];
 export default function AssignmentTable({
@@ -53,7 +54,7 @@ export default function AssignmentTable({
   const itemRender = (assign) => (
     <>
       <td>
-        <TableItem>{assign.assetId}</TableItem>
+        <TableItem>{assign.no}</TableItem>
       </td>
       <td>
         <TableItem>{assign.assetId}</TableItem>
@@ -68,7 +69,7 @@ export default function AssignmentTable({
         <TableItem>{assign.assignedBy}</TableItem>
       </td>
       <td>
-        <TableItem>{assign.assignedDate}</TableItem>
+        <TableItem>{formatDate(assign.assignedDate)}</TableItem>
       </td>
       <td
         style={{ cursor: "pointer" }}
@@ -81,19 +82,28 @@ export default function AssignmentTable({
       </td>
       <td className="table-actions">
         <span className="table-icon">
-          <BsPencil onClick={() => onEdit && onEdit(assign)} />
+          <BsPencil
+            className={"border-0" + (assign.state === 2 ? "" : " disabled")}
+            onClick={() => onEdit && onEdit(assign)}
+          />
         </span>
         <span className="table-icon ns-text-primary">
           <TiDeleteOutline
-            className={"border-0" + (assign.state === 2 ? " disabled" : "")}
+            className={"border-0" + (assign.state === 2 ? " " : " disabled")}
             onClick={() => onDeny && onDeny(assign)}
           />
         </span>
         <span className="table-icon">
           <TiRefresh
             onClick={() => onReturn && onReturn(assign)}
-            style={{ color: "blue", fontSize: "1.2em" }}
-            className="border-0"
+            style={{
+              color: assign.state === 2 || assign.state === 3 ? "" : " blue",
+              fontSize: "1.3em",
+            }}
+            className={
+              "border-0" +
+              (assign.state === 2 || assign.state === 3 ? " disabled" : "")
+            }
           />
         </span>
       </td>

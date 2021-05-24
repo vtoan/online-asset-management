@@ -61,14 +61,17 @@ export default function Home() {
   };
 
   return (
-    <HomeTable
-      datas={homeData}
-      onChangePage={handleChangePage}
-      onChangeSort={handleChangeSort}
-      onAccept={handleAcceptRequest}
-      onDeny={handleDenyRequest}
-      onRefresh={onRefresh}
-      totalPage={totalPages}
-    />
+    <>
+      <h5 className="name-list mb-4">My Assignments</h5>
+      <HomeTable
+        datas={homeData}
+        onChangePage={handleChangePage}
+        onChangeSort={handleChangeSort}
+        onAccept={handleAcceptRequest}
+        onDeny={handleDenyRequest}
+        onRefresh={onRefresh}
+        totalPage={totalPages}
+      />
+    </>
   );
 }
