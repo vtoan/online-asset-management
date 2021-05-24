@@ -13,14 +13,14 @@ namespace RookieOnlineAssetManagement.Models
         public StateAssignment[] StateAssignments { get; set; }
         public string AssignedDate { get; set; }
         public string LocationId { get; set; }
-        public string query { get; set; }
-        public SortBy? sortAssetId { get; set; }
-        public SortBy? sortAssetName { get; set; }
-        public SortBy? sortAssignedTo { get; set; }
-        public SortBy? sortAssignedBy { get; set; }
-        public SortBy? sortAssignedDate { get; set; }
-        public SortBy? sortState { get; set; }
-        public int page { get; set; }
-        public int pageSize { get; set; }
+        public string Query { get; set; }
+        public SortBy? SortAssetId { get; set; }
+        public SortBy? SortAssetName { get; set; }
+        public SortBy? SortAssignedTo { get; set; }
+        public SortBy? SortAssignedBy { get; set; }
+        public SortBy? SortAssignedDate { get; set; }
+        public SortBy? SortState { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
     }
 }

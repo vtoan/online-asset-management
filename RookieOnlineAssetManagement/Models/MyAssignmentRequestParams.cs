@@ -8,12 +8,12 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class MyAssignmentRequestParams
     {
-        public string userId { get; set; }
-        public string locationId { get; set; }
-        public SortBy? sortAssetId { get; set; }
-        public SortBy? sortAssetName { get; set; }
-        public SortBy? sortCategoryName { get; set; }
-        public SortBy? sortAssignedDate { get; set; }
-        public SortBy? sortState { get; set; }
+        public string UserId { get; set; }
+        public string LocationId { get; set; }
+        public SortBy? SortAssetId { get; set; }
+        public SortBy? SortAssetName { get; set; }
+        public SortBy? SortCategoryName { get; set; }
+        public SortBy? SortAssignedDate { get; set; }
+        public SortBy? SortState { get; set; }
     }
 }
