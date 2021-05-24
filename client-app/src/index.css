@@ -435,18 +435,18 @@ hr {
 
 .last-name-user,
 .first-name-user {
-  width: 200px;
+  /* width: 200px; */
   height: 38px;
   border-radius: 7px;
 }
 
 .date-user {
-  width: 200px;
+  /* width: 200px; */
   border-radius: 7px;
 }
 
 .category-type {
-  width: 200px;
+  /* width: 200px; */
   border-radius: 7px;
 }
 
