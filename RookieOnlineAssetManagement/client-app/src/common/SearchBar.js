@@ -1,7 +1,7 @@
 import React from "react";
 import { InputGroup, InputGroupAddon, Button, Input } from "reactstrap";
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, style }) {
   const queryInput = React.useRef();
 
   function handleSubmit() {
@@ -9,7 +9,7 @@ export default function SearchBar({ onSearch }) {
   }
   return (
     <>
-      <InputGroup>
+      <InputGroup style={style}>
         <Input innerRef={queryInput} />
         <InputGroupAddon addonType="append">
           <Button color="secondary" onClick={handleSubmit}>

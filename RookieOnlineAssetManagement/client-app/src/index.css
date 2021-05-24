@@ -553,7 +553,7 @@ hr {
 /* --- Search bar in Modal*/
 
 div.input-group {
-  width: 50%;
+  /* width: 50%; */
   float: right;
 }
 

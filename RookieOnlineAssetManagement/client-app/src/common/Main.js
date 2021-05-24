@@ -40,9 +40,9 @@ export default function Main() {
       .then(() => modalLoading.close());
   });
   React.useEffect(() => {
-    // if (appContext.user?.status) {
-    //   modalChangeFirst.show();
-    // }
+    if (!appContext.user?.status) {
+      modalChangeFirst.show();
+    }
   }, []);
 
   return (
@@ -58,7 +58,7 @@ export default function Main() {
           </Switch>
         }
       />
-      {/* <NSChangePassFirst hook={modalChangeFirst} /> */}
+      <NSChangePassFirst hook={modalChangeFirst} />
       <NSLoadingModal hook={modalLoading} />
       <NSAlertModal hook={modalAlert} />
     </BrowserRouter>

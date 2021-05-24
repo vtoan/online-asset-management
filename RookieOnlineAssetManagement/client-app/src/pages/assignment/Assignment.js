@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React from "react";
 import AssignmentTable from "./AssignmentTable";
 import { Row, Col, Table } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
@@ -16,8 +16,7 @@ import { assignmentOptions } from "../../enums/assignmentState";
 let params = {};
 
 function _refreshParams() {
-  // params.sortNo = 1;
-  params.sortAssetId = 1;
+  params.sortAssetId = 0;
   params.sortAssetName = 0;
   params.sortAssignedTo = 0;
   params.sortAssignedBy = 0;
@@ -31,7 +30,6 @@ export default function Assignment() {
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
-  const [sortNo, setSortNo] = React.useState(0);
   const history = useHistory();
   //modal
   const modalConfirm = useNSConfirmModal();
@@ -40,7 +38,6 @@ export default function Assignment() {
 
   React.useEffect(() => {
     params = {
-      locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
       sortNo: 1,
       sortAssetId: 1,
       sortAssetName: 0,
@@ -93,7 +90,6 @@ export default function Assignment() {
     _refreshParams();
     if ("sortNumber" in target) {
       params.sortNo = target.sortNumber;
-      setSortNo(target.sortNumber);
       target = { sortAssetId: target.sortNumber };
     }
     params = { ...params, ...target };

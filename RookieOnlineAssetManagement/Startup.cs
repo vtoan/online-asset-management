@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,10 +43,10 @@ namespace RookieOnlineAssetManagement
             services.AddSession();
             //spa
             // In production, the React files will be served from this directory
-            // services.AddSpaStaticFiles(configuration =>
-            // {
-            //     configuration.RootPath = "ClientApp/build";
-            // });
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "client-app/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,20 +63,21 @@ namespace RookieOnlineAssetManagement
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rookie Online Asset Management API V1");
-                c.RoutePrefix = string.Empty;
+                // c.RoutePrefix = string.Empty;
             });
 
-            // if (env.IsDevelopment())
-            // {
-            //     app.UseDeveloperExceptionPage();
-            //     // app.UseMigrationsEndPoint();
-            // }
-            // else
-            // {
-            //     // app.UseExceptionHandler("/Error");
-            //     app.UseStatusCodePages();
-            //     app.UseHsts();
-            // }
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                // app.UseMigrationsEndPoint();
+            }
+            else
+            {
+                // app.UseExceptionHandler("/Error");
+                app.UseStatusCodePages();
+                app.UseHsts();
+            }
+
             app.UseSession();
             app.UseCors(b =>
             {
@@ -89,7 +91,7 @@ namespace RookieOnlineAssetManagement
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            // app.UseSpaStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
@@ -107,15 +109,15 @@ namespace RookieOnlineAssetManagement
             });
 
 
-            // app.UseSpa(spa =>
-            // {
-            //     spa.Options.SourcePath = "ClientApp";
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "client-app";
 
-            //     if (env.IsDevelopment())
-            //     {
-            //         spa.UseReactDevelopmentServer(npmScript: "start");
-            //     }
-            // });
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            });
         }
     }
 }
