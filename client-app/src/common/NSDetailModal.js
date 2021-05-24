@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, ModalBody, Col, Button, FormGroup } from "reactstrap";
+import { Modal, ModalBody, ModalHeader, Button, FormGroup } from "reactstrap";
 
 export function useNSDetailModal() {
   const [modal, setModal] = useState(false);
@@ -12,19 +12,19 @@ export function useNSDetailModal() {
   };
 }
 
-export default function NSDetailModal({ hook, children }) {
+export default function NSDetailModal({ hook, children, title }) {
   const toggle = () => hook.close();
   return (
     <>
       {hook != null && (
-        <Modal centered isOpen={hook.modal} size="lg" style={{ maxWidth: '55%', width: '100%' }}>
-          {/* <ModalHeader toggle={toggle}>{title}</ModalHeader> */}
+        <Modal centered isOpen={hook.modal}>
+          <ModalHeader toggle={toggle}>{title}</ModalHeader>
           <ModalBody>
             {/* <p className="mb-4"> {contentModal && contentModal}</p> */}
-            <div style={{ overflow: "auto", height: 300 }}>{children}</div>
-            <FormGroup row style={{ float: "right" }}>
-              <Col xs={4} className="area-button-assignment">
-                <div className="submit-create-assignment" style={{ display: "inline-flex" }}>
+            <div>{children}</div>
+            {/*<FormGroup row >
+              <Col xs={4} >
+                <div " >
                   <Button color="danger" type="submit" onClick={toggle}>
                     Save
                     </Button>
@@ -38,8 +38,8 @@ export default function NSDetailModal({ hook, children }) {
                     Cancel
                     </Button>
                 </div>
-              </Col>
-            </FormGroup >
+              </Col> */}
+            {/* </FormGroup > */}
           </ModalBody>
         </Modal>
       )}

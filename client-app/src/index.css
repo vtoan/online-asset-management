@@ -497,7 +497,6 @@ hr {
   border-width: 2px;
 }
 
-
 /* --- Assignment Form --- */
 
 .col-create-assingment-note {
@@ -509,7 +508,6 @@ hr {
   margin-top: 20px;
   padding-right: 20px;
   width: 38%;
-
 }
 
 .submit-create-assignment {
@@ -554,15 +552,13 @@ hr {
 
 /* --- Search bar in Modal*/
 
-div.input-group
-{
+div.input-group {
   width: 50%;
   float: right;
 }
 
-.title-modal
-{
-  color: red;
+.title-modal {
+  color: var(--clr-primary);
 }
 /* pagingation */
 .page-link {
