@@ -89,50 +89,50 @@ namespace RookieOnlineAssetManagement.Repositories
             };
             return assetmodel;
         }
-        public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(StateAsset[] state, string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize)
+        public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(AssetRequestParams assetRequestParams)
         {
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
-            queryable = queryable.Where(x => x.LocationId == locationid);
-            if (state.Length > 0)
+            queryable = queryable.Where(x => x.LocationId == assetRequestParams.LocationId);
+            if (assetRequestParams.State != null)
             {
-                var stateNum = Array.ConvertAll(state, value => (int)value);
+                var stateNum = Array.ConvertAll(assetRequestParams.State, value => (int)value);
                 queryable = queryable.Where(x => stateNum.Contains(x.State));
             }
-            if (categoryid.Length > 0)
-                queryable = queryable.Where(x => categoryid.Contains(x.CategoryId));
-            if (!string.IsNullOrEmpty(query))
-                queryable = queryable.Where(x => x.AssetId.Contains(query) || x.AssetName.Contains(query));
+            if (assetRequestParams.CategoryId != null)
+                queryable = queryable.Where(x => assetRequestParams.CategoryId.Contains(x.CategoryId));
+            if (!string.IsNullOrEmpty(assetRequestParams.Query))
+                queryable = queryable.Where(x => x.AssetId.Contains(assetRequestParams.Query) || x.AssetName.Contains(assetRequestParams.Query));
             //sort
-            if (sortCode.HasValue)
+            if (assetRequestParams.SortCode.HasValue)
             {
-                if (sortCode.Value == SortBy.ASC)
+                if (assetRequestParams.SortCode.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AssetId);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssetId);
             }
-            else if (sortName.HasValue)
+            else if (assetRequestParams.SortName.HasValue)
             {
-                if (sortName.Value == SortBy.ASC)
+                if (assetRequestParams.SortName.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AssetName);
                 else
                     queryable = queryable.OrderByDescending(x => x.AssetName);
             }
-            else if (sortCate.HasValue)
+            else if (assetRequestParams.SortCate.HasValue)
             {
-                if (sortCate.Value == SortBy.ASC)
+                if (assetRequestParams.SortCate.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Category.CategoryName);
                 else
                     queryable = queryable.OrderByDescending(x => x.Category.CategoryName);
             }
-            else if (sortState.HasValue)
+            else if (assetRequestParams.SortState.HasValue)
             {
-                if (sortState.Value == SortBy.ASC)
+                if (assetRequestParams.SortState.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.State);
                 else
                     queryable = queryable.OrderByDescending(x => x.State);
             }
 
-            var result = Paging<Asset>(queryable, pageSize, page);
+            var result = Paging<Asset>(queryable, assetRequestParams.PageSize, assetRequestParams.Page);
             var list = await result.Sources.Select(x => new AssetModel
             {
                 AssetId = x.AssetId,

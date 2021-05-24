@@ -20,9 +20,9 @@ namespace RookieOnlineAssetManagement.Controllers
             _assetService = assetService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListAsync([FromQuery] StateAsset[] state, [FromQuery] string[] categoryid, string query, SortBy? sortCode, SortBy? sortName, SortBy? sortCate, SortBy? sortState, string locationid, int page, int pageSize)
+        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListAsync([FromQuery] AssetRequestParams assetRequestParams)
         {
-            var result = await _assetService.GetListAssetAsync(state, categoryid, query, sortCode, sortName, sortCate, sortState, locationid, page, pageSize);
+            var result = await _assetService.GetListAssetAsync(assetRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
         }

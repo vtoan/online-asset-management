@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Models
 {
-    public class MyAssigmentModel:AssignmentModel
+    public class MyAssigmentModel : AssignmentModel
     {
         public string CategoryName { get; set; }
     }
