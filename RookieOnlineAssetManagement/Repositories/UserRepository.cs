@@ -94,6 +94,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 UserName = x.UserName,
                 JoinedDate = x.JoinedDate,
                 RoleName = x.Roles.First().NormalizedName,
+                Status = x.LockoutEnabled
 
             }).ToListAsync();
             return (list, result.TotalPage);
