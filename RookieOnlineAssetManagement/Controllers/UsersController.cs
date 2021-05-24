@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -37,6 +37,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
+            userRequest.LocationId = RequestHelper.GetLocationSession(HttpContext);
             if (!ModelState.IsValid) return BadRequest(userRequest);
             return Ok(await _userSer.UpdateUserAsync(id, userRequest));
         }
@@ -50,6 +51,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<UserModel>> CreateAsync(UserRequestModel userRequestModel)
         {
+            userRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
             if (!ModelState.IsValid) return BadRequest();
             var result = await _userSer.CreateUserAsync(userRequestModel);
             if (result == null) return BadRequest();

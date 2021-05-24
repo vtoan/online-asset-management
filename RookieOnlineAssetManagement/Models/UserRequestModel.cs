@@ -1,4 +1,5 @@
-﻿using RookieOnlineAssetManagement.Enums;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using RookieOnlineAssetManagement.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,6 +29,7 @@ namespace RookieOnlineAssetManagement.Models
 
         [Required(ErrorMessage = "Type cannot null")]
         public TypeUser Type { get; set; }
+        [BindNever]
         public string LocationId { get; set; }
     }
 }
