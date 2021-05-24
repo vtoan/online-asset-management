@@ -1,13 +1,13 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
-import { Row, Col, ListGroup, ListGroupItem } from "reactstrap";
+import { Row, Col, Table } from "reactstrap";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import AssetFilterState from "./AssetFilterState.js";
 import AssetFilterCategory from "./AssetFilterCategory";
-import { _createQuery } from "../../ultis/helper";
+import { formatDate, _createQuery } from "../../ultis/helper";
 import http from "../../ultis/httpClient.js";
 import NSConfirmModal, {
   useNSConfirmModal,
@@ -29,6 +29,7 @@ export default function Asset(props) {
   const [assetDatas, setAssets] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
+  const [itemDetail, setItemDetail] = React.useState(null);
   const history = useHistory();
   const location = useLocation();
   console.log(location);
@@ -134,6 +135,10 @@ export default function Asset(props) {
 
   const handleShowDetail = (item) => {
     console.log("object");
+    console.log(item);
+    http.get("/api/Asset/" + item.assetId).then((response) => {
+      setItemDetail(response.data);
+    });
     modalDetail.show();
   };
 
@@ -167,17 +172,41 @@ export default function Asset(props) {
         onShowDetail={handleShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
+
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
-        <>
-          {/* <p>Item {item.assetId}</p> */}
-          <ListGroup>
-            <ListGroupItem>Cras justo odio</ListGroupItem>
-            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-            <ListGroupItem>Morbi leo risus</ListGroupItem>
-            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-            <ListGroupItem>Vestibulum at eros</ListGroupItem>
-          </ListGroup>
-        </>
+        <Table borderless>
+          <tbody>
+            <tr>
+              <td>Asset Code : </td>
+              <td>{itemDetail?.assetId}</td>
+            </tr>
+            <tr>
+              <td>Asset Name : </td>
+              <td>{itemDetail?.assetName}</td>
+            </tr>
+            <tr>
+              <td>Category :</td>
+              <td>{itemDetail?.categoryName}</td>
+            </tr>
+
+            <tr>
+              <td>Installed Date : </td>
+              <td>{formatDate(itemDetail?.installedDate)}</td>
+            </tr>
+            <tr>
+              <td>State : </td>
+              <td>{itemDetail?.state}</td>
+            </tr>
+            <tr>
+              <td>Location : </td>
+              <td>{itemDetail?.locationName}</td>
+            </tr>
+            <tr>
+              <td>Specification :</td>
+              <td>{itemDetail?.specification}</td>
+            </tr>
+          </tbody>
+        </Table>
       </NSDetailModal>
     </>
   );

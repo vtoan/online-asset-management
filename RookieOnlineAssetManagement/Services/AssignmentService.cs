@@ -36,22 +36,22 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _assignmentRepository.DeleteAssignmentAsync(id);
         }
-        public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(string userid, string locationid, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort)
+        public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(MyAssignmentRequestParams myAssignmentRequestParams)
         {
-            return await _assignmentRepository.GetListMyAssignmentAsync(userid, locationid, AssetIdSort, AssetNameSort, CategoryNameSort, AssignedDateSort, StateSort);
+            return await _assignmentRepository.GetListMyAssignmentAsync(myAssignmentRequestParams);
         }
-        public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(StateAssignment[] StateAssignments, string AssignedDateAssignment, string query, SortBy AssetId, SortBy AssetName, SortBy AssignedTo, SortBy AssignedBy, SortBy AssignedDate, SortBy State, int page, int pageSize)
+        public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
         {
-            return await _assignmentRepository.GetListAssignmentAsync(StateAssignments, AssignedDateAssignment, query, AssetId, AssetName, AssignedTo, AssignedBy, AssignedDate, State, page, pageSize);
+            return await _assignmentRepository.GetListAssignmentAsync(assignmentRequestParams);
         }
-        public async Task<AssetDetailModel> GetAssignmentById(string id)
+        public async Task<AssignmentDetailModel> GetAssignmentById(string id)
         {
             return await _assignmentRepository.GetAssignmentById(id);
         }
 
         public bool CheckDateGreaterThan(DateTime SmallDate, DateTime BigDate)
         {
-            if (SmallDate > BigDate)
+            if (SmallDate.Date > BigDate.Date)
             {
                 return false;
             }

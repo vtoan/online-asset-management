@@ -39,10 +39,17 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = asset.State
             };
             var transaction = _dbContext.Database.BeginTransaction();
-            _dbContext.Assets.Add(asset);
-            category.NumIncrease = category.NumIncrease + 1;
-            await _dbContext.SaveChangesAsync();
-            transaction.Commit();
+            try
+            {
+                _dbContext.Assets.Add(asset);
+                category.NumIncrease = category.NumIncrease + 1;
+                await _dbContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch
+            {
+                return null;
+            }
             return assetmodel;
         }
         public async Task<bool> DeleteAssetAsync(string id)
@@ -137,7 +144,6 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currentassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
         {
-            var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == locationid);
             queryable = queryable.Where(x => x.State == (short)StateAsset.Avaiable);
@@ -150,14 +156,19 @@ namespace RookieOnlineAssetManagement.Repositories
                 CategoryName = x.Category.CategoryName,
                 State = x.State
             }).ToListAsync();
-            var currentassetmodel = new AssetModel
+
+            if (!string.IsNullOrEmpty(currentassetid))
             {
-                AssetId = currentasset.AssetId,
-                AssetName = currentasset.AssetName,
-                CategoryName = currentasset.Category.CategoryName,
-                State = currentasset.State
-            };
-            list.Add(currentassetmodel);
+                var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
+                var currentassetmodel = new AssetModel
+                {
+                    AssetId = currentasset.AssetId,
+                    AssetName = currentasset.AssetName,
+                    CategoryName = currentasset.Category.CategoryName,
+                    State = currentasset.State
+                };
+                list.Add(currentassetmodel);
+            }
 
             if (AssetIdSort.HasValue)
             {
@@ -185,6 +196,21 @@ namespace RookieOnlineAssetManagement.Repositories
                 list = list.OrderBy(x => x.AssetId).ToList();
             }
             return list;
+        }
+        public async Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId)
+        {
+            var assetHistoryModel = await _dbContext.Assignments
+                .Where(x => x.AssetId == assetId && x.State == (int)StateAssignment.Completed)
+                .Include(x => x.ReturnRequest)
+                .Select(x => new AssetHistoryModel
+                {
+                    AssignmentId = x.AssignmentId,
+                    Date = x.AssignedDate.Value,
+                    AssignedTo = x.AssignTo,
+                    AssignedBy = x.AssignBy,
+                    ReturnedDate = x.ReturnRequest.ReturnDate.Value
+                }).ToListAsync();
+            return assetHistoryModel;
         }
         public async Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {

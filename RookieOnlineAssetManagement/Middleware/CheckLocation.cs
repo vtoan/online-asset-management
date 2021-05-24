@@ -23,7 +23,8 @@ namespace RookieOnlineAssetManagement.Middleware
             if (locaId == null)
             {
                 var user = await userManager.GetUserAsync(context.User);
-                RequestHelper.SetLocationSession(context, user.LocationId);
+                if (user != null)
+                    RequestHelper.SetLocationSession(context, user.LocationId);
             }
             await _next(context);
         }

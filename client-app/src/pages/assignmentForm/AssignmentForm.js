@@ -62,6 +62,7 @@ export default function UserForm() {
         setGetAssetId(nameAsset);
         let asset = assetDatas.find(x => x.assetId == nameAsset).assetName
         setFindNameAsset(asset);
+        setGetAssetId(nameAsset);
         console.log(asset)
 
     }, []);
@@ -70,6 +71,7 @@ export default function UserForm() {
         setGetUserId(nameUser);
         let user = userDatas.find(x => x.userId == nameUser).fullName
         setFindNameUser(user);
+        setGetUserId(nameUser);
         console.log(user);
     }, []);
 
@@ -80,7 +82,7 @@ export default function UserForm() {
     const _fetchDataUser = () => {
         http.get("/api/Users" + _createQuery(params)).then((resp) => {
             setUser(resp.data);
-            // console.log(resp.data);
+            console.log(resp.data);
         });
     };
 
@@ -90,8 +92,11 @@ export default function UserForm() {
                 setEdit(resp.data);
                 setDate(formatDate(resp.data.assignedDate));
                 setFindNameUser(resp.data.fullNameUser);
-                setFindNameAsset(resp.data.nameAsset);
+                setFindNameAsset(resp.data.assetName);
+                setGetAssetId(resp.data.assetId);
+                setGetUserId(resp.data.userId);
                 console.log(resp.data);
+
             });
     };
 
@@ -142,9 +147,11 @@ export default function UserForm() {
 
         if (id) {
             assignment = {
-                assignmentId: id,
-                state: Number(dataEdit.state),
-                ...assignment
+                ...assignment,
+                ...{
+                    assignmentId: id,
+                    state: Number(dataEdit.state),
+                }
             }
             http.put("/api/assignments/" + id + ")" + _createQuery(params), assignment).then(resp => {
                 console.log(assignment);
@@ -276,7 +283,7 @@ export default function UserForm() {
             <NSDetailModal hook={modalDetailAsset} title="Select Asset">
                 <SearchBar onSearch={handleSearch} />
                 <h5 className="title-modal">Select Asset</h5>
-                <AssetSelect datas={assetDatas} onChangeSort={handleChangeSort} parentCallback={callbackAsset} />
+                <AssetSelect datas={assetDatas} onChangeSort={handleChangeSort} parentCallback={callbackAsset} assignmentID={id} />
             </NSDetailModal>
             <NSDetailModal hook={modalDetailUser} title="Select User">
                 <SearchBar onSearch={handleSearch} />

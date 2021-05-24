@@ -2,6 +2,14 @@ import React, { useCallback } from "react";
 import TableItem from "../../common/TableItem";
 // import NSTable from "../../common/NSTable";
 import NSTableModal from "../../common/NSTableModal";
+import { _createQuery } from "../../ultis/helper";
+import http from "../../ultis/httpClient.js";
+
+let params = {
+    locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+    adminid: "92dd342c-7bc1-46c1-9c23-097887727a55"
+
+};
 
 const tableTitles = [
     {
@@ -20,12 +28,33 @@ const tableTitles = [
     },
 ];
 
-export default function AssetTable({ datas, onChangeSort, parentCallback }) {
-    const [selectUser, setSelectUser] = React.useState([]);
+export default function AssetTable({ datas, onChangeSort, parentCallback, assignmentID }) {
+    const [selectAsset, setSelectAsset] = React.useState([]);
     const [nameAsset, setNameAsset] = React.useState('');
+    const [dataEdit, setEdit] = React.useState(null);
+
+    const _fetchDataAssignment = (id) => {
+        http.get
+            ("/api/Assignments/" + id + _createQuery(params)).then((resp) => {
+                setEdit(resp.data.assetId);
+                console.log(resp.data.assetId);
+
+            });
+    };
+
+    React.useEffect(() => {
+        params = {
+            locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+            adminid: "92dd342c-7bc1-46c1-9c23-097887727a55",
+        };
+        if (assignmentID) {
+            _fetchDataAssignment(assignmentID);
+            console.log(dataEdit);
+        }
+    }, [assignmentID]);
 
     const handleSelectAsset = (event) => {
-        setSelectUser(event.target.value);
+        setSelectAsset(event.target.value);
         // console.log(event.target.value);
     };
 
@@ -37,6 +66,7 @@ export default function AssetTable({ datas, onChangeSort, parentCallback }) {
                     value={asset.assetId}
                     onChange={handleSelectAsset}
                     name="checked-radio"
+                    // checked={dataEdit == asset.assetId}
                     onClick={() => {
                         setNameAsset((asset.assetId));
                         parentCallback(asset.assetId)

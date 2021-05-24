@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Models
 {
-    public class ReturnRequest
+    public class ReturnRequestModel
     {
-        public long AssignmentId { get; set; }
+        public string AssignmentId { get; set; }
+        public string AssetId { get; set; }
+        public string AssetName { get; set; }
         public string AcceptedUserId { get; set; }
         public string RequestUserId { get; set; }
         public string RequestBy { get; set; }
         public string AcceptedBy { get; set; }
-        public DateTime? ReturnDate { get; set; }
+        public DateTime? ReturnedDate { get; set; }
         public bool State { get; set; }
     }
 }

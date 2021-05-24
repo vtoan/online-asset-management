@@ -31,6 +31,11 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             return Ok(await _assetService.GetListAssetForAssignmentAsync(currenassetid, locationid, query, AssetIdSort, AssetNameSort, CategoryNameSort));
         }
+        [HttpGet("historyasset")]
+        public async Task<ActionResult<IEnumerable<AssetHistoryModel>>> GetListHistoryAsync(string assetId)
+        {
+            return Ok(await _assetService.GetListAssetHistoryAsync(assetId));
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<AssetDetailModel>> GetAsync(string id)
         {
