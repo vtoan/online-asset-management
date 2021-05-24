@@ -1,48 +1,14 @@
 import React from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { Row, Col, Button, Input } from "reactstrap";
+import { Col, Button, Input, FormGroup } from "reactstrap";
 import http from "../../ultis/httpClient";
+import { _createQuery, formatDate } from "../../ultis/helper";
+import { userType } from "../../enums/userType";
 
 let params = {
   locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
 };
-
-function _createQuery(params) {
-  if (!params) return "";
-  let queryStr = "";
-  for (const key in params) {
-    if (!params[key]) continue;
-    if (queryStr) queryStr += "&&";
-    queryStr += key + "=" + params[key];
-  }
-  return "?" + queryStr;
-}
-
-function formatDate(date) {
-  if (date == null) {
-    date = Date.now();
-  }
-  var d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-  return [year, month, day].join("-");
-}
-
-const roles = [
-  {
-    id: 1,
-    name: "ADMIN",
-  },
-  {
-    id: 2,
-    name: "STAFF",
-  },
-];
 
 export default function UserForm() {
   const { id } = useParams();
@@ -64,8 +30,8 @@ export default function UserForm() {
         setDateOfBirth(formatDate(resp.data.dateOfBirth));
         setjoinedDate(formatDate(resp.data.joinedDate));
         selectType === "ADMIN"
-          ? setTypeRole(roles)
-          : setTypeRole(roles.reverse());
+          ? setTypeRole(userType)
+          : setTypeRole(userType.reverse());
         console.log(dataEdit);
         console.log(selectType);
       })
@@ -78,7 +44,7 @@ export default function UserForm() {
       setnameHeader("Edit User");
     } else {
       setnameHeader("Create New User");
-      setTypeRole(roles);
+      setTypeRole(userType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -130,11 +96,11 @@ export default function UserForm() {
     <>
       <h5 className="name-list mb-4">{nameHeader}</h5>
       <form className="form-user" onSubmit={handleSubmit}>
-        <Row className="row-create-new">
-          <Col className="col-user" xs="2">
+        <FormGroup row className="mb-3">
+          <Col className="col-user" xs={2}>
             <span>First Name</span>
           </Col>
-          <Col className="col-user-new">
+          <Col className="col-user-new" xs={3}>
             <Input
               type="text"
               className="first-name-user"
@@ -143,12 +109,12 @@ export default function UserForm() {
               disabled={id}
             />
           </Col>
-        </Row>
-        <Row className="row-create-new">
-          <Col className="col-user" xs="2">
+        </FormGroup>
+        <FormGroup row className="mb-3">
+          <Col className="col-user" xs={2}>
             <span>Last Name</span>
           </Col>
-          <Col className="col-user-new">
+          <Col className="col-user-new" xs={3}>
             <Input
               type="text"
               className="last-name-user"
@@ -157,12 +123,12 @@ export default function UserForm() {
               disabled={id}
             />
           </Col>
-        </Row>
-        <Row className="row-create-new">
-          <Col className="col-user" xs="2">
+        </FormGroup>
+        <FormGroup row className="mb-3">
+          <Col className="col-user" xs={2}>
             <span>Date of Birth</span>
           </Col>
-          <Col className="col-user-new">
+          <Col className="col-user-new" xs={3}>
             <Input
               type="date"
               className="date-user"
@@ -171,12 +137,16 @@ export default function UserForm() {
               onChange={handleChangeDateBOB}
             />
           </Col>
-        </Row>
-        <Row className="row-create-new">
-          <Col className="col-user" xs="2">
+        </FormGroup>
+        <FormGroup row className="mb-3">
+          <Col className="col-user" xs={2}>
             <span>Gender</span>
           </Col>
-          <Col className="col-user-new" style={{ display: "inline-flex" }}>
+          <Col
+            className="col-user-new"
+            xs={3}
+            style={{ display: "inline-flex" }}
+          >
             <label className="container-radio">
               Female
               <Input
@@ -200,12 +170,12 @@ export default function UserForm() {
               <span className="checkmark" />
             </label>
           </Col>
-        </Row>
-        <Row className="row-create-new">
-          <Col className="col-user" xs="2">
+        </FormGroup>
+        <FormGroup row className="mb-3">
+          <Col className="col-user" xs={2}>
             <span>Joined Date</span>
           </Col>
-          <Col className="col-user-new">
+          <Col className="col-user-new" xs={3}>
             <Input
               type="date"
               className="date-user"
@@ -214,12 +184,12 @@ export default function UserForm() {
               onChange={handleChangeDateJoined}
             />
           </Col>
-        </Row>
-        <Row className="row-create-new">
-          <Col className="col-user" xs="2">
+        </FormGroup>
+        <FormGroup row className="mb-3">
+          <Col className="col-user" xs={2}>
             <span>Type</span>
           </Col>
-          <Col className="col-user-new">
+          <Col className="col-user-new" xs={3}>
             <Input
               type="select"
               name="nameCategoryType"
@@ -228,16 +198,16 @@ export default function UserForm() {
               defaultValue={selectType}
             >
               {typeRole.map((item) => (
-                <option ket={item.id} value={item.id}>
-                  {item.name}
+                <option key={item.value} value={item.value}>
+                  {item.label}
                 </option>
               ))}
             </Input>
           </Col>
-        </Row>
-        <Row>
-          <Col xs="4" className="area-button-user">
-            <div className="submit-create-user">
+        </FormGroup>
+        <FormGroup row>
+          <Col xs={5} className="area-button-assignment">
+            <div className="submit-create-user" style={{ marginRight: "1em" }}>
               <Button color="danger" type="submit">
                 Save
               </Button>
@@ -253,10 +223,7 @@ export default function UserForm() {
               </Link>
             </div>
           </Col>
-          <Col />
-          <Col />
-          <Col />
-        </Row>
+        </FormGroup>
       </form>
     </>
   );

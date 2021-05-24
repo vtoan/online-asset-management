@@ -54,7 +54,7 @@ export default function AssignmentTable({
   const itemRender = (assign) => (
     <>
       <td>
-        <TableItem>{assign.assetId}</TableItem>
+        <TableItem>{assign.no}</TableItem>
       </td>
       <td>
         <TableItem>{assign.assetId}</TableItem>

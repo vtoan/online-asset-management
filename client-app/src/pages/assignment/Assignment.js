@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import AssignmentTable from "./AssignmentTable";
 import { Row, Col, Table } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
@@ -16,7 +16,8 @@ import { assignmentOptions } from "../../enums/assignmentState";
 let params = {};
 
 function _refreshParams() {
-  params.sortAssetId = 0;
+  // params.sortNo = 1;
+  params.sortAssetId = 1;
   params.sortAssetName = 0;
   params.sortAssignedTo = 0;
   params.sortAssignedBy = 0;
@@ -30,6 +31,7 @@ export default function Assignment() {
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
+  const [sortNo, setSortNo] = React.useState(0);
   const history = useHistory();
   //modal
   const modalConfirm = useNSConfirmModal();
@@ -39,12 +41,13 @@ export default function Assignment() {
   React.useEffect(() => {
     params = {
       locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
-      assetId: 0,
-      AssetName: 0,
-      AssignedTo: 0,
-      AssignedBy: 0,
-      AssignedDate: 0,
-      State: 0,
+      sortNo: 1,
+      sortAssetId: 1,
+      sortAssetName: 0,
+      sortAssignedTo: 0,
+      sortAssignedBy: 0,
+      sortAssignedDate: 0,
+      sortState: 0,
       query: "",
       pageSize: 8,
       page: 1,
@@ -55,11 +58,28 @@ export default function Assignment() {
   }, []);
 
   const _fetchData = () => {
-    http.get("/api/assignments" + _createQuery(params)).then((resp) => {
-      setAssignment(resp.data);
-      let totalPages = resp.headers["total-pages"];
-      setTotalPages(totalPages > 0 ? totalPages : 0);
-      setPageCurrent(params.page);
+    http
+      .get("/api/assignments" + _createQuery(params))
+      .then(({ data, headers }) => {
+        let totalPages = headers["total-pages"];
+        let totalItems = headers["total-item"];
+        _addFieldNo(data, params.page, totalItems);
+        setAssignment(data);
+        setTotalPages(totalPages > 0 ? totalPages : 0);
+        setPageCurrent(params.page);
+      });
+  };
+
+  const _addFieldNo = (data, page, totalItems) => {
+    let offset = page - 1;
+    let intialNumber = offset * params.pageSize;
+    if (Number(params.sortNo) === 2) {
+      intialNumber = totalItems - intialNumber;
+    }
+    if (Number(params.sortNo) !== 2) intialNumber++;
+    data.forEach((elm) => {
+      elm.no = intialNumber;
+      Number(params.sortNo) === 2 ? intialNumber-- : intialNumber++;
     });
   };
 
@@ -71,6 +91,11 @@ export default function Assignment() {
 
   const handleChangeSort = (target) => {
     _refreshParams();
+    if ("sortNumber" in target) {
+      params.sortNo = target.sortNumber;
+      setSortNo(target.sortNumber);
+      target = { sortAssetId: target.sortNumber };
+    }
     params = { ...params, ...target };
     if (target < 0) return (params.sortCode = null);
     _fetchData();
@@ -175,7 +200,6 @@ export default function Assignment() {
           <Link to="/new-assignments">
             <CreateNew namecreate="Create new assignment" />
           </Link>
-
         </Col>
       </Row>
       <AssignmentTable
