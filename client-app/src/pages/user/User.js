@@ -1,6 +1,6 @@
 import React from "react";
 import UserTable from "./UserTable";
-import { Row, Col, ListGroup, ListGroupItem } from "reactstrap";
+import { Row, Col, Table } from "reactstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer";
 import SearchBar from "../../common/SearchBar";
@@ -9,7 +9,7 @@ import http from "../../ultis/httpClient.js";
 import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import UserFilterState from "./UserFilterType";
-import { _createQuery } from "../../ultis/helper";
+import { formatDate, _createQuery } from "../../ultis/helper";
 
 let params = {
   locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
@@ -34,6 +34,7 @@ export default function User() {
   const [userDatas, setUser] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
+  const [itemDetail, setItemDetail] = React.useState(null);
 
   const history = useHistory();
   //modal
@@ -122,7 +123,7 @@ export default function User() {
   };
 
   const handleEdit = (item) => {
-    history.push("/users/" + item.code);
+    history.push("/users/" + item.userId);
   };
 
   const handleDelete = (item) => {
@@ -131,32 +132,22 @@ export default function User() {
 
   const handleFilterType = (items) => {
     _refreshParams();
-    params.state = items;
+    params.type = items;
     _fetchData();
   };
 
   const handleShowDetail = (item) => {
     console.log("object");
-    modalDetail.show({
-      title: "Detailed Asset Information",
-      content: (
-        <>
-          <p>Item {item.assetId}</p>
-          <ListGroup>
-            <ListGroupItem>Cras justo odio</ListGroupItem>
-            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-            <ListGroupItem>Morbi leo risus</ListGroupItem>
-            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-            <ListGroupItem>Vestibulum at eros</ListGroupItem>
-          </ListGroup>
-        </>
-      ),
+    console.log(item);
+    http.get("/api/users/" + item.userId).then((response) => {
+      setItemDetail(response.data);
     });
+    modalDetail.show();
   };
 
   return (
     <>
-      <h5 className="name-list">User List</h5>
+      <h5 className="name-list mb-4">User List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <UserFilterState onChange={handleFilterType} />
@@ -181,7 +172,44 @@ export default function User() {
         onShowDetail={handleShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
-      <NSDetailModal hook={modalDetail} />
+      <NSDetailModal hook={modalDetail} title="Detailed User Information">
+        <Table borderless className="table-detailed ">
+          <tbody>
+            <tr>
+              <td>Staff Code : </td>
+              <td>{itemDetail?.staffCode}</td>
+            </tr>
+            <tr>
+              <td>Full Name : </td>
+              <td>{itemDetail?.fullName}</td>
+            </tr>
+            <tr>
+              <td>Username : </td>
+              <td>{itemDetail?.userName}</td>
+            </tr>
+            <tr>
+              <td>Date Of Birth : </td>
+              <td>{formatDate(itemDetail?.dateOfBirth)}</td>
+            </tr>
+            <tr>
+              <td>Gender : </td>
+              <td>{itemDetail?.gender ? "MALE" : "FAMALE"}</td>
+            </tr>
+            <tr>
+              <td>Joined Date :</td>
+              <td>{formatDate(itemDetail?.joinedDate)}</td>
+            </tr>
+            <tr>
+              <td>TYPE : </td>
+              <td>{itemDetail?.roleName}</td>
+            </tr>
+            <tr>
+              <td>Location : </td>
+              <td>{itemDetail?.locationName}</td>
+            </tr>
+          </tbody>
+        </Table>
+      </NSDetailModal>{" "}
     </>
   );
 }

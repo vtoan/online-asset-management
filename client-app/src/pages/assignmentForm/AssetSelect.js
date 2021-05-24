@@ -1,15 +1,18 @@
-import React, { useCallback } from "react";
+import React from "react";
 import TableItem from "../../common/TableItem";
-// import NSTable from "../../common/NSTable";
 import NSTableModal from "../../common/NSTableModal";
 import { _createQuery } from "../../ultis/helper";
 import http from "../../ultis/httpClient.js";
+import SearchBar from '../../common/SearchBar';
 
 let params = {
     locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
-    adminid: "92dd342c-7bc1-46c1-9c23-097887727a55"
-
-};
+    query: "",
+    currenassetid: "",
+    AssetIdSort: 0,
+    AssetNameSort: 0,
+    CategoryNameSort: 0,
+}
 
 const tableTitles = [
     {
@@ -28,34 +31,52 @@ const tableTitles = [
     },
 ];
 
-export default function AssetTable({ datas, onChangeSort, parentCallback, assignmentID }) {
+function _refreshParams() {
+    params.AssetIdSort = 0;
+    params.AssetNameSort = 0;
+    params.CategoryNameSort = 0;
+}
+
+export default function AssetTable({ assetCurrentId, onSelectedItem }) {
     const [selectAsset, setSelectAsset] = React.useState([]);
-    const [nameAsset, setNameAsset] = React.useState('');
-    const [dataEdit, setEdit] = React.useState(null);
-
-    const _fetchDataAssignment = (id) => {
-        http.get
-            ("/api/Assignments/" + id + _createQuery(params)).then((resp) => {
-                setEdit(resp.data.assetId);
-                console.log(resp.data.assetId);
-
-            });
-    };
+    const [assetList, setAsset] = React.useState('');
 
     React.useEffect(() => {
-        params = {
-            locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
-            adminid: "92dd342c-7bc1-46c1-9c23-097887727a55",
-        };
-        if (assignmentID) {
-            _fetchDataAssignment(assignmentID);
-            console.log(dataEdit);
+        if (assetCurrentId) {
+            params.currenassetid = assetCurrentId
+            setSelectAsset(assetCurrentId)
         }
-    }, [assignmentID]);
+        _fetchDataAsset()
+    }, [assetCurrentId]);
+
+    const _fetchDataAsset = () => {
+        http.get("/api/Asset/assignmentasset" + _createQuery(params)).then((resp) => {
+            setAsset(resp.data);
+            console.log(resp.data);
+        });
+    };
+
+    const _findAssetName = (assetId) => {
+        return assetList.find(item => item.assetId === assetId)?.assetName ?? "unknown";
+    }
 
     const handleSelectAsset = (event) => {
-        setSelectAsset(event.target.value);
-        // console.log(event.target.value);
+        let val = event.target.value;
+        setSelectAsset(val);
+        onSelectedItem && onSelectedItem(_findAssetName(val));
+    };
+
+    const handleChangeSort = (target) => {
+        _refreshParams();
+        params = { ...params, ...target };
+        if (target < 0) return (params.sortCode = null);
+        _fetchDataAsset();
+    };
+
+    const handleSearch = (query) => {
+        _refreshParams();
+        params.query = query;
+        _fetchDataAsset();
     };
 
     const itemRender = (asset) => (
@@ -66,12 +87,7 @@ export default function AssetTable({ datas, onChangeSort, parentCallback, assign
                     value={asset.assetId}
                     onChange={handleSelectAsset}
                     name="checked-radio"
-                    // checked={dataEdit == asset.assetId}
-                    onClick={() => {
-                        setNameAsset((asset.assetId));
-                        parentCallback(asset.assetId)
-                    }}
-
+                    checked={selectAsset === asset.assetId}
                 />
                 <span className="checkmark" style={{ marginTop: 8 }} />
             </label></td>
@@ -88,11 +104,15 @@ export default function AssetTable({ datas, onChangeSort, parentCallback, assign
     );
 
     return (
-        <NSTableModal
-            titles={tableTitles}
-            datas={datas}
-            itemRender={itemRender}
-            onChangeSort={onChangeSort}
-        />
+        <>
+            <SearchBar onSearch={handleSearch} />
+            <h5 className="title-modal">Select Asset</h5>
+            <NSTableModal
+                titles={tableTitles}
+                datas={assetList}
+                itemRender={itemRender}
+                onChangeSort={handleChangeSort}
+            />
+        </>
     );
 }

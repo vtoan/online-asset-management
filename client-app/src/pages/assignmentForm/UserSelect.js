@@ -1,7 +1,17 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import TableItem from "../../common/TableItem";
-// import NSTable from "../../common/NSTable";
 import NSTableModal from "../../common/NSTableModal";
+import { _createQuery } from "../../ultis/helper";
+import http from "../../ultis/httpClient.js";
+import SearchBar from '../../common/SearchBar';
+
+let params = {
+    locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+    query: "",
+    sortCode: "",
+    sortFullName: 0,
+    sortType: 0,
+}
 
 const tableTitles = [
     {
@@ -20,50 +30,88 @@ const tableTitles = [
     },
 ];
 
-export default function UserTable({ datas, onChangeSort, parentCallback }) {
-    const [selectUser, setSelectUser] = React.useState([]);
-    const [nameUser, setNameUser] = React.useState('');
 
-    const handleSelectUser = (event) => {
-        setSelectUser(event.target.value);
-        // console.log(event.target.value);
+function _refreshParams() {
+    params.sortCode = 0;
+    params.sortFullName = 0;
+    params.sortType = 0;
+}
+
+export default function UserTable({ userCurrentId, onSelectedItem }) {
+    const [selectUser, setSelectUser] = React.useState([]);
+    const [userList, setUser] = React.useState('');
+
+    React.useEffect(() => {
+        if (userCurrentId) {
+            setSelectUser(userCurrentId);
+        }
+        _fetchDataUser()
+    }, [userCurrentId]);
+
+    const _fetchDataUser = () => {
+        http.get("/api/Users" + _createQuery(params)).then((resp) => {
+            setUser(resp.data);
+            console.log(resp.data);
+        });
     };
 
-    const itemRender = (item) => (
-        <>
+    const _findAssetUser = (userId) => {
+        return userList.find(item => item.userId === userId)?.fullName ?? "unknown";
+    }
 
+    const handleSelectUser = (event) => {
+        let val = event.target.value;
+        setSelectUser(val);
+        onSelectedItem && onSelectedItem(_findAssetUser(val));
+    };
+
+    const handleChangeSort = (target) => {
+        _refreshParams();
+        params = { ...params, ...target };
+        if (target < 0) return (params.sortCode = null);
+        _fetchDataUser();
+    };
+
+    const handleSearch = (query) => {
+        _refreshParams();
+        params.query = query;
+        _fetchDataUser();
+    };
+
+    const itemRender = (user) => (
+        <>
             <label className="container-radio">
                 <input
                     type="radio"
-                    value={item.userId}
+                    value={user.userId}
                     onChange={handleSelectUser}
                     name="checked-radio"
-                    onClick={() => {
-                        setNameUser((item.userId));
-                        parentCallback(item.userId)
-                    }}
-
+                    checked={selectUser === user.userId}
                 />
                 <span className="checkmark" style={{ marginTop: 8 }} />
             </label>
-
             <td>
-                <TableItem>{item.staffCode}</TableItem>
+                <TableItem>{user.staffCode}</TableItem>
             </td>
             <td>
-                <TableItem>{item.userName}</TableItem>
+                <TableItem>{user.userName}</TableItem>
             </td>
             <td>
-                <TableItem>{item.roleName}</TableItem>
+                <TableItem>{user.roleName}</TableItem>
             </td>
         </>
     );
+
     return (
-        <NSTableModal
-            titles={tableTitles}
-            datas={datas}
-            itemRender={itemRender}
-            onChangeSort={onChangeSort}
-        />
+        <>
+            <SearchBar onSearch={handleSearch} />
+            <h5 className="title-modal">Select User</h5>
+            <NSTableModal
+                titles={tableTitles}
+                datas={userList}
+                itemRender={itemRender}
+                onChangeSort={handleChangeSort}
+            />
+        </>
     );
 }

@@ -144,7 +144,7 @@ export default function Asset(props) {
 
   return (
     <>
-      <h5 className="name-list">Asset List</h5>
+      <h5 className="name-list mb-4">Asset List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <AssetFilterState onChange={handleFilterState} />
@@ -174,7 +174,7 @@ export default function Asset(props) {
       <NSConfirmModal hook={modalConfirm} />
 
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
-        <Table borderless>
+        <Table borderless className="table-detailed ">
           <tbody>
             <tr>
               <td>Asset Code : </td>

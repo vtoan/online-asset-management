@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Row, Col, Button, Input } from "reactstrap";
-import http from '../../ultis/httpClient';
+import http from "../../ultis/httpClient";
 
 let params = {
   locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
@@ -24,15 +24,13 @@ function formatDate(date) {
     date = Date.now();
   }
   var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
     year = d.getFullYear();
 
-  if (month.length < 2)
-    month = '0' + month;
-  if (day.length < 2)
-    day = '0' + day;
-  return [year, month, day].join('-');
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+  return [year, month, day].join("-");
 }
 
 const roles = [
@@ -43,7 +41,7 @@ const roles = [
   {
     id: 2,
     name: "STAFF",
-  }
+  },
 ];
 
 export default function UserForm() {
@@ -52,21 +50,26 @@ export default function UserForm() {
   const [nameHeader, setnameHeader] = React.useState("");
   const [selectType, setSelectType] = React.useState("");
   const [typeRole, setTypeRole] = React.useState([]);
-  const [joinedDate, setjoinedDate] = React.useState([]);
+  const [joinedDate, setjoinedDate] = React.useState(formatDate(Date.now()));
   const [dateOfBirth, setDateOfBirth] = React.useState([]);
   const [gender, setGender] = React.useState(0);
 
   const _fetchUserData = (userId) => {
-    http.get("/api/users/" + userId).then(resp => {
-      setEdit(resp.data);
-      setGender(resp.data.gender);
-      setSelectType(resp.data.roleName);
-      setDateOfBirth(formatDate(resp.data.dateOfBirth));
-      setjoinedDate(formatDate(resp.data.joinedDate))
-      selectType == "ADMIN" ? setTypeRole(roles) : setTypeRole(roles.reverse());
-      console.log(dataEdit);
-      console.log(selectType);
-    }).catch(err => console.log(err))
+    http
+      .get("/api/users/" + userId)
+      .then((resp) => {
+        setEdit(resp.data);
+        setGender(resp.data.gender);
+        setSelectType(resp.data.roleName);
+        setDateOfBirth(formatDate(resp.data.dateOfBirth));
+        setjoinedDate(formatDate(resp.data.joinedDate));
+        selectType === "ADMIN"
+          ? setTypeRole(roles)
+          : setTypeRole(roles.reverse());
+        console.log(dataEdit);
+        console.log(selectType);
+      })
+      .catch((err) => console.log(err));
   };
 
   React.useEffect(() => {
@@ -75,11 +78,11 @@ export default function UserForm() {
       setnameHeader("Edit User");
     } else {
       setnameHeader("Create New User");
-      setTypeRole(roles)
+      setTypeRole(roles);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const handleSubmit = (event) => {
-
     event.preventDefault();
     const user = {
       id: id,
@@ -89,17 +92,22 @@ export default function UserForm() {
       gender: Boolean(event.target.gender.value),
       joinedDate: String(event.target.dateAddUser.value),
       type: Number(event.target.nameCategoryType.value),
-      locationId: params.locationid
+      locationId: params.locationid,
     };
     if (id) {
-      http.put("/api/users/" + id + _createQuery(params), user).then(resp => {
-        console.log(user);
-      }).catch(err => console.log(err))
-    }
-    else {
-      http.post("/api/user" + _createQuery(params), user).then(resp => {
-        console.log(user);
-      }).catch(err => console.log(err))
+      http
+        .put("/api/users/" + id + _createQuery(params), user)
+        .then((resp) => {
+          console.log(user);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      http
+        .post("/api/user" + _createQuery(params), user)
+        .then((resp) => {
+          console.log(user);
+        })
+        .catch((err) => console.log(err));
     }
   };
 
@@ -120,7 +128,7 @@ export default function UserForm() {
 
   return (
     <>
-      <h5 className="name-list">{nameHeader}</h5>
+      <h5 className="name-list mb-4">{nameHeader}</h5>
       <form className="form-user" onSubmit={handleSubmit}>
         <Row className="row-create-new">
           <Col className="col-user" xs="2">
@@ -131,7 +139,7 @@ export default function UserForm() {
               type="text"
               className="first-name-user"
               name="firstName"
-              value={dataEdit?.firstName ?? ""}
+              defaultValue={dataEdit?.firstName ?? ""}
               disabled={id}
             />
           </Col>
@@ -145,7 +153,7 @@ export default function UserForm() {
               type="text"
               className="last-name-user"
               name="lastName"
-              value={dataEdit?.lastName ?? ""}
+              defaultValue={dataEdit?.lastName ?? ""}
               disabled={id}
             />
           </Col>
@@ -212,14 +220,17 @@ export default function UserForm() {
             <span>Type</span>
           </Col>
           <Col className="col-user-new">
-            <Input type="select"
+            <Input
+              type="select"
               name="nameCategoryType"
               onChange={(e) => setSelectType(e.target.value)}
               className="category-type"
               defaultValue={selectType}
             >
               {typeRole.map((item) => (
-                <option ket={item.id} value={item.id}>{item.name}</option>
+                <option ket={item.id} value={item.id}>
+                  {item.name}
+                </option>
               ))}
             </Input>
           </Col>

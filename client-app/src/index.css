@@ -564,3 +564,17 @@ div.input-group
 {
   color: red;
 }
+/* pagingation */
+.page-link {
+  color: var(--clr-primary);
+}
+
+.page-item.active .page-link {
+  background-color: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
+
+/**/
+.table-detailed tbody tr td:first-child {
+  width: 40%;
+}

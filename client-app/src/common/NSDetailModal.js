@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, ModalBody, ModalHeader, Col, Button, Input, FormGroup } from "reactstrap";
+import { Modal, ModalBody, Col, Button, FormGroup } from "reactstrap";
 
 export function useNSDetailModal() {
   const [modal, setModal] = useState(false);
@@ -12,7 +12,7 @@ export function useNSDetailModal() {
   };
 }
 
-export default function NSDetailModal({ hook, children, title }) {
+export default function NSDetailModal({ hook, children }) {
   const toggle = () => hook.close();
   return (
     <>

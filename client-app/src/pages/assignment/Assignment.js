@@ -16,12 +16,12 @@ import { assignmentOptions } from "../../enums/assignmentState";
 let params = {};
 
 function _refreshParams() {
-  params.AssetId = 0;
-  params.AssetName = 0;
-  params.AssignedTo = 0;
-  params.AssignedBy = 0;
-  params.AssignedDate = 0;
-  params.State = 0;
+  params.sortAssetId = 0;
+  params.sortAssetName = 0;
+  params.sortAssignedTo = 0;
+  params.sortAssignedBy = 0;
+  params.sortAssignedDate = 0;
+  params.sortState = 0;
   params.page = 1;
 }
 
@@ -87,7 +87,7 @@ export default function Assignment() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete("/api/Assignments/" + item.assignmentId)
+          .delete("/api/assignments/" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
@@ -100,31 +100,30 @@ export default function Assignment() {
           });
       },
     });
-
     modalConfirm.show(item);
   };
 
   const handleReturn = (item) => {
-    // modalConfirm.config({
-    //   message: "Do you want to create a returning request for this asset?",
-    //   btnName: "Yes",
-    //   onSubmit: (item) => {
-    //     modalLoading.show();
-    //     http
-    //       .delete("/api/Assignments/" + item.assignmentId)
-    //       .then((resp) => {
-    //         _refreshParams();
-    //         _fetchData();
-    //       })
-    //       .catch((err) => {
-    //         showDisableDeleteModal();
-    //       })
-    //       .finally(() => {
-    //         modalLoading.close();
-    //       });
-    //   },
-    // });
-    // modalConfirm.show(item);
+    modalConfirm.config({
+      message: "Do you want to create a returning request for this asset?",
+      btnName: "Yes",
+      onSubmit: (item) => {
+        // modalLoading.show();
+        // http
+        //   .delete("/api/Assignments/" + item.assignmentId)
+        //   .then((resp) => {
+        //     _refreshParams();
+        //     _fetchData();
+        //   })
+        //   .catch((err) => {
+        //     showDisableDeleteModal();
+        //   })
+        //   .finally(() => {
+        //     modalLoading.close();
+        //   });
+      },
+    });
+    modalConfirm.show(item);
   };
 
   const showDisableDeleteModal = () => {
@@ -148,7 +147,7 @@ export default function Assignment() {
 
   const handleFilterDate = (date) => {
     _refreshParams();
-    params.AssignedDateAssignment = date;
+    params.AssignedDate = date;
     _fetchData();
   };
 
@@ -161,7 +160,7 @@ export default function Assignment() {
 
   return (
     <>
-      <h5 className="name-list">Assignment List</h5>
+      <h5 className="name-list mb-4">Assignment List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
           <AssignmenttFilterState onChange={handleFilterState} />
@@ -191,8 +190,8 @@ export default function Assignment() {
         onShowDetail={handleShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
-      <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
-        <Table borderless>
+      <NSDetailModal hook={modalDetail} title="Detailed Assignment Information">
+        <Table borderless className="table-detailed ">
           <tbody>
             <tr>
               <td>Asset Code : </td>
@@ -215,7 +214,7 @@ export default function Assignment() {
               <td>{itemDetail?.assignedBy}</td>
             </tr>
             <tr>
-              <td>Assigned Date : </td>
+              <td>Assigned Date :</td>
               <td>{formatDate(itemDetail?.assignedDate)}</td>
             </tr>
             <tr>
