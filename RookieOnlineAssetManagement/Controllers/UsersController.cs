@@ -20,7 +20,6 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             _userSer = userSer;
         }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserModel>>> GetListAsync([FromQuery] UserRequestParmas userRequestParmas)
         {
