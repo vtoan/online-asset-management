@@ -27,7 +27,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.locationId);
             if (!string.IsNullOrEmpty(userRequestParmas.query))
             {
-                queryable = queryable.Where(x => x.Id.Contains(userRequestParmas.query) || x.UserName.Contains(userRequestParmas.query));
+                queryable = queryable.Where(x => x.StaffCode.Contains(userRequestParmas.query) || x.UserName.Contains(userRequestParmas.query) || x.FirstName.Contains(userRequestParmas.query) || x.LastName.Contains(userRequestParmas.query));
             }
             if (userRequestParmas.sortCode != null)
                 switch (userRequestParmas.sortCode)
