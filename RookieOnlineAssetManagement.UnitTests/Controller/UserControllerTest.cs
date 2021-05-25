@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RookieOnlineAssetManagement.Controllers;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.Utils;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -70,7 +73,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         }
 
         [Fact]
-        public async Task GetUser_Success()
+        public async Task GetUserById_Success()
         {
             var mockUserSer = new Mock<IUserService>();
             string UserId = Guid.NewGuid().ToString();
@@ -80,6 +83,6 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var result = await assetContr.GetAsync(UserId);
             Assert.IsType<OkObjectResult>(result.Result);
             Assert.NotNull(result);
-        }
+        }      
     }
 }
