@@ -1,33 +1,33 @@
 import React from "react";
 import HomeTable from "./Table";
 import http from "../../ultis/httpClient.js";
-import {_createQuery} from "../../ultis/helper.js";
+import { _createQuery } from "../../ultis/helper.js";
 
-let params = {}
+let params = {};
 
-function _refreshParams(){
-  params.sortCode=0;
-  params.sortName=0;
-  params.sortState = 0;
-  params.sortCate = 0;
+function _refreshParams() {
+  params.SortAssetId = 0;
+  params.SortAssetName = 0;
+  params.SortCategoryName = 0;
+  params.SortAssignedDate = 0;
+  params.SortState = 0;
 };
 
 export default function Home() {
   const [homeData, setHome] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
-  const [pageCurrent, setPageCurrent] =React.useState(0);
+  const [pageCurrent, setPageCurrent] = React.useState(0);
+
   React.useEffect(() => {
     params = {
       locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
-      sortCode: 0,
-      sortName: 0,
-      sortCate: 0,
-      sortState: 0,
-      query: "",
+      SortAssetId: 0,
+      SortAssetName: 0,
+      SortCategoryName: 0,
+      SortAssignedDate: 0,
+      SortState: 0,
       pagesize: 8,
       page: 1,
-      state: [],
-      categoryid: [],
     };
     _fetchData();
   }, []);
@@ -47,7 +47,9 @@ export default function Home() {
   };
 
   const handleChangeSort = (target) => {
-    console.log(target);
+    _refreshParams();
+    params = { ...params, ...target };
+    if (target < 0) return (params.SortAssetId = null);
     _fetchData();
   };
   const handleAcceptRequest = (item) => {
@@ -72,6 +74,7 @@ export default function Home() {
         onDeny={handleDenyRequest}
         onRefresh={onRefresh}
         totalPage={totalPages}
+        pageSelected={pageCurrent}
       />
     </>
   );

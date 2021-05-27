@@ -8,23 +8,23 @@ import {formatDate} from "../../ultis/helper";
 const tableTitles = [
     {
         title: "AssetCode",
-        nameSort: "sort AssetCode",
+        nameSort: "SortAssetId",
     },
     {
         title: "AssetName",
-        nameSort: "sort AssetName",
+        nameSort: "SortAssetName",
     },
     {
         title: "Category",
-        nameSort: "sort Category",
+        nameSort: "SortCategoryName",
     },
     {
         title: "AssignedDate",
-        nameSort: "sort AssignedDate",
+        nameSort: "SortAssignedDate",
     },
     {
         title: "State",
-        nameSort: "sort State",
+        nameSort: "SortState",
     },
 ]
 export default function HomeTable({
