@@ -37,25 +37,6 @@ export default function Asset(props) {
   const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
   const { modalAlert, modalLoading } = useNSModals();
-  modalConfirm.config({
-    message: "Do you want to delete this asset?",
-    btnName: "Delete",
-    onSubmit: (item) => {
-      modalLoading.show();
-      http
-        .delete("/api/asset/" + item.assetId)
-        .then((resp) => {
-          _refreshParams();
-          _fetchData();
-        })
-        .catch((err) => {
-          showDisableDeleteModal();
-        })
-        .finally(() => {
-          modalLoading.close();
-        });
-    },
-  });
 
   const showDisableDeleteModal = (itemId) => {
     let msg = (
@@ -118,6 +99,25 @@ export default function Asset(props) {
   };
 
   const handleDelete = (item) => {
+    modalConfirm.config({
+      message: "Do you want to delete this asset?",
+      btnName: "Delete",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .delete("/api/asset/" + item.assetId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+          });
+      },
+    });
     modalConfirm.show(item);
   };
 

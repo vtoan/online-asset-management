@@ -2,28 +2,29 @@ import '../../index.css';
 import TableItem from '../../common/TableItem';
 import NSTable from '../../common/NSTable';
 import { BsCheck } from "react-icons/bs";
-import { TiDeleteOutline,TiRefresh } from "react-icons/ti";
-
+import { TiDeleteOutline, TiRefresh } from "react-icons/ti";
+import { stateOptions } from "../../enums/assetState.js";
+import {formatDate} from "../../ultis/helper";
 const tableTitles = [
     {
         title: "AssetCode",
-        nameSort: "sort AssetCode",
+        nameSort: "SortAssetId",
     },
     {
         title: "AssetName",
-        nameSort: "sort AssetName",
+        nameSort: "SortAssetName",
     },
     {
         title: "Category",
-        nameSort: "sort Category",
+        nameSort: "SortCategoryName",
     },
     {
         title: "AssignedDate",
-        nameSort: "sort AssignedDate",
+        nameSort: "SortAssignedDate",
     },
     {
         title: "State",
-        nameSort: "sort State",
+        nameSort: "SortState",
     },
 ]
 export default function HomeTable({
@@ -34,23 +35,24 @@ export default function HomeTable({
     onAccept,
     onDeny,
     onRefresh,
+    onShowDetail
 }) {
     const itemRender = (item) => (
         <>
             <td>
-                <TableItem>{item.AssetCode}</TableItem>
+                <TableItem>{item.assetId}</TableItem>
             </td>
             <td>
-                <TableItem>{item.AssetName}</TableItem>
+                <TableItem>{item.assetName}</TableItem>
             </td>
             <td>
-                <TableItem>{item.Category}</TableItem>
+                <TableItem>{item.categoryName}</TableItem>
             </td>
             <td>
-                <TableItem>{item.AssignedDate}</TableItem>
+                <TableItem>{formatDate(item.assignedDate)}</TableItem>
             </td>
-            <td>
-                <TableItem>{item.State}</TableItem>
+            <td style={{cursor: 'pointer'}} onClick={() => onShowDetail && onShowDetail(item)}>
+                <TableItem>{stateOptions.find((items) => items.value === item.state)?.label ?? "Unknown"}</TableItem>
             </td>
             <td className="table-actions">
                 <span className="table-icon" onClick={() => onAccept && onAccept(item)}>
