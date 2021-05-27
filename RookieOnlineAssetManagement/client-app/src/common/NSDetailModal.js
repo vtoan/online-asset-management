@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, ModalBody, ModalHeader, Button, FormGroup } from "reactstrap";
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
 
 export function useNSDetailModal() {
   const [modal, setModal] = useState(false);
