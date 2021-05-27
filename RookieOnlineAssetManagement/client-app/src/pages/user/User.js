@@ -32,29 +32,6 @@ export default function User() {
   const modalDetail = useNSDetailModal();
 
   const { modalAlert, modalLoading } = useNSModals();
-  modalConfirm.config({
-    message: "Do you want to disable this user?",
-    btnName: "Disable",
-    onSubmit: (item) => {
-      modalLoading.show();
-      http
-        .delete("/api/users/" + item.userId)
-        .then((resp) => {
-          _refreshParams();
-          _fetchData();
-          modalAlert.show({
-            title: "Disable user",
-            msg: "Disable user successfully",
-          });
-        })
-        .catch((err) => {
-          showDisableModal();
-        })
-        .finally(() => {
-          modalLoading.close();
-        });
-    },
-  });
 
   const showDisableModal = (itemId) => {
     let msg = (
@@ -116,6 +93,29 @@ export default function User() {
   };
 
   const handleDelete = (item) => {
+    modalConfirm.config({
+      message: "Do you want to disable this user?",
+      btnName: "Disable",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .delete("/api/users/" + item.userId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+            modalAlert.show({
+              title: "Disable user",
+              msg: "Disable user successfully",
+            });
+          })
+          .catch((err) => {
+            showDisableModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+          });
+      },
+    });
     modalConfirm.show(item);
   };
 
