@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory, useParams } from "react-router";
 import http from "../../ultis/httpClient";
-import AssetForm from "./AssetForm";
+import AssetForm from "./assetForm";
 import { stateOptions } from "../../enums/assetState";
 import { useNSModals } from "../../containers/ModalContainer";
 
