@@ -12,12 +12,12 @@ export function useNSDetailModal() {
   };
 }
 
-export default function NSDetailModal({ hook, children, title }) {
+export default function NSDetailModal({ hook, children, title, size }) {
   const toggle = () => hook.close();
   return (
     <>
       {hook != null && (
-        <Modal centered isOpen={hook.modal}>
+        <Modal centered isOpen={hook.modal} size={size}>
           <ModalHeader toggle={toggle}>{title}</ModalHeader>
           <ModalBody>
             {/* <p className="mb-4"> {contentModal && contentModal}</p> */}

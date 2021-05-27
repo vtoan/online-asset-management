@@ -12,7 +12,7 @@ import http from "../../ultis/httpClient.js";
 import NSConfirmModal, {
   useNSConfirmModal,
 } from "../../common/NSConfirmModal.js";
-
+import TableItem from "../../common/TableItem";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 
 let params = {};
@@ -30,9 +30,9 @@ export default function Asset(props) {
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
+  const [itemHistory, setItemHistory] = React.useState(null);
   const history = useHistory();
   const location = useLocation();
-  console.log(location);
   //modal
   const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
@@ -81,6 +81,7 @@ export default function Asset(props) {
       page: 1,
       state: [],
       categoryid: [],
+      assetId: ""
     };
     _fetchData();
   }, []);
@@ -134,11 +135,17 @@ export default function Asset(props) {
   };
 
   const handleShowDetail = (item) => {
-    console.log("object");
-    console.log(item);
-    http.get("/api/Asset/" + item.assetId).then((response) => {
-      setItemDetail(response.data);
-    });
+    params.assetId = item.assetId;
+    Promise.all([
+      http.get("/api/Asset/" + item.assetId),
+      http.get("/api/Asset/history-asset" + _createQuery(params))
+    ]).then((responseArray) => {
+      setItemDetail(responseArray[0].data);
+      setItemHistory(responseArray[1].data);
+
+     
+      // console.log(itemHistory.slice().assignedBy)
+    })
     modalDetail.show();
   };
 
@@ -173,7 +180,7 @@ export default function Asset(props) {
       />
       <NSConfirmModal hook={modalConfirm} />
 
-      <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
+      <NSDetailModal hook={modalDetail} title="Detailed Asset Information" size="lg">
         <Table borderless className="table-detailed ">
           <tbody>
             <tr>
@@ -204,6 +211,31 @@ export default function Asset(props) {
             <tr>
               <td>Specification :</td>
               <td>{itemDetail?.specification}</td>
+            </tr>
+            <tr>
+              <td>History :</td>
+              {itemHistory && itemHistory.map((item) => {
+                return (<Table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Assigned to</th>
+                      <th>Assigned by</th>
+                      <th>Returned date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{formatDate(item.date)}</td>
+                      <td>{item.assignedTo}</td>
+                      <td>{item.assignedBy}</td>
+                      <td>{formatDate(item.returnedDate)}</td>
+                    </tr>
+                  </tbody>
+                </Table>)
+              })
+              }
+              
             </tr>
           </tbody>
         </Table>

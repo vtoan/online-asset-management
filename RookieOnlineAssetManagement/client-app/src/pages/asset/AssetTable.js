@@ -49,8 +49,7 @@ export default function AssetTable({
       </td>
       <td
         style={{ cursor: "pointer" }}
-        onClick={() => onShowDetail && onShowDetail(asset)}
-      >
+        onClick={() => onShowDetail && onShowDetail(asset)}>
         <TableItem>
           {stateOptions.find((item) => item.value === asset.state)?.label ??
             "Unknown"}
