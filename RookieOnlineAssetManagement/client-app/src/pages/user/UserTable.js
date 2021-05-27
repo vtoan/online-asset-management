@@ -14,7 +14,7 @@ const tableTitles = [
     width: "20%",
   },
   {
-    title: "User Name",
+    title: "Username",
     nameSort: null,
     width: "20%",
   },
@@ -58,10 +58,10 @@ export default function UserTable({
         <TableItem>{item.staffCode}</TableItem>
       </td>
       <td>
-        <TableItem>{item.userName}</TableItem>
+        <TableItem>{item.fullName}</TableItem>
       </td>
       <td>
-        <TableItem>{item.fullName}</TableItem>
+        <TableItem>{item.userName}</TableItem>
       </td>
       <td>
         <TableItem>{formatDate(item.joinedDate)}</TableItem>
