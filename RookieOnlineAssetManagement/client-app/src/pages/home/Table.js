@@ -35,6 +35,7 @@ export default function HomeTable({
     onAccept,
     onDeny,
     onRefresh,
+    onShowDetail
 }) {
     const itemRender = (item) => (
         <>
@@ -50,7 +51,7 @@ export default function HomeTable({
             <td>
                 <TableItem>{formatDate(item.assignedDate)}</TableItem>
             </td>
-            <td>
+            <td style={{cursor: 'pointer'}} onClick={() => onShowDetail && onShowDetail(item)}>
                 <TableItem>{stateOptions.find((items) => items.value === item.state)?.label ?? "Unknown"}</TableItem>
             </td>
             <td className="table-actions">
