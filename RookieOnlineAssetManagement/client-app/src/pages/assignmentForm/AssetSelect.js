@@ -6,7 +6,6 @@ import http from "../../ultis/httpClient.js";
 import SearchBar from "../../common/SearchBar";
 
 let params = {
-  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
   query: "",
   currenassetid: "",
   AssetIdSort: 0,
@@ -51,7 +50,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
 
   const _fetchDataAsset = () => {
     http
-      .get("/api/Asset/assignmentasset" + _createQuery(params))
+      .get("/api/Asset/assignment-asset" + _createQuery(params))
       .then((resp) => {
         setAsset(resp.data);
         console.log(resp.data);
@@ -67,7 +66,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
   const handleSelectAsset = (event) => {
     let val = event.target.value;
     setSelectAsset(val);
-    onSelectedItem && onSelectedItem(_findAssetName(val));
+    onSelectedItem && onSelectedItem(val, _findAssetName(val));
   };
 
   const handleChangeSort = (target) => {
@@ -111,7 +110,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
 
   return (
     <>
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar style={{ width: "50%" }} onSearch={handleSearch} />
       <h5 className="title-modal">Select Asset</h5>
       <NSTableModal
         titles={tableTitles}

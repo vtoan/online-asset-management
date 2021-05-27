@@ -4,11 +4,6 @@ import http from "../../ultis/httpClient";
 import AssetForm from "./assetForm";
 import { stateOptions } from "../../enums/assetState";
 import { useNSModals } from "../../containers/ModalContainer";
-import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
-
-let params = {
-  locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
-};
 
 const stateAssetEdit = stateOptions.slice(1);
 const stateAssetCreate = stateOptions.filter(
@@ -22,45 +17,7 @@ export default function AssetDetail(props) {
   const [stateForm, setStateForm] = React.useState([]);
   const history = useHistory();
   //modal
-  const modalConfirm = useNSConfirmModal();
   const { modalLoading } = useNSModals();
-  modalConfirm.config({
-    message: "Save changed infomation of asset",
-    btnName: "Ok",
-    onSubmit: (asset) => {
-      modalLoading.show();
-      asset.locationId = params.locationId;
-      if (id) {
-        asset.assetId = id;
-        http
-          .put("/api/asset/" + id, asset)
-          .then((resp) => {
-            console.log(resp.data);
-            history.push({
-              pathname: "/assets",
-              state: {
-                data: resp.data,
-              },
-            });
-          })
-          .catch((err) => console.log(err))
-          .finally(() => {
-            modalLoading.close();
-          });
-      } else {
-        http
-          .post("/api/asset", asset)
-          .then((resp) => {
-            props.history.push("/assets");
-          })
-          .catch((err) => console.log(err))
-          .finally(() => {
-            modalLoading.close();
-          });
-      }
-    },
-  });
-
   React.useEffect(() => {
     if (id) {
       _fetchAssetData(id);
@@ -82,8 +39,35 @@ export default function AssetDetail(props) {
   };
 
   const handleSubmit = (asset) => {
-    console.log(asset);
-    modalConfirm.show(asset);
+    modalLoading.show();
+    if (id) {
+      asset.assetId = id;
+      http
+        .put("/api/asset/" + id, asset)
+        .then((resp) => {
+          console.log(resp.data);
+          history.push({
+            pathname: "/assets",
+            state: {
+              data: resp.data,
+            },
+          });
+        })
+        .catch((err) => console.log(err))
+        .finally(() => {
+          modalLoading.close();
+        });
+    } else {
+      http
+        .post("/api/asset", asset)
+        .then((resp) => {
+          props.history.push("/assets");
+        })
+        .catch((err) => console.log(err))
+        .finally(() => {
+          modalLoading.close();
+        });
+    }
   };
 
   return (
@@ -94,7 +78,6 @@ export default function AssetDetail(props) {
         listState={stateForm}
         onSubmit={handleSubmit}
       />
-      <NSConfirmModal hook={modalConfirm} />
     </>
   );
 }

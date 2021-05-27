@@ -5,7 +5,7 @@ import Assignment from "./pages/assignment/Assignment";
 import Request from "./pages/request/Request";
 import Report from "./pages/report/Report";
 import AssetDetail from "./pages/assetForm/AssetDetail";
-import UserForm from "./pages/userForm/UserForm";
+import userForm from "./pages/userForm/userForm";
 import AssignmentForm from "./pages/assignmentForm/AssignmentForm";
 
 export const routePaths = [
@@ -57,12 +57,12 @@ export const routePaths = [
   {
     path: "/new-user",
     title: "Manage User > Create New User",
-    component: UserForm,
+    component: userForm,
   },
   {
     path: "/users/:id",
     title: "Manage User > Edit User",
-    component: UserForm,
+    component: userForm,
   },
   {
     path: "/new-assignments",

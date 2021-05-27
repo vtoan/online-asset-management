@@ -77,7 +77,7 @@ export default function Asset(props) {
       sortCate: 0,
       sortState: 0,
       query: "",
-      pagesize: 4,
+      pagesize: 8,
       page: 1,
       state: [],
       categoryid: [],

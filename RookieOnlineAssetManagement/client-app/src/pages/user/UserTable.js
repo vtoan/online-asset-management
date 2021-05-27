@@ -50,6 +50,7 @@ export default function UserTable({
   onEdit,
   onDelete,
   onShowDetail,
+  pageSelected,
 }) {
   const itemRender = (item) => (
     <>
@@ -89,6 +90,7 @@ export default function UserTable({
       itemRender={itemRender}
       onChangeSort={onChangeSort}
       onChangePage={onChangePage}
+      pageSelected={pageSelected}
     />
   );
 }

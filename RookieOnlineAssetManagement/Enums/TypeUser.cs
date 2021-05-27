@@ -7,6 +7,6 @@ namespace RookieOnlineAssetManagement.Enums
 {
     public enum TypeUser
     {
-        ADMIN = 1, USER = 2
+        ADMIN = 1, STAFF = 2
     }
 }

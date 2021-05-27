@@ -9,10 +9,11 @@ namespace RookieOnlineAssetManagement.Models
 {
     public class AssignmentRequestParams
     {
-        
+
+        [BindNever]
+        public string LocationId { get; set; }
         public StateAssignment[] StateAssignments { get; set; }
         public string AssignedDate { get; set; }
-        public string LocationId { get; set; }
         public string Query { get; set; }
         public SortBy? SortAssetId { get; set; }
         public SortBy? SortAssetName { get; set; }

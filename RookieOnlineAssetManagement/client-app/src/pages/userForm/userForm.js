@@ -1,14 +1,11 @@
 import React from "react";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Col, Button, Input, FormGroup } from "reactstrap";
 import http from "../../ultis/httpClient";
-import { _createQuery, formatDate } from "../../ultis/helper";
+import { formatDate } from "../../ultis/helper";
 import { userType } from "../../enums/userType";
-
-let params = {
-  locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
-};
+import { useNSModals } from "../../containers/ModalContainer";
 
 export default function UserForm() {
   const { id } = useParams();
@@ -19,7 +16,9 @@ export default function UserForm() {
   const [joinedDate, setjoinedDate] = React.useState(formatDate(Date.now()));
   const [dateOfBirth, setDateOfBirth] = React.useState([]);
   const [gender, setGender] = React.useState(0);
-
+  const history = useHistory();
+  //modal
+  const { modalLoading, modalAlert } = useNSModals();
   const _fetchUserData = (userId) => {
     http
       .get("/api/users/" + userId)
@@ -58,22 +57,49 @@ export default function UserForm() {
       gender: Boolean(event.target.gender.value),
       joinedDate: String(event.target.dateAddUser.value),
       type: Number(event.target.nameCategoryType.value),
-      locationId: params.locationid,
     };
+    modalLoading.show();
     if (id) {
       http
-        .put("/api/users/" + id + _createQuery(params), user)
+        .put("/api/users/" + id, user)
         .then((resp) => {
+          history.push("/users");
           console.log(user);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          modalAlert.show({
+            title: "Created User Successfully",
+            msg: "Created Failed",
+          });
+        })
+        .finally(() => {
+          modalLoading.close();
+        });
     } else {
       http
-        .post("/api/user" + _createQuery(params), user)
-        .then((resp) => {
-          console.log(user);
+        .post("/api/users", user)
+        .then(({ data }) => {
+          modalAlert.show({
+            title: "Created User Successfully",
+            msg: (
+              <>
+                <p>Username: {data.userName}</p>
+                <Link onClick={() => modalAlert.close()} to="/users">
+                  Go back to List User
+                </Link>
+              </>
+            ),
+          });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          modalAlert.show({
+            title: "Created User Successfully",
+            msg: "Created Failed",
+          });
+        })
+        .finally(() => {
+          modalLoading.close();
+        });
     }
   };
 

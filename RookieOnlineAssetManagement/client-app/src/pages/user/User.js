@@ -11,17 +11,7 @@ import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import UserFilterState from "./UserFilterType";
 import { formatDate, _createQuery } from "../../ultis/helper";
 
-let params = {
-  locationId: "9fdbb02a-244d-49ae-b979-362b4696479c",
-  sortCode: 0,
-  sortFullName: 0,
-  sortDate: 0,
-  sortType: 0,
-  query: "",
-  pagesize: 4,
-  page: null,
-  filter: null,
-};
+let params = {};
 
 function _refreshParams() {
   params.sortCode = 0;
@@ -79,21 +69,20 @@ export default function User() {
 
   React.useEffect(() => {
     params = {
-      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
       sortCode: 0,
       sortName: 0,
       sortCate: 0,
       sortState: 0,
       query: "",
-      pagesize: 4,
-      page: null,
-      filter: null,
+      pagesize: 8,
+      page: 1,
+      type: "",
     };
     _fetchData();
   }, []);
 
   const _fetchData = () => {
-    http.get("/api/Users" + _createQuery(params)).then((resp) => {
+    http.get("/api/users" + _createQuery(params)).then((resp) => {
       setUser(resp.data);
       let totalPages = resp.headers["total-pages"];
       setTotalPages(totalPages > 0 ? totalPages : 0);

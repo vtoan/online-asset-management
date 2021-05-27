@@ -124,5 +124,31 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             Assert.Null(user);
             Assert.IsNotType<UserDetailModel>(user);
         }
+        [Fact]
+        public async Task GetListUser_Succsess()
+        {
+            var dbContext = _fixture.Context;
+            var locationId = Guid.NewGuid().ToString();
+            var mockUserManager = new Mock<FakeUserManager>();
+            mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>())).ReturnsAsync(IdentityResult.Success);
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            await dbContext.SaveChangesAsync();
+            var UserTest = new UserRequestModel()
+            {
+                LocationId = locationId,
+                LastName = "Test",
+                FirstName = "Category",
+            };
+            var UserRepo = new UserRepository(dbContext, mockUserManager.Object);
+            var UserNew = await UserRepo.CreateUserAsync(UserTest);
+            var param = new UserRequestParmas
+            {
+                LocationId = locationId,
+                SortCode = Enums.SortBy.ASC,
+            };       
+            var user = await UserRepo.GetListUserAsync(param);
+            Assert.IsType<List<UserModel>>(user.Datas);
+            Assert.True(user.TotalPage >= 0);
+        }
     }
  }
