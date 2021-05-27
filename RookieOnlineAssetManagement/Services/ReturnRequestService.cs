@@ -1,4 +1,5 @@
-﻿using RookieOnlineAssetManagement.Models;
+﻿using IdentityServer4.Extensions;
+using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,34 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _returnRequestRepository.ChangeStateAsync(accept, assignmentId, acceptedUserId);
         }
-        public async Task<ICollection<ReturnRequestModel>> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
+        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
+            if (returnRequestParams.ReturnedDate != null)
+            {
+                var checkDate = IsDateTime(returnRequestParams.ReturnedDate);
+                if (checkDate == false)
+                    throw new Exception("Return date not valid !");
+            }
+            if(returnRequestParams.Page < 0 || returnRequestParams.PageSize < 0)
+            {
+                throw new Exception("Page and Page size not valid !");
+            }
             return await _returnRequestRepository.GetListReturnRequestAsync(returnRequestParams);
+        }
+
+        public bool IsDateTime(string text)
+        {
+            DateTime dateTime;
+            bool isDateTime;
+            // Check for empty string.
+            if (string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+
+            isDateTime = DateTime.TryParse(text, out dateTime);
+
+            return isDateTime;
         }
     }
 }
