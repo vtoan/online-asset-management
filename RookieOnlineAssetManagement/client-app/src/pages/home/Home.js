@@ -1,43 +1,44 @@
 import React from "react";
 import HomeTable from "./Table";
+import http from "../../ultis/httpClient.js";
+import {_createQuery} from "../../ultis/helper.js";
 
-const seedData = [
-  {
-    AssetCode: "LA100002",
-    AssetName: "Laptop HP Probook 450 G1",
-    Category: "Laptop",
-    AssignedDate: "10/04/2019",
-    State: "Accepted",
-  },
-  {
-    AssetCode: "LA100002",
-    AssetName: "Laptop HP Probook 450 G1",
-    Category: "Laptop",
-    AssignedDate: "10/04/2019",
-    State: "Accepted",
-  },
-  {
-    AssetCode: "LA100002",
-    AssetName: "Laptop HP Probook 450 G1",
-    Category: "Laptop",
-    AssignedDate: "10/04/2019",
-    State: "Accepted",
-  },
-];
+let params = {}
+
+function _refreshParams(){
+  params.sortCode=0;
+  params.sortName=0;
+  params.sortState = 0;
+  params.sortCate = 0;
+};
+
 export default function Home() {
   const [homeData, setHome] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
-
+  const [pageCurrent, setPageCurrent] =React.useState(0);
   React.useEffect(() => {
+    params = {
+      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+      sortCode: 0,
+      sortName: 0,
+      sortCate: 0,
+      sortState: 0,
+      query: "",
+      pagesize: 8,
+      page: 1,
+      state: [],
+      categoryid: [],
+    };
     _fetchData();
   }, []);
 
   const _fetchData = () => {
-    setHome([]);
-    setTimeout(() => {
-      setHome(seedData);
-      setTotalPages(2);
-    }, 500);
+    http.get('/api/Assignments/my-assignments' + _createQuery(params)).then((response) => {
+      setHome(response.data);
+      let totalPages = response.headers["total-pages"];
+      setTotalPages(totalPages > 0 ? totalPages : 0);
+      setPageCurrent(params.page);
+    })
   };
   //handleClick
   const handleChangePage = (page) => {

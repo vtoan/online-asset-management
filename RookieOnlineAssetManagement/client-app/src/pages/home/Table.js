@@ -2,8 +2,9 @@ import '../../index.css';
 import TableItem from '../../common/TableItem';
 import NSTable from '../../common/NSTable';
 import { BsCheck } from "react-icons/bs";
-import { TiDeleteOutline,TiRefresh } from "react-icons/ti";
-
+import { TiDeleteOutline, TiRefresh } from "react-icons/ti";
+import { stateOptions } from "../../enums/assetState.js";
+import {formatDate} from "../../ultis/helper";
 const tableTitles = [
     {
         title: "AssetCode",
@@ -38,19 +39,19 @@ export default function HomeTable({
     const itemRender = (item) => (
         <>
             <td>
-                <TableItem>{item.AssetCode}</TableItem>
+                <TableItem>{item.assetId}</TableItem>
             </td>
             <td>
-                <TableItem>{item.AssetName}</TableItem>
+                <TableItem>{item.assetName}</TableItem>
             </td>
             <td>
-                <TableItem>{item.Category}</TableItem>
+                <TableItem>{item.categoryName}</TableItem>
             </td>
             <td>
-                <TableItem>{item.AssignedDate}</TableItem>
+                <TableItem>{formatDate(item.assignedDate)}</TableItem>
             </td>
             <td>
-                <TableItem>{item.State}</TableItem>
+                <TableItem>{stateOptions.find((items) => items.value === item.state)?.label ?? "Unknown"}</TableItem>
             </td>
             <td className="table-actions">
                 <span className="table-icon" onClick={() => onAccept && onAccept(item)}>
