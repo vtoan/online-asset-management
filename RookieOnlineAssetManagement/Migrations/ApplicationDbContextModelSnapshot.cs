@@ -319,7 +319,6 @@ namespace RookieOnlineAssetManagement.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<string>("AcceptedUserId")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("AcceptedUserID");
@@ -571,8 +570,7 @@ namespace RookieOnlineAssetManagement.Migrations
                 {
                     b.HasOne("RookieOnlineAssetManagement.Entities.User", "AcceptedUser")
                         .WithMany("ReturnRequestAcceptedUsers")
-                        .HasForeignKey("AcceptedUserId")
-                        .IsRequired();
+                        .HasForeignKey("AcceptedUserId");
 
                     b.HasOne("RookieOnlineAssetManagement.Entities.Assignment", "Assignment")
                         .WithOne("ReturnRequest")

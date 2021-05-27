@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
@@ -22,31 +24,38 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<AssignmentModel>> CreateAsync(AssignmentRequestModel assignmentRequestModel)
         {
+            assignmentRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            assignmentRequestModel.AdminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _assignmentService.CreateAssignmentAsync(assignmentRequestModel));
         }
-        [HttpPut("{id})")]
-        public async Task<ActionResult<AssignmentModel>> UpdateAsync(string id,AssignmentRequestModel assignmentRequestModel)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AssignmentModel>> UpdateAsync(string id, AssignmentRequestModel assignmentRequestModel)
         {
+            assignmentRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            assignmentRequestModel.AdminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _assignmentService.UpdateAssignmentAsync(id, assignmentRequestModel));
         }
-        [HttpPut("changestate/{id}")]
+        [HttpPut("change-state/{id}")]
         public async Task<ActionResult<bool>> ChangeStateAsync(string id, StateAssignment state)
         {
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, state));
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteAssignmentAsync(string id)
+        public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
-            return Ok( await _assignmentService.DeleteAssignmentAsync(id));
+            return Ok(await _assignmentService.DeleteAssignmentAsync(id));
         }
-        [HttpGet("myassignments")]
-        public async Task<ActionResult<MyAssigmentModel>> GetMyListAsync(string userid, string locationid, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort, SortBy? AssignedDateSort, SortBy? StateSort)
+        [HttpGet("my-assignments")]
+        public async Task<ActionResult<MyAssigmentModel>> GetMyListAsync([FromQuery] MyAssignmentRequestParams myAssignmentRequestParams)
         {
-            return Ok(await _assignmentService.GetListMyAssignmentAsync(userid, locationid, AssetIdSort, AssetNameSort, CategoryNameSort, AssignedDateSort, StateSort));
+            myAssignmentRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            myAssignmentRequestParams.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Ok(await _assignmentService.GetListMyAssignmentAsync(myAssignmentRequestParams));
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AssignmentModel>>> GetListAsync([FromQuery] AssignmentRequestParams assignmentRequestParams)
         {
+            assignmentRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
             var result = await _assignmentService.GetListAssignmentAsync(assignmentRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             HttpContext.Response.Headers.Add("total-item", result.TotalItem.ToString());

@@ -20,11 +20,10 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             _userSer = userSer;
         }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserModel>>> GetListAsync([FromQuery] UserRequestParmas userRequestParmas)
         {
-            userRequestParmas.locationId = RequestHelper.GetLocationSession(HttpContext);
+            userRequestParmas.LocationId = RequestHelper.GetLocationSession(HttpContext);
             var result = await _userSer.GetListUserAsync(userRequestParmas);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             return Ok(result.Datas);
@@ -38,6 +37,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
+            userRequest.LocationId = RequestHelper.GetLocationSession(HttpContext);
             if (!ModelState.IsValid) return BadRequest(userRequest);
             return Ok(await _userSer.UpdateUserAsync(id, userRequest));
         }
@@ -51,6 +51,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<UserModel>> CreateAsync(UserRequestModel userRequestModel)
         {
+            userRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
             if (!ModelState.IsValid) return BadRequest();
             var result = await _userSer.CreateUserAsync(userRequestModel);
             if (result == null) return BadRequest();

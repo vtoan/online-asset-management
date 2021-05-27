@@ -1,0 +1,576 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 0 !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+hr {
+  margin: 0.5em 0 !important;
+}
+
+:root {
+  --clr-primary: rgb(207, 35, 56);
+  --clr-secondary: rgb(239, 241, 245);
+  --clr-dark: rgba(33, 37, 41);
+  --clr-white: rgba(250, 252, 252);
+}
+/* 
+input,
+select {
+  padding: 0.5em;
+  border-color: #dadada !important;
+  border-width: 1px !important;
+} */
+
+.main-content {
+  width: 90%;
+}
+
+.ns-bg-primary {
+  background-color: var(--clr-primary);
+}
+
+.ns-bg-secondary {
+  background-color: var(--clr-secondary);
+}
+
+.ns-text-primary {
+  color: var(--clr-primary);
+}
+
+.ns-text-secondary {
+  color: var(--clr-secondary);
+}
+
+.ns-text-dark {
+  color: var(--clr-dark);
+}
+
+.ns-text-white {
+  color: var(--clr-white);
+}
+
+/*Navigate*/
+.nav {
+  background-color: rgba(239, 241, 245, 1);
+  width: 220px;
+}
+.logo {
+  width: 120px;
+}
+
+.nav-container {
+  width: 200px;
+}
+
+.name-asset {
+  color: rgba(207, 35, 56, 1);
+  font-weight: bold;
+}
+
+.navLink {
+  color: #000000;
+  font-weight: bold;
+  text-decoration: none;
+  border: solid white 2px;
+  padding: 10px;
+}
+
+.navLink:hover {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffffff;
+}
+
+.active {
+  background-color: rgba(207, 35, 56, 1);
+  color: #ffff;
+}
+
+/*PageLayout*/
+
+.pt-3 {
+  padding: 40px;
+}
+
+.p-4 {
+  margin-top: 50px;
+}
+
+/*Header*/
+
+.header-name {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #ffffff;
+  margin-left: 40px;
+}
+
+.user-profile {
+  float: right;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Pages */
+
+.name-list {
+  color: rgba(207, 35, 56, 1);
+}
+
+/* Table */
+table thead tr td:first-child {
+  padding-left: 0;
+}
+
+table tbody tr td:first-child {
+  padding-left: 0;
+}
+
+.lable-arrow {
+  transition: 0.5s;
+}
+
+.table-item-bold {
+  font-weight: 700;
+}
+.table-item-bold hr {
+  border: 1px solid var(--clr-dark);
+  opacity: 1;
+}
+.table-icon {
+  font-size: 1.4em;
+  cursor: pointer;
+  display: inline-block !important;
+  padding-left: 0.75em;
+}
+
+.table-icon .disabled {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+
+.table-actions {
+  padding-right: 0 !important;
+  text-align: right;
+}
+
+/*SearchBar*/
+
+* {
+  box-sizing: border-box;
+}
+
+form.example input[type="text"] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 165px;
+  height: 34px;
+  background: #ffffff;
+  border-radius: 5px 0px 0px 5px;
+}
+
+form.example button {
+  width: 30px;
+  height: 34px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 14px;
+  border: 1px solid grey;
+  border-left: none;
+  border-radius: 0px 5px 5px 0px;
+}
+
+/*Select day */
+#select-date {
+  width: 165px;
+  height: 34px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  padding-left: 5px;
+}
+
+#select-date[type="date"]::before {
+  content: attr(data-placeholder);
+  width: 165px;
+}
+
+#select-date[type="date"]:focus::before,
+#select-date[type="date"]:valid::before {
+  display: none;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+
+/* Radio checkbox css */
+
+/* The container */
+.container-radio {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-right: 10px;
+}
+
+/* Hide the browser's default radio button */
+.container-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  margin-top: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container-radio:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-radio input:checked ~ .checkmark {
+  background-color: rgba(207, 35, 56, 1);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-radio input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-radio .checkmark:after {
+  top: 4px;
+  left: 3.7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* --- Common css for Forms --- */
+
+.row-create-new {
+  margin-top: 10px;
+}
+
+.col-create-new {
+  margin-left: 20px;
+}
+
+/* --- assetForm --- */
+
+.name-new-asset {
+  /* width: 200px; */
+  /* height: 27px; */
+  border-radius: 7px;
+}
+
+.category-asset {
+  width: 200px;
+  border-radius: 7px;
+}
+
+.date-asset {
+  width: 205px;
+  border-radius: 7px;
+}
+
+.container-radio {
+  font-size: 15px;
+}
+
+.specification-asset {
+  border-radius: 7px;
+}
+
+.area-button {
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+.submit-create-asset {
+  float: right;
+  padding-right: 30px;
+}
+
+.btn-cancel {
+  margin-left: 30px;
+}
+
+.form-asset {
+  margin-top: 40px;
+}
+
+.col-asset {
+  width: 13%;
+}
+
+.category-asset.form-control {
+  appearance: auto;
+  background-color: #ffffff !important;
+}
+/* --- Asset Category*/
+
+.fa.fa-chevron-down {
+  position: absolute;
+  left: 85%;
+  padding: 8px;
+  z-index: 1;
+  top: 10%;
+}
+
+.filter-cate {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+  padding-left: 10px;
+  border-radius: 5px;
+  border-color: gainsboro;
+}
+
+.multiselect {
+  width: 100%;
+}
+
+.selectBox {
+  position: relative;
+  width: 100%;
+}
+
+.selectBox .filter-cate {
+  width: 100%;
+  height: 2.5em;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+}
+
+#checkboxes {
+  border: 1px #dadada solid;
+  width: 310px;
+  display: none;
+  background-color: rgb(245, 245, 245);
+  padding-top: 10px;
+  position: absolute;
+  z-index: 1;
+}
+
+#checkboxes label {
+  display: block;
+}
+
+.checkboxlist {
+  padding: 5px 5px 10px 10px;
+}
+
+#nameCate {
+  width: 110px;
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+#shortname {
+  width: 29px;
+  font-size: 14px;
+}
+
+.fa.fa-check {
+  color: red;
+  margin-left: 5px;
+}
+
+.fa.fa-times {
+  color: black;
+  margin-left: 5px;
+}
+
+hr {
+  margin: 0px;
+}
+/* --- UserCreate --- */
+
+.last-name-user,
+.first-name-user {
+  /* width: 200px; */
+  height: 38px;
+  border-radius: 7px;
+}
+
+.date-user {
+  /* width: 200px; */
+  border-radius: 7px;
+}
+
+.category-type {
+  /* width: 200px; */
+  border-radius: 7px;
+}
+
+.area-button-user {
+  float: right;
+  margin-top: 20px;
+  padding-right: 10px;
+  width: 29.5%;
+}
+
+.submit-create-user {
+  float: right;
+}
+
+.form-user {
+  margin-top: 40px;
+}
+
+.col-user {
+  width: 11%;
+}
+
+.category-type.form-control {
+  appearance: auto;
+  background-color: #ffffff !important;
+}
+/* modal*/
+.modal-dialog .modal-content .close {
+  border: none;
+  background-color: white;
+  font-size: 1.4em;
+}
+.modal-dialog .modal-header,
+.modal-dialog .modal-body {
+  padding-left: 3em !important;
+  padding-right: 3em !important;
+}
+
+.modal-dialog .modal-header {
+  color: var(--clr-primary);
+  background-color: var(--clr-secondary);
+}
+.modal-dialog .modal-body {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+/* customer form */
+.form-control:focus {
+  border-color: #4285f4;
+  box-shadow: none;
+  border-width: 2px;
+}
+
+/* --- Assignment Form --- */
+
+.col-create-assingment-note {
+  margin-left: 0px;
+}
+
+.area-button-assignment {
+  float: right;
+  margin-top: 20px;
+  padding-right: 20px;
+  width: 38%;
+}
+
+.submit-create-assignment {
+  float: right;
+}
+
+.form-assignment {
+  margin-top: 40px;
+}
+
+.col-assignment {
+  width: 12.5%;
+}
+
+#searchIcon {
+  position: absolute;
+  left: 85%;
+  padding: 8px;
+  color: black;
+  top: 3px;
+}
+
+.searchName {
+  padding-left: 10px;
+  border-radius: 5px 5px 5px 5px;
+  border: 1px solid grey;
+}
+
+.wrapBox {
+  width: 185px;
+}
+
+.searchBox {
+  position: relative;
+}
+
+.searchBox .searchName {
+  font-size: 15px;
+  width: 200px;
+  height: 27px;
+}
+
+/* --- Search bar in Modal*/
+
+div.input-group {
+  /* width: 50%; */
+  float: right;
+}
+
+.title-modal {
+  color: var(--clr-primary);
+}
+/* pagingation */
+.page-link {
+  color: var(--clr-primary);
+}
+
+.page-item.active .page-link {
+  background-color: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
+
+/**/
+.table-detailed tbody tr td:first-child {
+  width: 40%;
+}

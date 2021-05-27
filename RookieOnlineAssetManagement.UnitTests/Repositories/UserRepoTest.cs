@@ -143,9 +143,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var UserNew = await UserRepo.CreateUserAsync(UserTest);
             var param = new UserRequestParmas
             {
-                locationId = locationId,
-                sortCode = Enums.SortBy.ASC,
-
+                LocationId = locationId,
+                SortCode = Enums.SortBy.ASC,
             };       
             var user = await UserRepo.GetListUserAsync(param);
             Assert.IsType<List<UserModel>>(user.Datas);

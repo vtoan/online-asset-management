@@ -181,7 +181,7 @@ namespace RookieOnlineAssetManagement.Data
                     .IsUnicode(false);
 
                 entity.Property(e => e.AcceptedUserId)
-                    .IsRequired()
+                    //.IsRequired()
                     .HasMaxLength(450)
                     .HasColumnName("AcceptedUserID");
 

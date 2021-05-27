@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Models;
 using Microsoft.AspNetCore.Authorization;
 using RookieOnlineAssetManagement.Utils;
+using System.Text.Json;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
@@ -105,24 +106,35 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
             var user = await _userManager.GetUserAsync(User);
-            var isPassValid = await _signInManger.CheckPasswordSignInAsync(user, userModel.OldPassword, false);
-            if (!isPassValid.Succeeded) return BadRequest("Password incorrect");
             var changePassword = await _userManager.ChangePasswordAsync(user, userModel.OldPassword, userModel.NewPassword);
             if (changePassword.Succeeded) return Ok();
-            return Problem("Can't change password");
+            var error = JsonSerializer.Serialize(changePassword.Errors);
+            return Problem(error);
+        }
+
+        public class ChangePassWordFirstModel
+        {
+            [Required]
+            public string NewPassword { set; get; }
         }
 
         [Authorize]
         [HttpPost("/change-password-first/{id}")]
-        public async Task<IActionResult> ChangePasswordFirstAsync([FromBody] string newPassword)
+        public async Task<IActionResult> ChangePasswordFirstAsync([FromBody] ChangePassWordFirstModel passWordFirstModel)
         {
-            if (string.IsNullOrEmpty(newPassword)) return BadRequest();
+            if (string.IsNullOrEmpty(passWordFirstModel.NewPassword)) return BadRequest();
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
             var defaultPass = AccountHelper.GenerateAccountPass(user.UserName, user.DateOfBirth.Value);
-            var changePassword = await _userManager.ChangePasswordAsync(user, defaultPass, newPassword);
-            if (changePassword.Succeeded) return Ok();
-            return Problem("Can't change password");
+            var changePassword = await _userManager.ChangePasswordAsync(user, defaultPass, passWordFirstModel.NewPassword);
+            if (changePassword.Succeeded)
+            {
+                user.IsChange = true;
+                await _userManager.UpdateAsync(user);
+                return Ok();
+            }
+            var error = JsonSerializer.Serialize(changePassword.Errors);
+            return Problem(error);
         }
 
     }

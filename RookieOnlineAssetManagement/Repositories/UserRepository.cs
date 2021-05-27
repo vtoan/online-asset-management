@@ -24,13 +24,14 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas)
         {
-            var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.locationId);
-            if (!string.IsNullOrEmpty(userRequestParmas.query))
+            var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.LocationId);
+            if (!string.IsNullOrEmpty(userRequestParmas.Query))
             {
-                queryable = queryable.Where(x => x.StaffCode.Contains(userRequestParmas.query) || x.UserName.Contains(userRequestParmas.query) || x.FirstName.Contains(userRequestParmas.query) || x.LastName.Contains(userRequestParmas.query));
+                queryable = queryable.Where(x => x.StaffCode.Contains(userRequestParmas.Query) || x.UserName.Contains(userRequestParmas.Query) || x.FirstName.Contains(userRequestParmas.Query) || x.LastName.Contains(userRequestParmas.Query));
             }
-            if (userRequestParmas.sortCode != null)
-                switch (userRequestParmas.sortCode)
+            queryable = queryable.Where(x => x.LockoutEnabled == false);
+            if (userRequestParmas.SortCode != null)
+                switch (userRequestParmas.SortCode)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.StaffCode);
@@ -39,9 +40,9 @@ namespace RookieOnlineAssetManagement.Repositories
                         queryable = queryable.OrderByDescending(item => item.StaffCode);
                         break;
                 }
-            if (userRequestParmas.sortFullName.HasValue)
+            if (userRequestParmas.SortFullName.HasValue)
             {
-                switch (userRequestParmas.sortFullName)
+                switch (userRequestParmas.SortFullName)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
@@ -51,9 +52,9 @@ namespace RookieOnlineAssetManagement.Repositories
                         break;
                 }
             }
-            else if (userRequestParmas.sortDate.HasValue)
+            else if (userRequestParmas.SortDate.HasValue)
             {
-                switch (userRequestParmas.sortDate)
+                switch (userRequestParmas.SortDate)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.JoinedDate);
@@ -66,14 +67,14 @@ namespace RookieOnlineAssetManagement.Repositories
             //include role
             queryable.Include(item => item.Roles);
 
-            if (userRequestParmas.type?.Length > 0)
+            if (userRequestParmas.Type?.Length > 0)
             {
-                var stringType = userRequestParmas.type.Select(x => x.ToString()).ToArray();
+                var stringType = userRequestParmas.Type.Select(x => x.ToString()).ToArray();
                 queryable = queryable.Where(x => x.Roles.Any(r => stringType.Contains(r.NormalizedName)));
             }
-            if (userRequestParmas.sortType.HasValue)
+            if (userRequestParmas.SortType.HasValue)
             {
-                switch (userRequestParmas.sortType)
+                switch (userRequestParmas.SortType)
                 {
                     case SortBy.ASC:
                         queryable = queryable.OrderBy(item => item.Roles.First());
@@ -84,7 +85,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
             }
 
-            var result = Paging<User>(queryable, userRequestParmas.pageSize, userRequestParmas.page);
+            var result = Paging<User>(queryable, userRequestParmas.PageSize, userRequestParmas.Page);
             var list = await result.Sources.Select(x => new UserModel
             {
                 UserId = x.Id,
@@ -93,6 +94,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 UserName = x.UserName,
                 JoinedDate = x.JoinedDate,
                 RoleName = x.Roles.First().NormalizedName,
+                Status = x.LockoutEnabled
 
             }).ToListAsync();
             return (list, result.TotalPage);
