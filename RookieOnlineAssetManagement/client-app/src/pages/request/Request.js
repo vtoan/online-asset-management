@@ -4,53 +4,63 @@ import { Row, Col } from "reactstrap";
 import SelectDate from "../../common/SelectDate";
 import SearchBar from "../../common/SearchBar";
 import FilterState from "../../common/FilterState";
-
-const seedData = [
-  {
-    no: 1,
-    code: "MO100005",
-    name: "Monitor Dell UltraSharp ",
-    requestBy: "antv",
-    assignedDate: "07/04/2021",
-    acceptedBy: "binhnv",
-    returnedDate: "07/04/2021",
-    state: "Completed",
-  },
-  {
-    no: 1,
-    code: "MO100005",
-    name: "Monitor Dell UltraSharp ",
-    requestBy: "antv",
-    assignedDate: "07/04/2021",
-    acceptedBy: "binhnv",
-    returnedDate: "07/04/2021",
-    state: "Completed",
-  },
-  {
-    no: 1,
-    code: "MO100005",
-    name: "Monitor Dell UltraSharp ",
-    requestBy: "antv",
-    assignedDate: "07/04/2021",
-    acceptedBy: "binhnv",
-    returnedDate: "07/04/2021",
-    state: "Completed",
-  },
-];
+import http from "../../ultis/httpClient";
+import { _createQuery } from "../../ultis/helper"
+let params = {}
+function _refreshParams() {
+  params.SortAssetId = 0;
+  params.SortAssetName = 0;
+  params.SortCategoryName = 0;
+  params.SortAssignedDate = 0;
+  params.SortState = 0;
+};
 export default function Request() {
   const [requestDatas, setRequests] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
+  const [currentPage, setCurrentPage] = React.useState(0);
 
   React.useEffect(() => {
+    params = {
+      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
+      SortAssetId: 0,
+      SortAssetName: 0,
+      SortRequestedBy: 0,
+      SortAssignedDate: 0,
+      SortAcceptedBy: 0,
+      SortReturnedDate: 0,
+      SortState: 0,
+      query: "",
+      pagesize: 8,
+      page: 1,
+      state: [],
+      categoryid: [],
+    };
     _fetchData();
   }, []);
 
   const _fetchData = () => {
-    setRequests([]);
-    setTimeout(() => {
-      setRequests(seedData);
-      setTotalPages(2);
-    }, 500);
+    http.get("/api/ReturnRequests" + _createQuery(params)).then(({ data, headers }) => {
+      let totalPages = headers["total-pages"];
+      let totalItems = headers["total-item"];
+      _addFieldNo(data, params.page, totalItems);
+      console.log(totalItems);
+      setRequests(data);
+      setTotalPages(totalPages > 0 ? totalPages : 0);
+      setCurrentPage(params.page);
+    })
+  };
+
+  const _addFieldNo = (data, page, totalItems) => {
+    let offset = page - 1;
+    let intialNumber = offset * params.pageSize;
+    if (Number(params.sortNo) === 2) {
+      intialNumber = totalItems - intialNumber;
+    }
+    if (Number(params.sortNo) !== 2) intialNumber++;
+    data.forEach((elm) => {
+      elm.no = intialNumber;
+      Number(params.sortNo) === 2 ? intialNumber-- : intialNumber++;
+    });
   };
 
   const handleAcceptRequest = (item) => {
@@ -90,6 +100,7 @@ export default function Request() {
         onDeny={handleDenyRequest}
         onChangeSort={handleChangeSort}
         onChangePage={handleChangePage}
+        pageSelected={currentPage}
       />
     </>
   );

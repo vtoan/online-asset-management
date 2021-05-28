@@ -10,31 +10,31 @@ const tableTitles = [
   },
   {
     title: "Asset Code",
-    nameSort: "sortCode",
+    nameSort: "SortAssetId",
   },
   {
     title: "Asset Name",
-    nameSort: "sortName",
+    nameSort: "SortAssetName",
   },
   {
     title: "Request by",
-    nameSort: "sortRequestby",
+    nameSort: "SortRequestedBy",
   },
   {
     title: "Assigned Date",
-    nameSort: "sortAssignedDate",
+    nameSort: "SortAssignedDate",
   },
   {
     title: "Accepted by",
-    nameSort: "sortAcceptedby",
+    nameSort: "SortAcceptedBy",
   },
   {
     title: "Returned Date",
-    nameSort: "sortReturnedDate",
+    nameSort: "SortReturnedDate",
   },
   {
     title: "State",
-    nameSort: "sortState",
+    nameSort: "SortState",
   },
 ];
 
@@ -52,10 +52,10 @@ export default function RequestTable({
         <TableItem>{item.no}</TableItem>
       </td>
       <td>
-        <TableItem>{item.code}</TableItem>
+        <TableItem>{item.assetId}</TableItem>
       </td>
       <td>
-        <TableItem>{item.name}</TableItem>
+        <TableItem>{item.assetName}</TableItem>
       </td>
       <td>
         <TableItem>{item.requestBy}</TableItem>
