@@ -62,7 +62,6 @@ export default function Asset(props) {
       page: 1,
       state: [],
       categoryid: [],
-      assetId: ""
     };
     _fetchData();
   }, []);
@@ -138,7 +137,7 @@ export default function Asset(props) {
     params.assetId = item.assetId;
     Promise.all([
       http.get("/api/Asset/" + item.assetId),
-      http.get("/api/Asset/history-asset" + _createQuery(params))
+      http.get("/api/Asset/history-asset?assetId=" + item.assetId)
     ]).then((responseArray) => {
       setItemDetail(responseArray[0].data);
       setItemHistory(responseArray[1].data);
