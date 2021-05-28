@@ -30,6 +30,7 @@ namespace RookieOnlineAssetManagement.Models
         // [Required(ErrorMessage ="LocationId cannot null")]
         [BindNever]
         public string LocationId { get; set; }
+        [RegularExpression(@"^\d$")]
         public int State { get; set; }
     }
 }
