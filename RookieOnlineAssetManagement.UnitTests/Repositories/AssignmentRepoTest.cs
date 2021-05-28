@@ -174,7 +174,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssignedDate = DateTime.Now,
                 Note = "test",
                 LocationId = locationId,
-                State = (int)StateAssignment.WatingForAcceptance
+                State = (int)StateAssignment.WaitingForAcceptance
             };
             var AssignmentModelUpdate = await assignmentRepo.UpdateAssignmentAsync(assignmentrequsetmodelupdate.AssignmentId, assignmentrequsetmodelupdate);
 
