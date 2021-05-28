@@ -1,9 +1,9 @@
 import React from "react";
-import HomeTable from "./Table";
+import HomeTable from "./HomeTable";
 import http from "../../ultis/httpClient.js";
 import { _createQuery } from "../../ultis/helper.js";
-import {formatDate} from "../../ultis/helper";
-import {Table} from "reactstrap";
+import { formatDate } from "../../ultis/helper";
+import { Table } from "reactstrap";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import { stateOptions } from "../../enums/assetState.js";
 let params = {};
@@ -14,7 +14,7 @@ function _refreshParams() {
   params.SortCategoryName = 0;
   params.SortAssignedDate = 0;
   params.SortState = 0;
-};
+}
 
 export default function Home() {
   const [homeData, setHome] = React.useState([]);
@@ -39,12 +39,14 @@ export default function Home() {
   }, []);
 
   const _fetchData = () => {
-    http.get('/api/Assignments/my-assignments' + _createQuery(params)).then((response) => {
-      setHome(response.data);
-      let totalPages = response.headers["total-pages"];
-      setTotalPages(totalPages > 0 ? totalPages : 0);
-      setPageCurrent(params.page);
-    })
+    http
+      .get("/api/Assignments/my-assignments" + _createQuery(params))
+      .then((response) => {
+        setHome(response.data);
+        let totalPages = response.headers["total-pages"];
+        setTotalPages(totalPages > 0 ? totalPages : 0);
+        setPageCurrent(params.page);
+      });
   };
   //handleClick
   const handleChangePage = (page) => {
@@ -70,11 +72,11 @@ export default function Home() {
   };
 
   const onShowDetail = (item) => {
-    http.get('/api/Assignments/' + item.assignmentId).then(response => {
+    http.get("/api/Assignments/" + item.assignmentId).then((response) => {
       setItemDetail(response.data);
-    })
+    });
     modalDetail.show();
-  }
+  };
   return (
     <>
       <h5 className="name-list mb-4">My Assignments</h5>
@@ -120,7 +122,10 @@ export default function Home() {
             </tr>
             <tr>
               <td>State :</td>
-              <td>{stateOptions.find((items) => items.value === itemDetail?.state)?.label ?? "Unknown"}</td>
+              <td>
+                {stateOptions.find((items) => items.value === itemDetail?.state)
+                  ?.label ?? "Unknown"}
+              </td>
             </tr>
             <tr>
               <td>Note : </td>
