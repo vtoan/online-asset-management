@@ -141,9 +141,6 @@ export default function Asset(props) {
     ]).then((responseArray) => {
       setItemDetail(responseArray[0].data);
       setItemHistory(responseArray[1].data);
-
-     
-      // console.log(itemHistory.slice().assignedBy)
     })
     modalDetail.show();
   };
