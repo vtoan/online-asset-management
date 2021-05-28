@@ -393,35 +393,56 @@ form.example button {
   padding-top: 10px;
   position: absolute;
   z-index: 1;
+  overflow: auto;
+  height: 300px;
 }
 
 #checkboxes label {
   display: block;
 }
 
+#form-category
+{
+  display: none;
+}
+
+#add-new-cate
+{
+  display: block;
+  color: red; 
+  text-decoration: "underline"; 
+  font-style: "italic";
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
 .checkboxlist {
   padding: 5px 5px 10px 10px;
+  display: inline-flex;
 }
 
 #nameCate {
-  width: 110px;
+  width: 145px;
   margin-left: 5px;
   font-size: 14px;
 }
 
 #shortname {
-  width: 29px;
+  width: 68px;
   font-size: 14px;
 }
 
 .fa.fa-check {
   color: red;
   margin-left: 5px;
+  font-size: 25px;
+  margin-top: 4px;
 }
 
 .fa.fa-times {
   color: black;
   margin-left: 5px;
+  font-size: 25px;
+  margin-top: 4px;
 }
 
 hr {

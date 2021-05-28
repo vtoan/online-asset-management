@@ -7,7 +7,7 @@ import SearchBar from "../../common/SearchBar";
 
 let params = {
   query: "",
-  currenassetid: "",
+  currentAssetId: "",
   AssetIdSort: 0,
   AssetNameSort: 0,
   CategoryNameSort: 0,
@@ -42,7 +42,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
 
   React.useEffect(() => {
     if (assetCurrentId) {
-      params.currenassetid = assetCurrentId;
+      params.currentAssetId = assetCurrentId;
       setSelectAsset(assetCurrentId);
     }
     _fetchDataAsset();

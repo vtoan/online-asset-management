@@ -14,6 +14,7 @@ namespace RookieOnlineAssetManagement.Models
         public string RequestUserId { get; set; }
         public string RequestBy { get; set; }
         public string AcceptedBy { get; set; }
+        public DateTime? AssignedDate { get; set; }
         public DateTime? ReturnedDate { get; set; }
         public bool State { get; set; }
     }
