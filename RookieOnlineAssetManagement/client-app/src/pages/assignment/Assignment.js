@@ -129,19 +129,19 @@ export default function Assignment() {
       message: "Do you want to create a returning request for this asset?",
       btnName: "Yes",
       onSubmit: (item) => {
-        // modalLoading.show();
-        // http
-        //   .delete("/api/Assignments/" + item.assignmentId)
-        //   .then((resp) => {
-        //     _refreshParams();
-        //     _fetchData();
-        //   })
-        //   .catch((err) => {
-        //     showDisableDeleteModal();
-        //   })
-        //   .finally(() => {
-        //     modalLoading.close();
-        //   });
+        modalLoading.show();
+        http
+          .post("/api/ReturnRequests?assignmentId=" + item.assignmentId + "&requestedUserId=" + item.userId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+          });
       },
     });
     modalConfirm.show(item);
