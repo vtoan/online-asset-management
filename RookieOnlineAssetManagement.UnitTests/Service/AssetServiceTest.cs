@@ -80,5 +80,11 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             var result = await assetSer.GetAssetByIdAsync(assetid);
             Assert.NotNull(result);
         }
+        [Fact]
+        public async Task GetListHistory_Success()
+        {
+            var mockAssetRepo = new Mock<IAssetRepository>();
+        }
+            
     }
 }

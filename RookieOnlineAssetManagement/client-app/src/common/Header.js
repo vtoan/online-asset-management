@@ -42,19 +42,9 @@ export default function Header() {
   };
 
   modalChangePass.config(_changePass);
-  modalConfirm.config({
-    message: "Do you want to log out?",
-    btnName: "Log out",
-    onSubmit: () => {
-      http.post("/logout").then((resp) => {
-        appContext.setUser(null);
-      });
-    },
-  });
   //listener every navigate to other pages
   React.useEffect(() => {
     console.log(location.pathname);
-
     let route = routePaths.find((item) => {
       let path = item.path;
       if (item.path.includes(":")) {
@@ -72,6 +62,15 @@ export default function Header() {
   };
 
   const handleLogout = () => {
+    modalConfirm.config({
+      message: "Do you want to log out?",
+      btnName: "Log out",
+      onSubmit: () => {
+        http.post("/logout").then((resp) => {
+          appContext.setUser(null);
+        });
+      },
+    });
     modalConfirm.show(null);
   };
 
