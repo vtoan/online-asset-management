@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RookieOnlineAssetManagement.Entities;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using Xunit;
@@ -115,7 +116,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssetName = "Asset Test Update",
                 InstalledDate = DateTime.Now
             };
-            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew.AssetId,assetTestNew);
+            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew.AssetId, assetTestNew);
 
             Assert.Null(assetupdate);
         }
@@ -228,6 +229,81 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
 
             Assert.Null(asset);
             Assert.IsNotType<AssetModel>(asset);
+        }
+        [Fact]
+        public async Task GetListHistory_Success()
+        {
+            var dbContext = _fixture.Context;
+            var locationId = Guid.NewGuid().ToString();
+            var AssetId = Guid.NewGuid().ToString();
+            var Assignid = Guid.NewGuid().ToString();
+            var userId = Guid.NewGuid().ToString();
+            int state = (int)StateAssignment.Accepted;
+            var categoryId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
+            await dbContext.SaveChangesAsync();
+            var user = new User
+            {
+
+                Id = userId,
+            };
+            var admin = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "AssignedToUser",
+                FirstName = "admin",
+                LastName = "hcm",
+                Gender = true,
+                JoinedDate = DateTime.Now,
+                IsChange = true,
+                StaffCode = "SD00002",
+                LocationId = locationId,
+            };
+            dbContext.Users.Add(admin);
+            await dbContext.SaveChangesAsync();
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
+            var asset = new Asset
+            {
+                CategoryId=categoryId,
+                AssetId = AssetId,
+                AssetName="Test",
+            };
+            dbContext.Assets.Add(asset);
+            var assignment = new Assignment
+            {
+                UserId = user.Id,
+                AssignmentId = Assignid,
+                State = state,
+                AssetId = asset.AssetId,
+                AdminId = admin.Id,
+            };
+            dbContext.Assignments.Add(assignment);
+            await dbContext.SaveChangesAsync();
+                var returnRequestModel = new ReturnRequestModel
+                {
+                    AssignmentId = assignment.AssignmentId,
+                    AssetId = AssetId,
+                    AssetName = "User",
+                    ReturnedDate = DateTime.Now,
+                };
+            
+            var request = new ReturnRequestRepository(dbContext);
+            var CreateRequest = await request.CreateReturnRequestAsync(assignment.AssignmentId,userId);         
+            
+            var assetHistory = new AssetHistoryModel()
+            {               
+                AssignmentId = CreateRequest.AssignmentId,
+                AssignedBy = "admin",
+                Date = new DateTime(),
+                AssignedTo = "user",                
+            };
+            var assetRepo = new AssetRepository(dbContext);
+            var History = await assetRepo.GetListAssetHistoryAsync(AssetId);
+            Assert.NotNull(History);
+            Assert.IsType<List<AssetHistoryModel>>(History);
         }
     }
 }
