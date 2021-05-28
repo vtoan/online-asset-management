@@ -9,18 +9,22 @@ const tableTitles = [
     {
         title: "AssetCode",
         nameSort: "SortAssetId",
+        width: "10%",
     },
     {
         title: "AssetName",
         nameSort: "SortAssetName",
+        width: "10%",
     },
     {
         title: "Category",
         nameSort: "SortCategoryName",
+        width: "20%",
     },
     {
         title: "AssignedDate",
         nameSort: "SortAssignedDate",
+        width: "20%",
     },
     {
         title: "State",
