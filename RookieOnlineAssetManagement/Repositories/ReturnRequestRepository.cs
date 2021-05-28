@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class ReturnRequestRepository : IReturnRequestRepository
+    public class ReturnRequestRepository :  BaseRepository, IReturnRequestRepository
     {
         private readonly ApplicationDbContext _dbContext;
         public ReturnRequestRepository(ApplicationDbContext dbContext)
