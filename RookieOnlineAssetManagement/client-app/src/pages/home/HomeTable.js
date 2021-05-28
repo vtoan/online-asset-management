@@ -1,10 +1,10 @@
 import "../../index.css";
 import TableItem from "../../common/TableItem";
 import NSTable from "../../common/NSTable";
-import { BsCheck } from "react-icons/bs";
-import { TiDeleteOutline, TiRefresh } from "react-icons/ti";
-import { stateOptions } from "../../enums/assetState.js";
+import { TiRefresh } from "react-icons/ti";
+import { ImCheckmark, ImCross } from "react-icons/im";
 import { formatDate } from "../../ultis/helper";
+import { assignmentOptions } from "../../enums/assignmentState";
 const tableTitles = [
   {
     title: "AssetCode",
@@ -13,10 +13,12 @@ const tableTitles = [
   {
     title: "AssetName",
     nameSort: "SortAssetName",
+    width: "20%",
   },
   {
     title: "Category",
     nameSort: "SortCategoryName",
+    width: "20%",
   },
   {
     title: "AssignedDate",
@@ -25,6 +27,7 @@ const tableTitles = [
   {
     title: "State",
     nameSort: "SortState",
+    width: "20%",
   },
 ];
 export default function HomeTable({
@@ -34,7 +37,7 @@ export default function HomeTable({
   onChangeSort,
   onAccept,
   onDeny,
-  onRefresh,
+  onReturn,
   onShowDetail,
 }) {
   const itemRender = (item) => (
@@ -68,22 +71,36 @@ export default function HomeTable({
         onClick={() => onShowDetail && onShowDetail(item)}
       >
         <TableItem>
-          {stateOptions.find((items) => items.value === item.state)?.label ??
-            "Unknown"}
+          {assignmentOptions.find((items) => items.value === item.state)
+            ?.label ?? "Unknown"}
         </TableItem>
       </td>
       <td className="table-actions">
-        <span className="table-icon" onClick={() => onAccept && onAccept(item)}>
-          <BsCheck color="#dc3545" />
+        <span className="table-icon ns-text-primary">
+          <ImCheckmark
+            className={"border-0" + (item.state === 2 ? "" : " disabled")}
+            onClick={() => onAccept && onAccept(item)}
+          />
         </span>
-        <span className="table-icon" onClick={() => onDeny && onDeny(item)}>
-          <TiDeleteOutline className="border-0" />
+        <span className="table-icon">
+          <ImCross
+            style={{ fontSize: "0.8em" }}
+            className={"border-0" + (item.state === 2 ? " " : " disabled")}
+            onClick={() => onDeny && onDeny(item)}
+          />
         </span>
-        <span
-          className="table-icon"
-          onClick={() => onRefresh && onRefresh(item)}
-        >
-          <TiRefresh className="border-0" />
+        <span className="table-icon">
+          <TiRefresh
+            onClick={() => onReturn && onReturn(item)}
+            style={{
+              color: item.state === 2 || item.state === 3 ? "" : " blue",
+              fontSize: "1.5em",
+            }}
+            className={
+              "border-0" +
+              (item.state === 2 || item.state === 3 ? " disabled" : "")
+            }
+          />
         </span>
       </td>
     </>

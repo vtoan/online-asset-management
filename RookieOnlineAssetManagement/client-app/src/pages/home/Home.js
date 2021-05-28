@@ -6,6 +6,8 @@ import { formatDate } from "../../ultis/helper";
 import { Table } from "reactstrap";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import { stateOptions } from "../../enums/assetState.js";
+import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
+import { useNSModals } from "../../containers/ModalContainer";
 let params = {};
 
 function _refreshParams() {
@@ -22,11 +24,11 @@ export default function Home() {
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
   //modal
-
+  const { modalLoading } = useNSModals();
+  const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
   React.useEffect(() => {
     params = {
-      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
       SortAssetId: 0,
       SortAssetName: 0,
       SortCategoryName: 0,
@@ -40,7 +42,7 @@ export default function Home() {
 
   const _fetchData = () => {
     http
-      .get("/api/Assignments/my-assignments" + _createQuery(params))
+      .get("/api/assignments/my-assignments" + _createQuery(params))
       .then((response) => {
         setHome(response.data);
         let totalPages = response.headers["total-pages"];
@@ -61,18 +63,74 @@ export default function Home() {
     _fetchData();
   };
   const handleAcceptRequest = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to accept this assignment?",
+      btnName: "Accept",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .delete("/api/assignments/" + item.assignmentId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            // showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+          });
+      },
+    });
+    modalConfirm.show(item);
   };
 
   const handleDenyRequest = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to decline this assignment?",
+      btnName: "Decline",
+      onSubmit: (item) => {
+        // modalLoading.show();
+        // http
+        //   .delete("/api/assignments/" + item.assignmentId)
+        //   .then((resp) => {
+        //     _refreshParams();
+        //     _fetchData();
+        //   })
+        //   .catch((err) => {
+        //     // showDisableDeleteModal();
+        //   })
+        //   .finally(() => {
+        //     modalLoading.close();
+        //   });
+      },
+    });
+    modalConfirm.show(item);
   };
-  const onRefresh = (item) => {
-    console.log(item);
+  const handleReturn = (item) => {
+    modalConfirm.config({
+      message: "Do you want to create a returning request for this asset?",
+      btnName: "Create",
+      onSubmit: (item) => {
+        // modalLoading.show();
+        // http
+        //   .delete("/api/assignments/" + item.assignmentId)
+        //   .then((resp) => {
+        //     _refreshParams();
+        //     _fetchData();
+        //   })
+        //   .catch((err) => {
+        //     // showDisableDeleteModal();
+        //   })
+        //   .finally(() => {
+        //     modalLoading.close();
+        //   });
+      },
+    });
   };
 
   const onShowDetail = (item) => {
-    http.get("/api/Assignments/" + item.assignmentId).then((response) => {
+    http.get("/api/assignments/" + item.assignmentId).then((response) => {
       setItemDetail(response.data);
     });
     modalDetail.show();
@@ -86,12 +144,12 @@ export default function Home() {
         onChangeSort={handleChangeSort}
         onAccept={handleAcceptRequest}
         onDeny={handleDenyRequest}
-        onRefresh={onRefresh}
+        onReturn={handleReturn}
         totalPage={totalPages}
         pageSelected={pageCurrent}
         onShowDetail={onShowDetail}
       />
-
+      <NSConfirmModal hook={modalConfirm} />
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
         <Table borderless className="table-detailed ">
           <tbody>
