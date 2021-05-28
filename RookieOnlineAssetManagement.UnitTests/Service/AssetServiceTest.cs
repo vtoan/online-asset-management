@@ -84,6 +84,14 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
         public async Task GetListHistory_Success()
         {
             var mockAssetRepo = new Mock<IAssetRepository>();
+            string assetid = Guid.NewGuid().ToString();
+            AssetHistoryModel Model = new AssetHistoryModel();
+            List<AssetHistoryModel> collection = new List<AssetHistoryModel>();
+            mockAssetRepo.Setup(x => x.GetListAssetHistoryAsync(It.IsAny<string>())).ReturnsAsync(collection);
+            var request = new AssetService(mockAssetRepo.Object);
+            var result = await request.GetListAssetHistoryAsync(assetid);
+            Assert.NotNull(result);
+
         }
             
     }
