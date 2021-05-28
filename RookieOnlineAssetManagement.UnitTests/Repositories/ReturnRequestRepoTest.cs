@@ -88,7 +88,6 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             Assert.NotNull(Params);
             Assert.IsType<List<ReturnRequestModel>>(RequestParam.Datas);
             Assert.True(RequestParam.TotalPage >= 0);
-
         }
     }
 }
