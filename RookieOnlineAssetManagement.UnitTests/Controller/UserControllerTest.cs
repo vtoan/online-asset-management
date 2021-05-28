@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RookieOnlineAssetManagement.Controllers;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.UnitTests.Mock;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -45,7 +48,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var locationId = Guid.NewGuid().ToString();
             var UserTest = new UserRequestModel
             {
-                LocationId=locationId,
+                LocationId = locationId,
                 UserId = Guid.NewGuid().ToString(),
                 FirstName = "Demo",
                 LastName = "User",
@@ -54,7 +57,10 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             };
             var usermodel = new UserModel();
             mockUserSer.Setup(x => x.UpdateUserAsync(It.IsAny<string>(), It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
-            var assetContr = new UsersController(mockUserSer.Object);
+            var assetContr = new UsersController(mockUserSer.Object)
+            {
+
+            };
             var result = await assetContr.UpdateAsync(UserTest.UserId, UserTest);
             Assert.NotNull(result);
         }
@@ -78,6 +84,26 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             mockUserSer.Setup(x => x.GetUserByIdAsync(It.IsAny<string>())).ReturnsAsync(UserModel);
             var assetContr = new UsersController(mockUserSer.Object);
             var result = await assetContr.GetAsync(UserId);
+            Assert.IsType<OkObjectResult>(result.Result);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetListUser_Success()
+        {
+            var mockUserSer = new Mock<IUserService>();
+            //mock http context
+            Mock<ISession> sessionMock = new Mock<ISession>();
+            //mock user
+            string UserId = Guid.NewGuid().ToString();
+            var userRequestParmas = new UserRequestParmas();
+            mockUserSer.Setup(x => x.GetListUserAsync(userRequestParmas)).ReturnsAsync((new List<UserModel>(), 5));
+            //create and config httpcontext controller
+            var userContr = new UsersController(mockUserSer.Object);
+            userContr.ControllerContext.HttpContext = new DefaultHttpContext();
+            userContr.ControllerContext.HttpContext.Session = sessionMock.Object;
+            //test
+            var result = await userContr.GetListAsync(userRequestParmas);
             Assert.IsType<OkObjectResult>(result.Result);
             Assert.NotNull(result);
         }

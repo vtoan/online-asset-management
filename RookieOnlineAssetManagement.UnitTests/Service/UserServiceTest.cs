@@ -81,5 +81,29 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             var result = await assetSer.UpdateUserAsync(UserTest.UserId, UserTest);
             Assert.NotNull(result);
         }
+        [Fact]
+        public async Task GetUser_Success()
+        {
+            var mockUserRepo = new Mock<IUserRepository>();
+            var UserTest = new UserRequestModel
+            {
+                UserId = Guid.NewGuid().ToString(),
+                FirstName = "Demo",
+                LastName = "User",
+                DateOfBirth = new DateTime(1999, 04, 27),
+                JoinedDate = new DateTime(2021, 04, 27),
+            };
+            UserModel Model = new UserModel();
+            List<UserModel> collection = new List<UserModel>();
+            int totalP = 0;
+            (ICollection<UserModel> Datas, int totalpage) List = new(collection, totalP);
+            mockUserRepo.Setup(x => x.GetListUserAsync(It.IsAny<UserRequestParmas>())).ReturnsAsync(List);
+            var userMock = new UserService(mockUserRepo.Object);
+            var kq = await userMock.CreateUserAsync(UserTest);
+            var user = new UserRequestParmas();
+            var result = await userMock.GetListUserAsync(user);
+            Assert.NotNull(result.Datas);
+
+        }
     }
 }
