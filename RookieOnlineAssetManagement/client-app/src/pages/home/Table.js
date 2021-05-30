@@ -4,7 +4,7 @@ import NSTable from '../../common/NSTable';
 import { BsCheck } from "react-icons/bs";
 import { TiDeleteOutline, TiRefresh } from "react-icons/ti";
 import { stateOptions } from "../../enums/assetState.js";
-import {formatDate} from "../../ultis/helper";
+import { formatDate } from "../../ultis/helper";
 const tableTitles = [
     {
         title: "AssetCode",
@@ -55,7 +55,7 @@ export default function HomeTable({
             <td>
                 <TableItem>{formatDate(item.assignedDate)}</TableItem>
             </td>
-            <td style={{cursor: 'pointer'}} onClick={() => onShowDetail && onShowDetail(item)}>
+            <td style={{ cursor: 'pointer' }} onClick={() => onShowDetail && onShowDetail(item)}>
                 <TableItem>{stateOptions.find((items) => items.value === item.state)?.label ?? "Unknown"}</TableItem>
             </td>
             <td className="table-actions">
@@ -65,8 +65,18 @@ export default function HomeTable({
                 <span className="table-icon" onClick={() => onDeny && onDeny(item)}>
                     <TiDeleteOutline className="border-0" />
                 </span>
-                <span className="table-icon" onClick={() => onRefresh && onRefresh(item)}>
-                    <TiRefresh className="border-0" />
+                <span className="table-icon">
+                    <TiRefresh
+                        onClick={() => onRefresh && onRefresh(item)}
+                        style={{
+                            color: item.state === 2 || item.state === 3 ? "" : " blue",
+                            fontSize: "1.3em",
+                        }}
+                        className={
+                            "border-0" +
+                            (item.state === 2 || item.state === 3 ? " disabled" : "")
+                        }
+                    />
                 </span>
             </td>
         </>

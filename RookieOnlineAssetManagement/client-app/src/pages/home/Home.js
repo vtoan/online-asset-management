@@ -2,7 +2,9 @@ import React from "react";
 import HomeTable from "./Table";
 import http from "../../ultis/httpClient.js";
 import { _createQuery } from "../../ultis/helper.js";
+import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
 import {formatDate} from "../../ultis/helper";
+import { useNSModals } from "../../containers/ModalContainer";
 import {Table} from "reactstrap";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import { stateOptions } from "../../enums/assetState.js";
@@ -23,7 +25,9 @@ export default function Home() {
   const [itemDetail, setItemDetail] = React.useState(null);
   //modal
 
+  const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
+  const { modalAlert, modalLoading } = useNSModals();
   React.useEffect(() => {
     params = {
       locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
@@ -66,7 +70,33 @@ export default function Home() {
     console.log(item);
   };
   const onRefresh = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to create a returning request for this asset?",
+      btnName: "Yes",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .post("/api/ReturnRequests?assignmentId=" + item.assignmentId + "&requestedUserId=" + item.userId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+          });
+      },
+    });
+    modalConfirm.show(item);
+  };
+
+  const showDisableDeleteModal = () => {
+    modalAlert.show({
+      title: "Can't delete asset",
+      msg: "Cannot delete the Assignment!",
+    });
   };
 
   const onShowDetail = (item) => {
