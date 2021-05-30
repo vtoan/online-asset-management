@@ -94,7 +94,9 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
   };
 
   return (
-    <div className="multiselect" disabled={itemSelected}>
+    <div className="multiselect" disabled={itemSelected} style={{
+      border: !itemSelected ? "1px solid red" : "", borderRadius: 6
+    }}>
       <div className="selectBox" onClick={showCheckboxes}>
         <span className="fa fa-chevron-down" />
         <select
@@ -125,17 +127,17 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
             ))}
           <hr />
           <a href="new-category" onClick={showDropDownList} id="add-new-cate">Add new category</a>
-          <FormGroup className="checkboxlist" id="form-category" style={{ padding: 6, display: "inline-flex" }}>
+          <FormGroup className="checkboxlist" id="form-category" style={{ padding: 6 }}>
             <Input
               type="text"
-              placeholder="Blutooth Mouse"
+              placeholder="MP3"
               id="nameCate"
               name="nameCate"
               invalid={checkNameCate}
             />
             <Input
               type="text"
-              placeholder="BM"
+              placeholder="MP"
               id="shortname"
               name="shortNameCate"
               invalid={checkShortNameCate}

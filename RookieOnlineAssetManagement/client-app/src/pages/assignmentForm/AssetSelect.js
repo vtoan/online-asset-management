@@ -16,16 +16,16 @@ let params = {
 const tableTitles = [
   {
     title: "Asset Code",
-    nameSort: "sortCodeA",
+    nameSort: "AssetIdSort",
   },
   {
     title: "Asset Name",
-    nameSort: "sortName",
+    nameSort: "AssetNameSort",
     width: "30%",
   },
   {
     title: "Category",
-    nameSort: "sortCate",
+    nameSort: "CategoryNameSort",
     width: "30%",
   },
 ];
