@@ -4,7 +4,8 @@ import { formatDate } from "../../ultis/helper";
 
 export default function AssignmenttFilterState({ onChange }) {
   const handleChangeDate = (event) => {
-    let date = formatDate(event.target.value);
+    let date = event.target.value;
+    if (date) date = formatDate(date);
     onChange && onChange(date);
   };
 

@@ -1,6 +1,6 @@
 import React from "react";
 import AssignmentTable from "./AssignmentTable";
-import { Row, Col, Table, Button } from "reactstrap";
+import { Row, Col, Table } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import { useHistory, Link } from "react-router-dom";
@@ -177,15 +177,8 @@ export default function Assignment() {
 
   const handleFilterDate = (date) => {
     _refreshParams();
-    params.AssignedDate = date;
+    params.ReturnedDate = date ?? "";
     _fetchData();
-    console.log(assignmentData);
-    if (assignmentData.length == 0) {
-      setTimeout(() => {
-        params.AssignedDate = "";
-        _fetchData();
-      }, 1000);
-    }
   };
 
   const handleShowDetail = (item) => {
