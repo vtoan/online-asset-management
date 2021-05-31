@@ -67,6 +67,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssignmentId = Assignid,
                 AssetId = asset.AssetId,
                 AdminId = admin.Id,
+                State = (int)StateAssignment.Accepted
             };
             dbContext.Assignments.Add(assignment);
             await dbContext.SaveChangesAsync();
@@ -79,14 +80,13 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             };
 
             var request = new ReturnRequestRepository(dbContext);
-            async Task act() => await request.CreateReturnRequestAsync(assignment.AssignmentId, userId);
+            var CreateRequest = await request.CreateReturnRequestAsync(assignment.AssignmentId, userId);
             var Params = new ReturnRequestParams
             {
                 LocationId = locationId,
                 SortAssetId = Enums.SortBy.ASC,
             };
-            var ex = await Assert.ThrowsAsync<Exception>(act);
-            Assert.Contains("Repository | State is not valid", ex.Message);
+         
             var RequestParam = await request.GetListReturnRequestAsync(Params);
             Assert.NotNull(Params);
             Assert.IsType<List<ReturnRequestModel>>(RequestParam.Datas);
