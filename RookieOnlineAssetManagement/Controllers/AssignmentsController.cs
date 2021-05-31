@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
@@ -14,6 +15,7 @@ namespace RookieOnlineAssetManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize("ADMIN")]
     public class AssignmentsController : ControllerBase
     {
         private readonly IAssignmentService _assignmentService;
@@ -36,11 +38,13 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.UpdateAssignmentAsync(id, assignmentRequestModel));
         }
         [HttpPut("accept/{id}")]
+        [Authorize]
         public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string id)
         {
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Accepted));
         }
         [HttpPut("decline/{id}")]
+        [Authorize]
         public async Task<ActionResult<bool>> ChangeStateDeclineAsync(string id)
         {
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Decline));
@@ -51,6 +55,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.DeleteAssignmentAsync(id));
         }
         [HttpGet("my-assignments")]
+        [Authorize]
         public async Task<ActionResult<MyAssigmentModel>> GetMyListAsync([FromQuery] MyAssignmentRequestParams myAssignmentRequestParams)
         {
             myAssignmentRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);

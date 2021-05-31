@@ -47,6 +47,10 @@ namespace RookieOnlineAssetManagement
             {
                 configuration.RootPath = "client-app/build";
             });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ADMIN", policy => policy.RequireRole("admin"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

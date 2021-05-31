@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Models;
@@ -13,6 +14,7 @@ namespace RookieOnlineAssetManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize("ADMIN")]
     public class ReportsController : ControllerBase
     {
         private readonly IReportService _reportService;
