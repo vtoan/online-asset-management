@@ -23,7 +23,7 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _returnRequestRepository.ChangeStateAsync(accept, assignmentId, acceptedUserId);
         }
-        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
+        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
             if (returnRequestParams.ReturnedDate != null)
             {
