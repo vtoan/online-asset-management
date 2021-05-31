@@ -27,8 +27,7 @@ export default function Request() {
   const [currentPage, setCurrentPage] = React.useState(0);
   //modal
   const modalConfirm = useNSConfirmModal();
-  // const { modalAlert, modalLoading } = useNSModals();
-  const { modalLoading } = useNSModals();
+  const { modalAlert, modalLoading } = useNSModals();
 
   React.useEffect(() => {
     params = {
@@ -47,6 +46,7 @@ export default function Request() {
       page: 1,
     };
     _fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const _fetchData = () => {
@@ -63,7 +63,6 @@ export default function Request() {
   };
 
   const _addFieldNo = (data, page, totalItems) => {
-    console.log(totalItems);
     let offset = page - 1;
     let intialNumber = offset * params.pageSize;
     if (Number(params.sortNo) === 2) {
@@ -74,10 +73,10 @@ export default function Request() {
       elm.no = intialNumber;
       Number(params.sortNo) === 2 ? intialNumber-- : intialNumber++;
     });
-    console.log(data);
   };
 
   const handleDenyRequest = (item) => {
+    console.log(item);
     modalConfirm.config({
       message: "Do you want to cancel this returning request?",
       btnName: "Ok",
@@ -90,19 +89,17 @@ export default function Request() {
           .then((resp) => {
             _refreshParams();
             _fetchData();
+            showSuccessModal("Cancel a returning request successfully.");
           })
-          .catch((err) => {
-            showErrorModal(err);
-          })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .catch(showErrorModal)
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
   };
 
   const handleAcceptRequest = (item) => {
+    console.log(item);
     modalConfirm.config({
       message: "Do you want to mark this returning request as 'Completed'?",
       btnName: "Accept",
@@ -113,13 +110,10 @@ export default function Request() {
           .then((resp) => {
             _refreshParams();
             _fetchData();
+            showSuccessModal("Completed returning request successfully.");
           })
-          .catch((err) => {
-            showErrorModal(err);
-          })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .catch(showErrorModal)
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -160,11 +154,17 @@ export default function Request() {
   };
 
   const showErrorModal = (err) => {
-    console.log(err);
-    // modalAlert.show({
-    //   title: "Can't delete asset",
-    //   msg: "Cannot delete the Assignment!",
-    // });
+    modalAlert.show({
+      title: "Error",
+      msg: err.message ?? "Unknown",
+    });
+  };
+
+  const showSuccessModal = (message) => {
+    modalAlert.show({
+      title: "Success",
+      msg: message,
+    });
   };
 
   return (

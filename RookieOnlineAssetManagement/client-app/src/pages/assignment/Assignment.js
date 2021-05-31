@@ -120,9 +120,7 @@ export default function Assignment() {
           .catch((err) => {
             showDisableDeleteModal();
           })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .finally(modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -144,13 +142,14 @@ export default function Assignment() {
           .then((resp) => {
             _refreshParams();
             _fetchData();
+            showSuccessModal(
+              "Create a returning request  assignment successfully."
+            );
           })
           .catch((err) => {
-            showDisableDeleteModal();
+            showErrorModal({ message: "Request Returning was exsist!" });
           })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .finally(modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -186,6 +185,20 @@ export default function Assignment() {
       setItemDetail(response.data);
     });
     modalDetail.show();
+  };
+
+  const showErrorModal = (err) => {
+    modalAlert.show({
+      title: "Error",
+      msg: err.message ?? "Unknown",
+    });
+  };
+
+  const showSuccessModal = (message) => {
+    modalAlert.show({
+      title: "Success",
+      msg: message,
+    });
   };
 
   return (
