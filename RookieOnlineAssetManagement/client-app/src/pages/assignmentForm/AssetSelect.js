@@ -80,6 +80,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
     _refreshParams();
     params.query = query;
     _fetchDataAsset();
+    params.query = "";
   };
 
   const itemRender = (asset) => (
