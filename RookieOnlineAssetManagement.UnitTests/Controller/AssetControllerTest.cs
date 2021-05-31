@@ -25,6 +25,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task Create_Success()
         {
             var mockAssetSer = new Mock<IAssetService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
             var asset = new AssetRequestModel
             {
                 LocationId = Guid.NewGuid().ToString(),
@@ -37,6 +38,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var assetmodel = new AssetModel();
             mockAssetSer.Setup(m => m.CreateAssetAsync(It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
             var assetcontr = new AssetController(mockAssetSer.Object);
+            assetcontr.ControllerContext.HttpContext = new DefaultHttpContext();
+            assetcontr.ControllerContext.HttpContext.Session = sessionMock.Object;
             var result = await assetcontr.CreateAsync(asset);
             Assert.NotNull(result);
         }
@@ -44,6 +47,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task Update_Success()
         {
             var mockAssetSer = new Mock<IAssetService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
             var asset = new AssetRequestModel
             {
                 AssetId = "LT100004",
@@ -57,6 +61,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var assetmodel = new AssetModel();
             mockAssetSer.Setup(x => x.UpdateAssetAsync(It.IsAny<string>(), It.IsAny<AssetRequestModel>())).ReturnsAsync(assetmodel);
             var assetContr = new AssetController(mockAssetSer.Object);
+            assetContr.ControllerContext.HttpContext = new DefaultHttpContext();
+            assetContr.ControllerContext.HttpContext.Session = sessionMock.Object;
             var result = await assetContr.UpdateAsync(asset.AssetId, asset);
             Assert.NotNull(result);
         }
@@ -83,7 +89,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             Assert.NotNull(result);
         }
         [Fact]
-        public async Task GetListHist0ry_Success()
+        public async Task GetListHistory_Success()
         {
             var HttpContext = new DefaultHttpContext();
             string assetid = Guid.NewGuid().ToString();

@@ -1,4 +1,5 @@
 ﻿using Moq;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Services;
@@ -60,6 +61,15 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             var assignmentSer = new AssignmentService(mockAssignmentRepo.Object);
             var result = await assignmentSer.UpdateAssignmentAsync(assignmentrequsetmodel.AssetId, assignmentrequsetmodel);
             Assert.NotNull(result);
+        }
+        [Fact]
+        public async Task ChangeStateAssignment_Success()
+        {
+            var mockAssignmentRepo = new Mock<IAssignmentRepository>();
+            mockAssignmentRepo.Setup(x => x.ChangeStateAssignmentAsync(It.IsAny<string>(), It.IsAny<StateAssignment>())).ReturnsAsync(true);
+            var assignmentSer = new AssignmentService(mockAssignmentRepo.Object);
+            var result = await assignmentSer.ChangeStateAssignmentAsync(Guid.NewGuid().ToString(), StateAssignment.Accepted);
+            Assert.True(result);
         }
         [Fact]
         public async Task DeleteAssignment_Success()

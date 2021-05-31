@@ -21,6 +21,22 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             _fixture.CreateDatabase();
         }
         [Fact]
+        public async Task CreateReturnRequest_Success()
+        {
+            var mockReturnRequestRepo = new Mock<IReturnRequestRepository>();
+            var returnRequestModel = new ReturnRequestModel
+            {
+                AssignmentId = Guid.NewGuid().ToString(),
+                AssetId = "LD100040",
+                AssetName = "User",
+                ReturnedDate = DateTime.Now,
+                RequestUserId = Guid.NewGuid().ToString()
+            };
+            mockReturnRequestRepo.Setup(m => m.CreateReturnRequestAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(returnRequestModel);
+            var returnSer = new ReturnRequestService(mockReturnRequestRepo.Object);
+            var result = await returnSer.CreateReturnRequestAsync(returnRequestModel.AssignmentId, returnRequestModel.RequestUserId);
+        }
+        [Fact]
         public async Task GetListReturnRquest_Success()
         {
             var mockRequestRepo = new Mock<IReturnRequestRepository>();

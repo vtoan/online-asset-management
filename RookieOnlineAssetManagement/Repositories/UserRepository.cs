@@ -214,13 +214,12 @@ namespace RookieOnlineAssetManagement.Repositories
 
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
+                return usermodel;
             }
             catch
             {
                 throw new Exception("Repository | Create user fail");
             }
-
-            return usermodel;
         }
 
         public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
