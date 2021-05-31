@@ -33,11 +33,12 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var mokService = new Mock<IReturnRequestService>();
             List<ReturnRequestModel> collection = new List<ReturnRequestModel>();
             int totalP = 0;
-            (ICollection<ReturnRequestModel> Datas, int totalpage) List = new(collection, totalP);
+            int totalI = 0;
+            (ICollection<ReturnRequestModel> Datas, int totalpage, int totalItem) List = new(collection, totalP, totalI);
             mokService.Setup(x => x.GetListReturnRequestAsync(It.IsAny<ReturnRequestParams>())).ReturnsAsync(List);
             ReturnRequestModel model = new ReturnRequestModel();
             var Request = new ReturnRequestParams();
-            var controller = new ReturnRequestsController(mokService.Object)     
+            var controller = new ReturnRequestsController(mokService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -51,5 +52,5 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             Assert.NotNull(result);
         }
     }
-    }
+}
 

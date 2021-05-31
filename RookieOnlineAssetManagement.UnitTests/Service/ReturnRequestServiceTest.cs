@@ -27,7 +27,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             ReturnRequestModel Model = new ReturnRequestModel();
             List<ReturnRequestModel> collection = new List<ReturnRequestModel>();
             int totalP = 0;
-            (ICollection<ReturnRequestModel> Datas, int totalpage) List = new(collection, totalP);
+            int totalI = 0;
+            (ICollection<ReturnRequestModel> Datas, int totalpage, int totalI) List = new(collection, totalP, totalI);
             mockRequestRepo.Setup(x => x.GetListReturnRequestAsync(It.IsAny<ReturnRequestParams>())).ReturnsAsync(List);
             var request = new ReturnRequestService(mockRequestRepo.Object);
             var requestParams = new ReturnRequestParams();
