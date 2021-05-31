@@ -36,7 +36,7 @@ namespace RookieOnlineAssetManagement.Controllers
             var locationId = RequestHelper.GetLocationSession(HttpContext);
             return Ok(await _assetService.GetListAssetForAssignmentAsync(currentAssetId, locationId, query, AssetIdSort, AssetNameSort, CategoryNameSort));
         }
-        [HttpGet("history-asset")]
+        [HttpGet("history")]
         public async Task<ActionResult<IEnumerable<AssetHistoryModel>>> GetListHistoryAsync(string assetId)
         {
             return Ok(await _assetService.GetListAssetHistoryAsync(assetId));

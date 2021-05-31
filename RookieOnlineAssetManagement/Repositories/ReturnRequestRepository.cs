@@ -72,7 +72,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 throw new Exception("Repository | State must be accepted");
             }
             var returnRequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
-            if(returnRequest.State==true)
+            if (returnRequest.State == true)
             {
                 throw new Exception("Repository | State is completed");
             }
@@ -85,7 +85,7 @@ namespace RookieOnlineAssetManagement.Repositories
                     var acceptedUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == acceptedUserId);
                     if (acceptedUser == null)
                     {
-                        throw new Exception("Have not this accept user");
+                        throw new Exception("Repository | Have not this accept user");
                     }
                     asset.State = (short)StateAsset.Avaiable;
                     assignment.State = (int)StateAssignment.Completed;
@@ -111,10 +111,11 @@ namespace RookieOnlineAssetManagement.Repositories
                 throw new Exception("Repository | Change state return request fail");
             }
         }
-        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
+        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
             var queryable = _dbContext.ReturnRequests.Include(x => x.Assignment).Where(x => x.Assignment.LocationId == returnRequestParams.LocationId);
-            if(returnRequestParams.StateReturnRequests != null)
+            var totalitem = queryable.Count();
+            if (returnRequestParams.StateReturnRequests != null)
             {
                 //var stateNum = Convert.ToInt32(returnRequestParams.StateReturnRequests);
                 queryable = queryable.Where(x => returnRequestParams.StateReturnRequests.Contains(x.State));
@@ -188,7 +189,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 ReturnedDate = x.ReturnDate,
                 State = x.State
             }).ToListAsync();
-            return (list,result.TotalPage);
+            return (list, result.TotalPage, totalitem);
         }
     }
 }

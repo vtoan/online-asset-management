@@ -1,4 +1,5 @@
 ﻿using RookieOnlineAssetManagement.Entities;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using System;
@@ -20,7 +21,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             _fixture.CreateDatabase();
         }
         [Fact]
-        public async Task GetListReturnRequest_Success()
+        public async Task CreateReturnRequest_Success()
         {
             var dbContext = _fixture.Context;
             var locationId = Guid.NewGuid().ToString();
@@ -34,7 +35,6 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             await dbContext.SaveChangesAsync();
             var user = new User
             {
-
                 Id = userId,
             };
             var admin = new User
@@ -66,6 +66,61 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssignmentId = Assignid,
                 AssetId = asset.AssetId,
                 AdminId = admin.Id,
+                State = (int)StateAssignment.Accepted
+            };
+            dbContext.Assignments.Add(assignment);
+            await dbContext.SaveChangesAsync();
+
+            var request = new ReturnRequestRepository(dbContext);
+            var CreateRequest = await request.CreateReturnRequestAsync(assignment.AssignmentId, userId);
+        }
+        [Fact]
+        public async Task GetListReturnRequest_Success()
+        {
+            var dbContext = _fixture.Context;
+            var locationId = Guid.NewGuid().ToString();
+            var AssetId = Guid.NewGuid().ToString();
+            var Assignid = Guid.NewGuid().ToString();
+            var userId = Guid.NewGuid().ToString();
+            var categoryId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
+            await dbContext.SaveChangesAsync();
+            var user = new User
+            {
+                Id = userId,
+            };
+            var admin = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "AssignedToUser",
+                FirstName = "admin",
+                LastName = "hcm",
+                Gender = true,
+                JoinedDate = DateTime.Now,
+                IsChange = true,
+                StaffCode = "SD00002",
+                LocationId = locationId,
+            };
+            dbContext.Users.Add(admin);
+            await dbContext.SaveChangesAsync();
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
+            var asset = new Asset
+            {
+                CategoryId = categoryId,
+                AssetId = AssetId,
+                AssetName = "Test",
+            };
+            dbContext.Assets.Add(asset);
+            var assignment = new Assignment
+            {
+                UserId = user.Id,
+                AssignmentId = Assignid,
+                AssetId = asset.AssetId,
+                AdminId = admin.Id,
+                State = (int)StateAssignment.Accepted
             };
             dbContext.Assignments.Add(assignment);
             await dbContext.SaveChangesAsync();
@@ -74,7 +129,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssignmentId = assignment.AssignmentId,
                 AssetId = AssetId,
                 AssetName = "User",
-                ReturnedDate = DateTime.Now,  
+                ReturnedDate = DateTime.Now,
             };
 
             var request = new ReturnRequestRepository(dbContext);
