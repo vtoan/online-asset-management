@@ -85,16 +85,18 @@ export default function RequestTable({
         </TableItem>
       </td>
       <td className="table-actions">
-        <span onClick={() => onAccept && onAccept(request)}>
+        <span className="table-icon">
           <BsCheck
             color="#dc3545"
+            onClick={() => onAccept && onAccept(request)}
             className={
               "border-0" + (request.state === false ? " " : " disabled")
             }
           />
         </span>
-        <span className="table-icon" onClick={() => onDeny && onDeny(request)}>
+        <span className="table-icon">
           <TiDeleteOutline
+            onClick={() => onDeny && onDeny(request)}
             className={
               "border-0" + (request.state === false ? " " : " disabled")
             }
