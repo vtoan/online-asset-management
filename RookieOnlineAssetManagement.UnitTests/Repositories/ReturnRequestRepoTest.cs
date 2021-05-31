@@ -157,7 +157,6 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var adminId = Guid.NewGuid().ToString();
             var categoryId = Guid.NewGuid().ToString();
             var assignId = Guid.NewGuid().ToString();
-            var acceptedUserId = "";
             // add mock data
             dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
             dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
@@ -216,7 +215,6 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var adminId = Guid.NewGuid().ToString();
             var categoryId = Guid.NewGuid().ToString();
             var assignId = Guid.NewGuid().ToString();
-            var acceptedUserId = "";
             // add mock data
             dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
             dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
