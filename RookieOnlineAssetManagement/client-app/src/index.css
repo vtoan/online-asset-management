@@ -401,16 +401,14 @@ form.example button {
   display: block;
 }
 
-#form-category
-{
+#form-category {
   display: none;
 }
 
-#add-new-cate
-{
+#add-new-cate {
   display: block;
-  color: red; 
-  text-decoration: "underline"; 
+  color: red;
+  text-decoration: "underline";
   font-style: "italic";
   margin-left: 20px;
   margin-bottom: 10px;
@@ -493,8 +491,9 @@ hr {
 /* modal*/
 .modal-dialog .modal-content .close {
   border: none;
-  background-color: white;
-  font-size: 1.4em;
+  /* background-color: white; */
+  font-size: 1.5em;
+  color: var(--clr-primary);
 }
 .modal-dialog .modal-header,
 .modal-dialog .modal-body {

@@ -18,6 +18,7 @@ function _refreshParams() {
   params.sortFullName = 0;
   params.sortDate = 0;
   params.sortType = 0;
+  params.page = 1;
 }
 
 export default function User() {
@@ -33,7 +34,7 @@ export default function User() {
 
   const { modalAlert, modalLoading } = useNSModals();
 
-  const showDisableModal = (itemId) => {
+  const showDisableModal = () => {
     let msg = (
       <>
         Cannot delete the asset because it belongs to one or more historical
