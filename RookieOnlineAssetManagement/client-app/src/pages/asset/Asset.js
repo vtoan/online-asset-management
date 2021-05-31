@@ -92,6 +92,12 @@ export default function Asset(props) {
     _fetchData();
   };
 
+  const handleSearchKey = () => {
+    _refreshParams();
+    params.query = "";
+    _fetchData();
+  };
+
   const handleEdit = (item) => {
     history.push("/assets/" + item.assetId);
   };
@@ -154,7 +160,7 @@ export default function Asset(props) {
           <AssetFilterCategory onChange={handleFilterCategory} />
         </Col>
         <Col>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
