@@ -39,7 +39,7 @@ export default function Request() {
       SortAssignedDate: 0,
       SortReturnedDate: 0,
       SortState: 0,
-      RequestAssignments: [],
+      StateReturnRequests: [],
       ReturnedDate: "",
       query: "",
       pageSize: 8,
@@ -119,7 +119,7 @@ export default function Request() {
 
   const handleFilterState = (items) => {
     _refreshParams();
-    params.RequestAssignments = items;
+    params.StateReturnRequests = items;
     _fetchData();
   };
 
