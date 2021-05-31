@@ -23,7 +23,7 @@ export default function NSTable({
   const [pageCurrent, setPageCurrent] = React.useState(1);
 
   React.useEffect(() => {
-    if (datas && datas.length > 0) setLoading(false);
+    if (datas && datas.length >= 0) setLoading(false);
   }, [datas]);
 
   React.useEffect(() => {
@@ -69,7 +69,10 @@ export default function NSTable({
               titles.map((item, index) => (
                 <td
                   key={index}
-                  style={{ width: index === 0 ? "10%" : item.width, fontSize: 14 }}
+                  style={{
+                    width: index === 0 ? "10%" : item.width,
+                    fontSize: 14,
+                  }}
                 >
                   <TableItem bold>
                     <LableItems
