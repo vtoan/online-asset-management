@@ -69,7 +69,7 @@ export default function Home() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete("/api/assignments/" + item.assignmentId)
+          .put("​/api​/Assignments​/change-state​/" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
@@ -87,22 +87,22 @@ export default function Home() {
 
   const handleDenyRequest = (item) => {
     modalConfirm.config({
-      message: "Do you want to decline this assignment?",
-      btnName: "Decline",
+      message: "Do you want to delete this assignment?",
+      btnName: "Delete",
       onSubmit: (item) => {
-        // modalLoading.show();
-        // http
-        //   .delete("/api/assignments/" + item.assignmentId)
-        //   .then((resp) => {
-        //     _refreshParams();
-        //     _fetchData();
-        //   })
-        //   .catch((err) => {
-        //     // showDisableDeleteModal();
-        //   })
-        //   .finally(() => {
-        //     modalLoading.close();
-        //   });
+        modalLoading.show();
+        http
+          .delete("/api/assignments/" + item.assignmentId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+          });
       },
     });
     modalConfirm.show(item);
