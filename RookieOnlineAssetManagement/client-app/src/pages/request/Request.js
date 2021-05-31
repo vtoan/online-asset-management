@@ -83,9 +83,7 @@ export default function Request() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete(
-            "/api/ReturnRequests/cancel?assignmentId=" + item.assignmentId
-          )
+          .put("/api/ReturnRequests/cancel?assignmentId=" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
