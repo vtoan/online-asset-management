@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Moq;
 using RookieOnlineAssetManagement.Entities;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.UnitTests.Mock;
@@ -38,10 +39,14 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 LocationId = locationId,
                 LastName = "Test",
                 FirstName = "Category",
+                DateOfBirth = DateTime.Parse("1999-10-20"),
+                Gender = true,
+                JoinedDate = DateTime.Parse("2020-6-30"),
+                Type = Enums.TypeUser.STAFF
             };
             var UserRepo = new UserRepository(dbContext, mockUserManager.Object);
             var UserNew = await UserRepo.CreateUserAsync(UserTest);
-            Assert.Null(UserNew);
+            Assert.NotNull(UserNew);
         }
 
         [Fact]
@@ -49,54 +54,75 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
         {
             var dbContext = _fixture.Context;
             var locationId = Guid.NewGuid().ToString();
-            var userid = Guid.NewGuid().ToString();
             var mockUserManager = new Mock<FakeUserManager>();
             mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+            mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<User>())).ReturnsAsync(IdentityResult.Success);
             dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
             await dbContext.SaveChangesAsync();
-            var UserTest = new UserRequestModel()
+            var UserTest = new User()
             {
-                UserId = userid,
                 LocationId = locationId,
                 LastName = "Test",
                 FirstName = "Category",
+                DateOfBirth = DateTime.Parse("1999-10-20"),
+                Gender = true,
+                JoinedDate = DateTime.Parse("2020-6-30"),
+                StaffCode = "SD0001"
             };
-            // create repo
-            var userRepository = new UserRepository(dbContext, mockUserManager.Object);
-            var UserNew = await userRepository.CreateUserAsync(UserTest);
+            var Role = new IdentityRole()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Staff",
+                NormalizedName = TypeUser.STAFF.ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
+            var UserRepo = new UserRepository(dbContext, mockUserManager.Object);
+            var createuser = dbContext.Users.Add(UserTest);
+            var createrole = dbContext.Roles.Add(Role);
+            var UserRole = new IdentityUserRole<string>()
+            {
+                RoleId = createrole.Entity.Id,
+                UserId = createuser.Entity.Id
+            };
+            var createuserrol = dbContext.UserRoles.Add(UserRole);
 
-            var newlocationId = Guid.NewGuid().ToString();
             var UserTestNew = new UserRequestModel()
             {
-                UserId = userid,
-                LastName = "Test1",
+                UserId = createuser.Entity.Id,
+                LocationId = createuser.Entity.LocationId,
+                LastName = "Test",
                 FirstName = "Category",
+                DateOfBirth = DateTime.Parse("1999-10-22"),
+                Gender = true,
+                JoinedDate = DateTime.Parse("2020-6-30"),
+                Type = Enums.TypeUser.STAFF
             };
-            var Createupdate = await userRepository.UpdateUserAsync(userid,UserTestNew);
-            Assert.Null(Createupdate);
+            var Createupdate = await UserRepo.UpdateUserAsync(UserTestNew.UserId, UserTestNew);
+            Assert.NotNull(Createupdate);
         }
 
         [Fact]
         public async Task DisableUser_Success()
         {
             var dbContext = _fixture.Context;
-            var LocationId = Guid.NewGuid().ToString();
-            var Id = Guid.NewGuid().ToString();
+            var locationId = Guid.NewGuid().ToString();
             var mockUserManager = new Mock<FakeUserManager>();
-            mockUserManager.Setup(x => x.DeleteAsync(It.IsAny<User>())).ReturnsAsync(IdentityResult.Success);
-            dbContext.Locations.Add(new Location() { LocationId = LocationId, LocationName = "HCM" });
+            mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
             await dbContext.SaveChangesAsync();
             var UserTest = new UserRequestModel()
             {
-                UserId = Id,
-                LocationId = LocationId,
+                LocationId = locationId,
                 LastName = "Test",
                 FirstName = "Category",
+                DateOfBirth = DateTime.Parse("1999-10-20"),
+                Gender = true,
+                JoinedDate = DateTime.Parse("2020-6-30"),
+                Type = Enums.TypeUser.STAFF
             };
-            // create repo
             var UserRepo = new UserRepository(dbContext, mockUserManager.Object);
             var UserNew = await UserRepo.CreateUserAsync(UserTest);
-            var result = await UserRepo.DisableUserAsync(Id);
+            var result = await UserRepo.DisableUserAsync(UserNew.UserId);
             Assert.False(result);
         }
 
@@ -107,21 +133,25 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var locationId = Guid.NewGuid().ToString();
             var id = Guid.NewGuid().ToString();
             var mockUserManager = new Mock<FakeUserManager>();
+            mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
             mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new User { });
             dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
             await dbContext.SaveChangesAsync();
             var UserTest = new UserRequestModel()
             {
-                UserId =id,
                 LocationId = locationId,
-                LastName = "Test1",
+                LastName = "Test",
                 FirstName = "Category",
+                DateOfBirth = DateTime.Parse("1999-10-20"),
+                Gender = true,
+                JoinedDate = DateTime.Parse("2020-6-30"),
+                Type = TypeUser.STAFF
             };
-            var userRepository = new UserRepository(dbContext,mockUserManager.Object);
+            var userRepository = new UserRepository(dbContext, mockUserManager.Object);
             var UserNew = await userRepository.CreateUserAsync(UserTest);
-            var user = await userRepository.GetUserByIdAsync(id);
-            Assert.True(UserTest.UserId.Equals(id));
-            Assert.Null(user);
+            var user = await userRepository.GetUserByIdAsync(UserNew.UserId);
+            //Assert.True(UserTest.UserId.Equals(id));
+            Assert.NotNull(user);
             Assert.IsNotType<UserDetailModel>(user);
         }
         [Fact]

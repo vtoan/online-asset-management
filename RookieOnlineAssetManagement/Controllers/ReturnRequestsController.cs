@@ -6,6 +6,7 @@ using RookieOnlineAssetManagement.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
@@ -21,27 +22,31 @@ namespace RookieOnlineAssetManagement.Controllers
             _returnRequestService = returnRequestService;
         }
         [HttpPost]
-        public async Task<ActionResult<ReturnRequestModel>> CreateAsync(string assignmentId, string requestedUserId)
+        public async Task<ActionResult<ReturnRequestModel>> CreateAsync(string assignmentId)
         {
+            var requestedUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _returnRequestService.CreateReturnRequestAsync(assignmentId, requestedUserId));
         }
-        [HttpPut("admin-accept")]
-        public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string assignmentId, string acceptedUserId)
+        [HttpPut("accept")]
+        public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string assignmentId)
         {
             bool accept = true;
+            var acceptedUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
         }
-        [HttpPut("admin-cancel")]
-        public async Task<ActionResult<bool>> ChangeStateCancelAsync(string assignmentId, string acceptedUserId)
+        [HttpPut("cancel")]
+        public async Task<ActionResult<bool>> ChangeStateCancelAsync(string assignmentId)
         {
-            bool accept = false;
-            return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
+            bool cancel = false;
+            var acceptedUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Ok(await _returnRequestService.ChangeStateAsync(cancel, assignmentId, acceptedUserId));
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReturnRequestModel>>> GetListAsync([FromQuery] ReturnRequestParams returnRequestParams)
         {
             var result = await _returnRequestService.GetListReturnRequestAsync(returnRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
+            HttpContext.Response.Headers.Add("total-item", result.TotalItem.ToString());
             return Ok(result.Datas);
         }
     }

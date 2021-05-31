@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RookieOnlineAssetManagement.Controllers;
+using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
 using System;
@@ -26,6 +27,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task Create_Success()
         {
             var mockAssignmentSer = new Mock<IAssignmentService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
             var assignmentrequsetmodel = new AssignmentRequestModel
             {
                 AssignmentId = Guid.NewGuid().ToString(),
@@ -39,6 +41,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var assignmentmodel = new AssignmentModel();
             mockAssignmentSer.Setup(m => m.CreateAssignmentAsync(It.IsAny<AssignmentRequestModel>())).ReturnsAsync(assignmentmodel);
             var assignmentcontr = new AssignmentsController(mockAssignmentSer.Object);
+            assignmentcontr.ControllerContext.HttpContext = new DefaultHttpContext();
+            assignmentcontr.ControllerContext.HttpContext.Session = sessionMock.Object;
             var result = await assignmentcontr.CreateAsync(assignmentrequsetmodel);
             Assert.NotNull(result);
         }
@@ -46,6 +50,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task Update_Success()
         {
             var mockAssignmentSer = new Mock<IAssignmentService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
             var assignmentrequsetmodel = new AssignmentRequestModel
             {
                 AssignmentId = Guid.NewGuid().ToString(),
@@ -59,8 +64,28 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var assignmentmodel = new AssignmentModel();
             mockAssignmentSer.Setup(x => x.UpdateAssignmentAsync(It.IsAny<string>(), It.IsAny<AssignmentRequestModel>())).ReturnsAsync(assignmentmodel);
             var assignmentcontr = new AssignmentsController(mockAssignmentSer.Object);
+            assignmentcontr.ControllerContext.HttpContext = new DefaultHttpContext();
+            assignmentcontr.ControllerContext.HttpContext.Session = sessionMock.Object;
             var result = await assignmentcontr.UpdateAsync(assignmentrequsetmodel.AssetId, assignmentrequsetmodel);
             Assert.NotNull(result);
+        }
+        [Fact]
+        public async Task ChangeStateAccept_Success()
+        {
+            var mockAssignmentSer = new Mock<IAssignmentService>();
+            mockAssignmentSer.Setup(x => x.ChangeStateAssignmentAsync(It.IsAny<string>(), It.IsAny<StateAssignment>())).ReturnsAsync(true);
+            var assignmentcontr = new AssignmentsController(mockAssignmentSer.Object);
+            var result = await assignmentcontr.ChangeStateAcceptAsync(Guid.NewGuid().ToString());
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+        [Fact]
+        public async Task ChangeStateDecline_Success()
+        {
+            var mockAssignmentSer = new Mock<IAssignmentService>();
+            mockAssignmentSer.Setup(x => x.ChangeStateAssignmentAsync(It.IsAny<string>(), It.IsAny<StateAssignment>())).ReturnsAsync(false);
+            var assignmentcontr = new AssignmentsController(mockAssignmentSer.Object);
+            var result = await assignmentcontr.ChangeStateAcceptAsync(Guid.NewGuid().ToString());
+            Assert.IsType<OkObjectResult>(result.Result);
         }
         [Fact]
         public async Task Delete_Success()
@@ -90,6 +115,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             HttpContext.Request.Headers["total-pages"] = "0";
             HttpContext.Request.Headers["total-item"] = "0";
             var mokService = new Mock<IAssignmentService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
             List<AssignmentModel> collection = new List<AssignmentModel>();
             int totalP = 0;
             int totali = 0;
@@ -97,17 +123,13 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             mokService.Setup(x => x.GetListAssignmentAsync(It.IsAny<AssignmentRequestParams>())).ReturnsAsync(List);
             AssignmentModel model = new AssignmentModel();
             var assignmentrequest = new AssignmentRequestParams();
-            var controller = new AssignmentsController(mokService.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = HttpContext,
-                }
-            };
-            var resutl = await controller.GetListAsync(assignmentrequest);
+            var assignmentcontr = new AssignmentsController(mokService.Object);
+            assignmentcontr.ControllerContext.HttpContext = new DefaultHttpContext();
+            assignmentcontr.ControllerContext.HttpContext.Session = sessionMock.Object;
+            var resutl = await assignmentcontr.GetListAsync(assignmentrequest);
 
             Assert.NotNull(resutl);
-            Assert.IsType<OkObjectResult>(resutl);
+            Assert.IsType<ActionResult<IEnumerable<AssignmentModel>>>(resutl);
         }
     }
 }
