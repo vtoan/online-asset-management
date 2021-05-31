@@ -27,6 +27,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task CreateUser_Success()
         {
             var mockUserSer = new Mock<IUserService>();
+            //mock http context
+            Mock<ISession> sessionMock = new Mock<ISession>();
             var locationId = Guid.NewGuid().ToString();
             var UserTest = new UserRequestModel()
             {
@@ -37,6 +39,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             var usermodel = new UserModel();
             mockUserSer.Setup(m => m.CreateUserAsync(It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
             var Usercontr = new UsersController(mockUserSer.Object);
+            Usercontr.ControllerContext.HttpContext = new DefaultHttpContext();
+            Usercontr.ControllerContext.HttpContext.Session = sessionMock.Object;
             var result = await Usercontr.CreateAsync(UserTest);
             Assert.NotNull(result);
         }
@@ -45,6 +49,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task UpdateUser_Success()
         {
             var mockUserSer = new Mock<IUserService>();
+            //mock http context
+            Mock<ISession> sessionMock = new Mock<ISession>();
             var locationId = Guid.NewGuid().ToString();
             var UserTest = new UserRequestModel
             {
@@ -57,11 +63,10 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             };
             var usermodel = new UserModel();
             mockUserSer.Setup(x => x.UpdateUserAsync(It.IsAny<string>(), It.IsAny<UserRequestModel>())).ReturnsAsync(usermodel);
-            var assetContr = new UsersController(mockUserSer.Object)
-            {
-
-            };
-            var result = await assetContr.UpdateAsync(UserTest.UserId, UserTest);
+            var Usercontr = new UsersController(mockUserSer.Object);
+            Usercontr.ControllerContext.HttpContext = new DefaultHttpContext();
+            Usercontr.ControllerContext.HttpContext.Session = sessionMock.Object;
+            var result = await Usercontr.UpdateAsync(UserTest.UserId, UserTest);
             Assert.NotNull(result);
         }
         [Fact]

@@ -116,9 +116,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 AssetName = "Asset Test Update",
                 InstalledDate = DateTime.Now
             };
-            var assetupdate = await assetRepo.UpdateAssetAsync(assetTestNew.AssetId, assetTestNew);
-
-            Assert.Null(assetupdate);
+            await Assert.ThrowsAsync<Exception>(() => assetRepo.UpdateAssetAsync(assetTestNew.AssetId, assetTestNew));
         }
 
         [Fact]
@@ -171,9 +169,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var assetRepo = new AssetRepository(dbContext);
             var assetNew = await assetRepo.CreateAssetAsync(assetTest);
 
-            var result = await assetRepo.DeleteAssetAsync(Guid.NewGuid().ToString());
-            //var asset = await assetRepo.GetAssetByIdAsync(assetNew.AssetId);
-            Assert.False(result);
+            await Assert.ThrowsAsync<Exception>(() => assetRepo.DeleteAssetAsync(Guid.NewGuid().ToString()));
             //Assert.Null(asset);
         }
 
@@ -225,10 +221,9 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var assetRepo = new AssetRepository(dbContext);
             var assetNew = await assetRepo.CreateAssetAsync(assetcreate);
 
-            var asset = await assetRepo.GetAssetByIdAsync(Guid.NewGuid().ToString());
-
-            Assert.Null(asset);
-            Assert.IsNotType<AssetModel>(asset);
+            await Assert.ThrowsAsync<Exception>(() => assetRepo.GetAssetByIdAsync(Guid.NewGuid().ToString()));
+            //Assert.Null(asset);
+            //Assert.IsNotType<AssetModel>(asset);
         }
         [Fact]
         public async Task GetListHistory_Success()

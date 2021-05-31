@@ -183,6 +183,72 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             Assert.NotSame(AssignmentModelUpdate.AssetId, AssignmentModel.AssetId);
         }
         [Fact]
+        public async Task ChangeState_Success()
+        {
+            var dbContext = _fixture.Context;
+            var locationId = Guid.NewGuid().ToString();
+            var categoryId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
+            await dbContext.SaveChangesAsync();
+            var asset = new Asset
+            {
+                AssetId = "LD100012",
+                AssetName = "test",
+                CategoryId = categoryId,
+                State = (short)StateAsset.Avaiable,
+                Specification = "test",
+                InstalledDate = DateTime.Now,
+                LocationId = locationId
+            };
+            dbContext.Assets.Add(asset);
+            var result = await dbContext.SaveChangesAsync();
+
+            var user = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "AssignedToUser",
+                FirstName = "duyen",
+                LastName = "le",
+                Gender = true,
+                JoinedDate = DateTime.Now,
+                IsChange = true,
+                StaffCode = "SD00001",
+                LocationId = locationId,
+            };
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
+            var admin = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "AssignedToUser",
+                FirstName = "admin",
+                LastName = "hcm",
+                Gender = true,
+                JoinedDate = DateTime.Now,
+                IsChange = true,
+                StaffCode = "SD00002",
+                LocationId = locationId,
+            };
+            dbContext.Users.Add(admin);
+            await dbContext.SaveChangesAsync();
+            var assignmentrequsetmodel = new AssignmentRequestModel
+            {
+                AssignmentId = Guid.NewGuid().ToString(),
+                UserId = user.Id,
+                AssetId = asset.AssetId,
+                AdminId = admin.Id,
+                AssignedDate = DateTime.Now,
+                Note = "test",
+                LocationId = locationId,
+            };
+            var assignmentRepo = new AssignmentRepository(dbContext);
+            var AssignmentModel = await assignmentRepo.CreateAssignmentAsync(assignmentrequsetmodel);
+            var change = await assignmentRepo.ChangeStateAssignmentAsync(AssignmentModel.AssignmentId, StateAssignment.Accepted);
+            Assert.True(change);
+        }
+        [Fact]
         public async Task Delete_Success()
         {
             var dbContext = _fixture.Context;
