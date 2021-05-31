@@ -38,13 +38,22 @@ export default function AssetTable({
 }) {
   const itemRender = (asset) => (
     <>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(asset)}
+      >
         <TableItem>{asset.assetId}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(asset)}
+      >
         <TableItem>{asset.assetName}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(asset)}
+      >
         <TableItem>{asset.categoryName}</TableItem>
       </td>
       <td

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
@@ -11,6 +12,7 @@ namespace RookieOnlineAssetManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReturnRequestsController : ControllerBase
     {
         private readonly IReturnRequestService _returnRequestService;
@@ -23,15 +25,25 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             return Ok(await _returnRequestService.CreateReturnRequestAsync(assignmentId, requestedUserId));
         }
-        [HttpPut]
-        public async Task<ActionResult<bool>> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId)
+        [HttpPut("admin-accept")]
+        public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string assignmentId, string acceptedUserId)
         {
+            bool accept = true;
+            return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
+        }
+        [HttpPut("admin-cancel")]
+        public async Task<ActionResult<bool>> ChangeStateCancelAsync(string assignmentId, string acceptedUserId)
+        {
+            bool accept = false;
             return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReturnRequestModel>>> GetListAsync([FromQuery] ReturnRequestParams returnRequestParams)
         {
-            return Ok(await _returnRequestService.GetListReturnRequestAsync(returnRequestParams));
+            var result = await _returnRequestService.GetListReturnRequestAsync(returnRequestParams);
+            HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
+            HttpContext.Response.Headers.Add("total-item", result.TotalItem.ToString());
+            return Ok(result.Datas);
         }
     }
 }

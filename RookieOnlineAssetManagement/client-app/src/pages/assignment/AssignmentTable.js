@@ -53,22 +53,40 @@ export default function AssignmentTable({
 }) {
   const itemRender = (assign) => (
     <>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(assign)}
+      >
         <TableItem>{assign.no}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(assign)}
+      >
         <TableItem>{assign.assetId}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(assign)}
+      >
         <TableItem>{assign.assetName}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(assign)}
+      >
         <TableItem>{assign.assignedTo}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(assign)}
+      >
         <TableItem>{assign.assignedBy}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(assign)}
+      >
         <TableItem>{formatDate(assign.assignedDate)}</TableItem>
       </td>
       <td

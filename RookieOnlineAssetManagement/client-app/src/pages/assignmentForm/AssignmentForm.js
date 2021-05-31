@@ -13,11 +13,14 @@ export default function UserForm() {
   const { id } = useParams();
   const [dataEdit, setEdit] = React.useState(null);
   const [nameHeader, setNameHeader] = React.useState("");
-  const [date, setDate] = React.useState(formatDate(Date.now()));
+  //form
   const [getAssetId, setGetAssetId] = React.useState("");
   const [getUserId, setGetUserId] = React.useState("");
   const [findNameAsset, setFindNameAsset] = React.useState("");
   const [findNameUser, setFindNameUser] = React.useState("");
+  const [isValid, setValid] = React.useState(false);
+  const [date, setDate] = React.useState(formatDate(Date.now()));
+  const [note, setNote] = React.useState("");
   const history = useHistory();
   //modal
   const modalSelectAsset = useNSSelectModal();
@@ -28,6 +31,7 @@ export default function UserForm() {
     http.get("/api/Assignments/" + id).then(({ data }) => {
       setEdit(data);
       setDate(formatDate(data.assignedDate));
+      setNote(data.note);
       setFindNameUser(data.fullNameUser);
       setFindNameAsset(data.assetName);
       setGetAssetId(data.assetId);
@@ -45,22 +49,15 @@ export default function UserForm() {
     }
   }, [id]);
 
-  const validate = (assignment) => {
-    if (assignment.userId === "") {
-      alert("User' s name can't not be empty, please!");
-      return false;
-    } else if (assignment.assetId === "") {
-      alert("Asset's name can't be empty, please!");
-      return false;
-    } else if (assignment.assignedDate === "") {
-      alert("Don' t forget set assinged date");
-      return false;
-    } else if (assignment.note === "") {
-      alert("Don' t forget set note");
-      return false;
-    }
-    return true;
-  };
+  React.useEffect(() => {
+    validateData();
+  })
+
+  const validateData = () => {
+    if (getUserId && getAssetId && note && date) setValid(true);
+    else setValid(false)
+  }
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -70,7 +67,7 @@ export default function UserForm() {
       assignedDate: event.target.assignedDate.value,
       note: event.target.noteAssignment.value,
     };
-    if (!validate(assignment)) return;
+    // if (!validate(assignment)) return;
     console.log(assignment);
     modalLoading.show();
     if (id) {
@@ -109,12 +106,24 @@ export default function UserForm() {
   const handleSelectedAsset = (assetId, assetName) => {
     setGetAssetId(assetId);
     setFindNameAsset(assetName);
+
   };
 
   const handleSelectedUser = (userId, userName) => {
     setGetUserId(userId);
     setFindNameUser(userName);
+
   };
+
+  const handleChangeDate = (event) => {
+    setDate(event.target.value)
+
+  }
+
+  const handleChangeNote = (event) => {
+    setNote(event.target.value)
+
+  }
 
   return (
     <>
@@ -132,6 +141,7 @@ export default function UserForm() {
                 className="name-new-asset"
                 name="userName"
                 value={findNameUser}
+                invalid={findNameUser ? false : true}
               />
             </div>
           </Col>
@@ -148,6 +158,7 @@ export default function UserForm() {
                 className="name-new-asset"
                 name="assetName"
                 value={findNameAsset}
+                invalid={findNameAsset ? false : true}
               />
             </div>
           </Col>
@@ -161,7 +172,9 @@ export default function UserForm() {
               type="date"
               className="name-new-asset"
               name="assignedDate"
-              defaultValue={date}
+              value={date}
+              onClick={handleChangeDate}
+              invalid={date ? false : true}
             />
           </Col>
         </FormGroup>
@@ -175,14 +188,16 @@ export default function UserForm() {
               rows="5"
               className="specification-asset"
               name="noteAssignment"
-              defaultValue={dataEdit?.note ?? ""}
+              value={note}
+              onChange={handleChangeNote}
+              invalid={note ? false : true}
             />
           </Col>
         </FormGroup>
         <FormGroup row>
           <Col xs={5} className="area-button-assignment">
             <div className="submit-create-assignment">
-              <Button color="danger" type="submit">
+              <Button color="danger" type="submit" disabled={!isValid}>
                 Save
               </Button>
               <Link to="/assignments">

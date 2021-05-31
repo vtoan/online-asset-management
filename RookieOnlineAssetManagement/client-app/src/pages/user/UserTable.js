@@ -14,7 +14,7 @@ const tableTitles = [
     width: "20%",
   },
   {
-    title: "User Name",
+    title: "Username",
     nameSort: null,
     width: "20%",
   },
@@ -54,16 +54,28 @@ export default function UserTable({
 }) {
   const itemRender = (item) => (
     <>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{item.staffCode}</TableItem>
       </td>
-      <td>
-        <TableItem>{item.userName}</TableItem>
-      </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{item.fullName}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
+        <TableItem>{item.userName}</TableItem>
+      </td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{formatDate(item.joinedDate)}</TableItem>
       </td>
       <td

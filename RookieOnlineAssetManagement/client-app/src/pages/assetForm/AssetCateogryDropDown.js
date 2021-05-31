@@ -1,23 +1,43 @@
 import React from "react";
 import http from "../../ultis/httpClient";
-
-var expanded = false;
-
-function showCheckboxes() {
-  var checkboxes = document.getElementById("checkboxes");
-  if (!checkboxes) return;
-  if (!expanded) {
-    checkboxes.style.display = "block";
-    expanded = true;
-  } else {
-    checkboxes.style.display = "none";
-    expanded = false;
-  }
-}
+import { Input, FormGroup } from 'reactstrap';
 
 export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
   const [category, setCategory] = React.useState([]);
+  const [checkNameCate, setCheckNameCate] = React.useState("");
+  const [checkShortNameCate, setCheckShortNameCate] = React.useState("");
   const [cateSelected, setCateSelected] = React.useState([]);
+
+  let expanded = false;
+
+  const showCheckboxes = () => {
+    var checkboxes = document.getElementById("checkboxes");
+    var listCate = document.getElementById("form-category");
+    var label = document.getElementById("add-new-cate");
+    if (!checkboxes) return;
+    if (!expanded) {
+      checkboxes.style.display = "block";
+      expanded = true;
+    } else {
+      checkboxes.style.display = "none";
+      document.getElementById("nameCate").value = "";
+      document.getElementById("shortname").value = "";
+      setCheckNameCate(false);
+      setCheckShortNameCate(false);
+      listCate.style.display = "none";
+      label.style.display = "block";
+      expanded = false;
+    }
+  }
+
+  const showDropDownList = (event) => {
+    event.preventDefault();
+    let listCate = document.getElementById("add-new-cate");
+    listCate.style.display = "none";
+    let label = document.getElementById("form-category");
+    label.style.display = "block";
+    label.style.display = "inline-flex";
+  }
 
   const _fetchCateData = () => {
     http
@@ -30,6 +50,8 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
 
   React.useEffect(() => {
     _fetchCateData();
+    setCheckNameCate(false);
+    setCheckShortNameCate(false);
   }, []);
 
   const handleChangeCate = (event) => {
@@ -49,11 +71,18 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
     };
 
     if (cate.categoryName === "" && cate.shortName === "") {
-      alert("Enter category's infomations, please!");
+      setCheckNameCate(true);
+      setCheckShortNameCate(true);
     } else if (cate.categoryName === "") {
-      alert("Enter category's name, please!");
+      setCheckNameCate(true);
+      setCheckShortNameCate(false);
     } else if (cate.shortName === "") {
-      alert("Enter category's short name, please!");
+      setCheckShortNameCate(true);
+      setCheckNameCate(false);
+    }
+    else {
+      setCheckNameCate(false);
+      setCheckShortNameCate(false);
     }
 
     http
@@ -65,7 +94,9 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
   };
 
   return (
-    <div className="multiselect" disabled={itemSelected}>
+    <div className="multiselect" disabled={itemSelected} style={{
+      border: !itemSelected ? "1px solid red" : "", borderRadius: 6
+    }}>
       <div className="selectBox" onClick={showCheckboxes}>
         <span className="fa fa-chevron-down" />
         <select
@@ -95,22 +126,25 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
               </label>
             ))}
           <hr />
-          <label className="checkboxlist" style={{ padding: 6 }}>
-            <input
+          <a href="new-category" onClick={showDropDownList} id="add-new-cate">Add new category</a>
+          <FormGroup className="checkboxlist" id="form-category" style={{ padding: 6 }}>
+            <Input
               type="text"
-              placeholder="Blutooth Mouse"
+              placeholder="MP3"
               id="nameCate"
               name="nameCate"
+              invalid={checkNameCate}
             />
-            <input
+            <Input
               type="text"
-              placeholder="BM"
+              placeholder="MP"
               id="shortname"
               name="shortNameCate"
+              invalid={checkShortNameCate}
             />
             <i className="fa fa-check" onClick={handleCreateCate} />
             <i className="fa fa-times" onClick={showCheckboxes} />
-          </label>
+          </FormGroup>
         </div>
       )}
     </div>

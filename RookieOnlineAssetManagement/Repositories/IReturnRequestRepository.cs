@@ -8,6 +8,6 @@ namespace RookieOnlineAssetManagement.Repositories
     {
         Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId);
         Task<bool> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId);
-        Task<ICollection<ReturnRequestModel>> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams);
+        Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams);
     }
 }

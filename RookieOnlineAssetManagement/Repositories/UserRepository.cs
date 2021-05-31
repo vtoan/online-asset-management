@@ -24,10 +24,15 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas)
         {
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequestParmas.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.LocationId);
             if (!string.IsNullOrEmpty(userRequestParmas.Query))
             {
-                queryable = queryable.Where(x => x.Id.Contains(userRequestParmas.Query) || x.UserName.Contains(userRequestParmas.Query));
+                queryable = queryable.Where(x => x.StaffCode.Contains(userRequestParmas.Query) || x.UserName.Contains(userRequestParmas.Query) || x.FirstName.Contains(userRequestParmas.Query) || x.LastName.Contains(userRequestParmas.Query));
             }
             queryable = queryable.Where(x => x.LockoutEnabled == false);
             if (userRequestParmas.SortCode != null)
@@ -103,11 +108,20 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<UserDetailModel> GetUserByIdAsync(string id)
         {
             var user = await _dbContext.Users.Where(item => item.Id == id).Include(item => item.Location).FirstOrDefaultAsync();
-            if (user == null) return null;
+            if (user == null)
+            {
+                throw new Exception("Repository | Have not this user");
+            }
             var userRole = await _dbContext.UserRoles.Where(item => item.UserId == user.Id).FirstOrDefaultAsync();
-            if (userRole == null) return null;
+            if (userRole == null)
+            {
+                throw new Exception("Repository | Have not user role");
+            }
             var role = await _dbContext.Roles.Where(item => item.Id == userRole.RoleId).FirstOrDefaultAsync();
-            if (role == null) return null;
+            if (role == null)
+            {
+                throw new Exception("Repository | Have not role");
+            }
             var userdetail = new UserDetailModel
             {
                 UserId = user.Id,
@@ -128,6 +142,11 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
         {
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequest.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             string username = userRequest.FirstName.ToLower();
             var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
             string prefix = new string(firstChars).ToLower();
@@ -138,7 +157,7 @@ namespace RookieOnlineAssetManagement.Repositories
 
             var usermodel = new UserModel();
 
-            var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 if (UserExtension == null)
@@ -198,7 +217,7 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             catch
             {
-                return null;
+                throw new Exception("Repository | Create user fail");
             }
 
             return usermodel;
@@ -206,35 +225,47 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequest.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                return null;
+                throw new Exception("Repository | Have not this user");
             }
             if (user.FirstName != userRequest.FirstName || user.LastName != userRequest.LastName)
             {
-                return null;
+                throw new Exception("Repository | First name or Last name is not valid");
             }
             // user.Id = userRequest.UserId;
+            var checkrole = await _dbContext.Roles.FirstOrDefaultAsync(x => x.NormalizedName == userRequest.Type.ToString().ToUpper());
+            if (checkrole == null)
+            {
+                throw new Exception("Repository | Have not this role");
+            }
             var role = userRequest.Type.ToString();
             user.DateOfBirth = userRequest.DateOfBirth.Value;
             user.Gender = userRequest.Gender;
             user.JoinedDate = userRequest.JoinedDate.Value;
             await _changeRoleUserAsync(user.Id, userRequest.Type);
-            await _dbContext.SaveChangesAsync();
-
-            var usermodel = new UserModel
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
             {
-                UserId = user.Id,
-                StaffCode = user.StaffCode,
-                FullName = user.FirstName + " " + user.LastName,
-                UserName = user.UserName,
-                JoinedDate = user.JoinedDate,
-                RoleName = role,
-                LocationId = user.LocationId
-            };
-
-            return usermodel;
+                var usermodel = new UserModel
+                {
+                    UserId = user.Id,
+                    StaffCode = user.StaffCode,
+                    FullName = user.FirstName + " " + user.LastName,
+                    UserName = user.UserName,
+                    JoinedDate = user.JoinedDate,
+                    RoleName = role,
+                    LocationId = user.LocationId
+                };
+                return usermodel;
+            }
+            throw new Exception("Repository | Update user fail");
         }
 
         public async Task<bool> DisableUserAsync(string id)
@@ -242,18 +273,30 @@ namespace RookieOnlineAssetManagement.Repositories
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                return false;
+                throw new Exception("Repository | Have not this user");
             }
-            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.UserId == id);
-            if (assignment != null)
+            var assignments = await _dbContext.Assignments.Where(x => x.UserId == id).ToListAsync();
+            if (assignments.Count > 0)
+            {
+                for (int i = 0; i < assignments.Count; i++)
+                {
+                    if (assignments[i].State == (int)StateAssignment.Accepted)
+                    {
+                        throw new Exception("Repository | Have not this assignment");
+                    }
+                }
+                
+            }
+            var createResultLockend = await _userManager.SetLockoutEnabledAsync(user, true);
+            if (!createResultLockend.Succeeded)
             {
                 return false;
             }
-            await _userManager.SetLockoutEnabledAsync(user, true);
             await _userManager.SetLockoutEndDateAsync(user, DateTime.MaxValue);
             // user.LockoutEnabled = true;
             // user.LockoutEnd = DateTime.MaxValue;
-            await _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
+
             return true;
         }
 

@@ -20,9 +20,31 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel)
         {
+            var returnrequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentRequestModel.AssignmentId);
+            if (returnrequest != null)
+            {
+                throw new Exception("Repository | Return request have exists");
+            }
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestModel.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
+            if (AssignToUserId == null)
+            {
+                throw new Exception("Repository | Have not this Assign To User");
+            }
             var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
+            if(AssignByAdminId==null)
+            {
+                throw new Exception("Repository | Have not this Assign By Admin");
+            }
             var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
+            if (Asset == null)
+            {
+                throw new Exception("Repository | Have not this asset");
+            }
             var assignment = new Assignment
             {
                 AssignmentId = Guid.NewGuid().ToString(),
@@ -35,9 +57,9 @@ namespace RookieOnlineAssetManagement.Repositories
                 AssignedDate = assignmentRequestModel.AssignedDate,
                 Note = assignmentRequestModel.Note,
                 LocationId = assignmentRequestModel.LocationId,
-                State = (int)StateAssignment.WatingForAcceptance,
+                State = (int)StateAssignment.WaitingForAcceptance,
             };
-            var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 Asset.State = (short)StateAsset.Assigned;
@@ -65,41 +87,69 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
                 else
                 {
-                    return null;
+                    throw new Exception("Repository | Create assignment fail");
                 }
             }
             catch
             {
-                return null;
+                throw new Exception("Repository | Create assignment fail");
             }
             
         }
         public async Task<AssignmentModel> UpdateAssignmentAsync(string id, AssignmentRequestModel assignmentRequestModel)
         {
-            if (!assignmentRequestModel.State.Equals((int)StateAssignment.WatingForAcceptance))
-            { return null; }
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestModel.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
+            if (!assignmentRequestModel.State.Equals((int)StateAssignment.WaitingForAcceptance))
+            {
+                throw new Exception("Repository | State must be waiting for acceptance");
+            }
 
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
+            if (assignment == null)
+            {
+                throw new Exception("Repository | Have not this assignment");
+            }
 
-            var transaction = _dbContext.Database.BeginTransaction();
+
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 if (assignment.UserId != assignmentRequestModel.UserId)
                 {
                     var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
+                    if (AssignToUserId == null)
+                    {
+                        throw new Exception("Repository | Have not this Assign To User");
+                    }
                     assignment.UserId = assignmentRequestModel.UserId;
                     assignment.AssignTo = AssignToUserId.UserName;
                 }
                 if (assignment.AdminId != assignmentRequestModel.AdminId)
                 {
                     var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
+                    if (AssignByAdminId == null)
+                    {
+                        throw new Exception("Repository | Have not this Assign By Admin");
+                    }
                     assignment.AdminId = assignmentRequestModel.AdminId;
                     assignment.AssignBy = AssignByAdminId.UserName;
                 }
                 if (assignment.AssetId != assignmentRequestModel.AssetId)
                 {
                     var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
+                    if (Asset == null)
+                    {
+                        throw new Exception("Repository | Have not this new asset");
+                    }
                     var AssetOld = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
+                    if (AssetOld == null)
+                    {
+                        throw new Exception("Repository | Have not this old asset");
+                    }
                     AssetOld.State = (int)StateAsset.Avaiable;
                     Asset.State = (int)StateAsset.Assigned;
                     assignment.AssetId = assignmentRequestModel.AssetId;
@@ -127,50 +177,66 @@ namespace RookieOnlineAssetManagement.Repositories
                     return assignmentmodel;
                 }
                 else
-                    return null;
+                    throw new Exception("Repository | Update assignment fail");
             }
             catch
             {
-                return null;
+                throw new Exception("Repository | Update assignment fail");
             }
         }
         public async Task<bool> ChangeStateAssignmentAsync(string id, StateAssignment state)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
+            if (assignment == null)
+            {
+                throw new Exception("Repository | Have not this assignment");
+            }
             assignment.State = (int)state;
             var result = await _dbContext.SaveChangesAsync();
             if (result > 0)
             {
                 return true;
             }
-            return false;
+            throw new Exception("Repository | Change state assignment fail");
         }
         public async Task<bool> DeleteAssignmentAsync(string id)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
+            if (assignment == null)
+            {
+                throw new Exception("Repository | Have not this assignment");
+            }
             if (assignment.State.Equals((int)StateAssignment.Accepted) || assignment.State.Equals((int)StateAssignment.Completed))
-            { return false; }
+            {
+                throw new Exception("Repository | State is not valid");
+            }
             var returnrequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignment.AssignmentId);
             if (returnrequest != null)
-            { return false; }
-
+            {
+                throw new Exception("Repository | This assignment have a return request");
+            }
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
-            var transaction = _dbContext.Database.BeginTransaction();
+            if (asset == null)
+            {
+                throw new Exception("Repository | Have not this asset");
+            }
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 asset.State = (int)StateAsset.Avaiable;
-                _dbContext.Assignments.Remove(assignment);
+                var deleted = _dbContext.Assignments.Remove(assignment);
                 var result = await _dbContext.SaveChangesAsync();
                 if (result > 0)
                 {
                     transaction.Commit();
                     return true;
                 }
-                else return false;
+                else
+                    throw new Exception("Repository | Delete assignment fail");
             }
             catch
             {
-                return false;
+                throw new Exception("Repository | Delete assignment fail");
             }
         }
         public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(MyAssignmentRequestParams myAssignmentRequestParams)
@@ -178,7 +244,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var queryable = _dbContext.Assignments.Where(x => x.LocationId == myAssignmentRequestParams.LocationId && x.UserId == myAssignmentRequestParams.UserId).AsQueryable();
             queryable = queryable.Include(x => x.Asset).ThenInclude(x => x.Category);
             queryable = queryable.Where(x => x.AssignedDate.Value.Date <= DateTime.Now.Date);
-            queryable = queryable.Where(x => x.State == (int)StateAssignment.Accepted || x.State == (int)StateAssignment.WatingForAcceptance);
+            queryable = queryable.Where(x => x.State == (int)StateAssignment.Accepted || x.State == (int)StateAssignment.WaitingForAcceptance);
             if (myAssignmentRequestParams.SortAssetId.HasValue)
             {
                 if (myAssignmentRequestParams.SortAssetId.Value == SortBy.ASC)
@@ -236,6 +302,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
         {
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestParams.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             var queryable = _dbContext.Assignments.Include(x => x.Location).Where(x => x.LocationId == assignmentRequestParams.LocationId);
             queryable = queryable.Where(x => x.State != (int)StateAssignment.Completed);
             if (assignmentRequestParams.StateAssignments != null)

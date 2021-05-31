@@ -8,6 +8,9 @@ export default function AssetForm({ data, onSubmit, listState }) {
   const [cateIdSelected, setCateSelected] = React.useState(null);
   const [stateSelected, setStateSelected] = React.useState();
   const [dateCurrent, setDateCurrent] = React.useState([]);
+  const [checkNameAsset, setCheckNameAsset] = React.useState(false);
+  const [checkNote, setCheckNote] = React.useState(false);
+  const [checkDate, setCheckDate] = React.useState(false);
 
   React.useEffect(() => {
     setCateSelected(data?.categoryId);
@@ -36,6 +39,10 @@ export default function AssetForm({ data, onSubmit, listState }) {
       installedDate: String(event.target.dateAddAsset.value),
       state: Number(event.target.radioAvailable.value),
     };
+    if (asset.assetName === "") setCheckNameAsset(true)
+    if (asset.specification === "") setCheckNote(true)
+    if (asset.installedDate === "") setCheckDate(true)
+
     onSubmit && onSubmit(asset);
   };
 
@@ -51,7 +58,7 @@ export default function AssetForm({ data, onSubmit, listState }) {
             defaultValue={data?.assetName ?? ""}
             className="name-new-asset"
             name="nameAsset"
-            required
+            invalid={checkNameAsset}
           />
         </Col>
       </FormGroup>
@@ -76,7 +83,7 @@ export default function AssetForm({ data, onSubmit, listState }) {
             rows="5"
             name="specificationAsset"
             defaultValue={data?.specification ?? ""}
-            required
+            invalid={checkNote}
           />
         </Col>
       </FormGroup>
@@ -91,7 +98,7 @@ export default function AssetForm({ data, onSubmit, listState }) {
             // value={formatDate(dataEdit?.installedDate)}
             value={dateCurrent}
             onChange={handleChangeDate}
-            required
+            invalid={checkDate}
           />
         </Col>
       </FormGroup>
