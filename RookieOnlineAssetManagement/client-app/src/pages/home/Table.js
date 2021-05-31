@@ -68,14 +68,6 @@ export default function HomeTable({
                 <span className="table-icon">
                     <TiRefresh
                         onClick={() => onRefresh && onRefresh(item)}
-                        style={{
-                            color: item.state === 2 || item.state === 3 ? "" : " blue",
-                            fontSize: "1.3em",
-                        }}
-                        className={
-                            "border-0" +
-                            (item.state === 2 || item.state === 3 ? " disabled" : "")
-                        }
                     />
                 </span>
             </td>

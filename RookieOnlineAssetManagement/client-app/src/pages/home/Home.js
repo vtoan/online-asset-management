@@ -90,6 +90,7 @@ export default function Home() {
       },
     });
     modalConfirm.show(item);
+    console.log(item)
   };
 
   const showDisableDeleteModal = () => {
@@ -119,7 +120,7 @@ export default function Home() {
         pageSelected={pageCurrent}
         onShowDetail={onShowDetail}
       />
-
+      <NSConfirmModal hook={modalConfirm} />
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
         <Table borderless className="table-detailed ">
           <tbody>
