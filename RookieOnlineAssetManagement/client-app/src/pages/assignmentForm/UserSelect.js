@@ -76,6 +76,7 @@ export default function UserTable({ userCurrentId, onSelectedItem }) {
     _refreshParams();
     params.query = query;
     _fetchDataUser();
+    params.query = "";
   };
 
   const itemRender = (user) => (
