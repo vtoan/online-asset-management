@@ -10,18 +10,29 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class ReturnRequestRepository: BaseRepository,IReturnRequestRepository
+    public class ReturnRequestRepository : BaseRepository, IReturnRequestRepository
     {
         private readonly ApplicationDbContext _dbContext;
         public ReturnRequestRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId,string requestedUserId)
+        public async Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
-            if (!assignment.State.Equals((int)StateAssignment.Accepted)) return null;
+            if (assignment == null)
+            {
+                throw new Exception("Repository | Have not this assignment");
+            }
+            if (!assignment.State.Equals((int)StateAssignment.Accepted))
+            {
+                throw new Exception("Repository | State is not valid");
+            }
             var requestedUser = await _dbContext.Users.FindAsync(requestedUserId);
+            if (requestedUser == null)
+            {
+                throw new Exception("Repository | Request User not exists");
+            }
             var returnRequest = new ReturnRequest
             {
                 AssignmentId = assignment.AssignmentId,
@@ -47,17 +58,21 @@ namespace RookieOnlineAssetManagement.Repositories
                 };
                 return returnRequestModel;
             }
-            return null;
+            throw new Exception("Repository | Create return request fail");
         }
         public async Task<bool> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
+            if (assignment == null)
+            {
+                throw new Exception("Repository | Have not this assignment");
+            }
             if (assignment.State != (int)StateAssignment.Accepted)
             {
                 throw new Exception("Repository | State must be accepted");
             }
             var returnRequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
-            if(returnRequest.State==true)
+            if (returnRequest.State == true)
             {
                 throw new Exception("Repository | State is completed");
             }
@@ -68,6 +83,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 {
                     var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
                     var acceptedUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == acceptedUserId);
+                    if (acceptedUser == null)
+                    {
+                        throw new Exception("Have not this accept user");
+                    }
                     asset.State = (short)StateAsset.Avaiable;
                     assignment.State = (int)StateAssignment.Completed;
                     returnRequest.State = true;
@@ -85,63 +104,66 @@ namespace RookieOnlineAssetManagement.Repositories
                     transaction.Commit();
                     return true;
                 }
-                return false;
+                throw new Exception("Repository | Change state return request fail");
             }
-            catch { return false;}
+            catch
+            {
+                throw new Exception("Repository | Change state return request fail");
+            }
         }
-        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
+        public async Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
             var queryable = _dbContext.ReturnRequests.Include(x => x.Assignment).Where(x => x.Assignment.LocationId == returnRequestParams.LocationId);
-            if(returnRequestParams.StateReturnRequests != null)
+            if (returnRequestParams.StateReturnRequests != null)
             {
                 //var stateNum = Convert.ToInt32(returnRequestParams.StateReturnRequests);
                 queryable = queryable.Where(x => returnRequestParams.StateReturnRequests.Contains(x.State));
             }
-            if(!string.IsNullOrEmpty(returnRequestParams.ReturnedDate))
+            if (!string.IsNullOrEmpty(returnRequestParams.ReturnedDate))
             {
                 var Date = Convert.ToDateTime(returnRequestParams.ReturnedDate);
                 queryable = queryable.Where(x => Date.Day == x.ReturnDate.Value.Day && Date.Month == x.ReturnDate.Value.Month && Date.Year == x.ReturnDate.Value.Year);
             }
-            if(!string.IsNullOrEmpty(returnRequestParams.Query) )
+            if (!string.IsNullOrEmpty(returnRequestParams.Query))
             {
                 queryable = queryable.Where(x => x.Assignment.AssetId.Contains(returnRequestParams.Query) || x.Assignment.AssetName.Contains(returnRequestParams.Query) || x.RequestBy.Contains(returnRequestParams.Query));
             }
-            if(returnRequestParams.SortAssetId.HasValue)
+            if (returnRequestParams.SortAssetId.HasValue)
             {
-                if(returnRequestParams.SortAssetId.Value == SortBy.ASC)
+                if (returnRequestParams.SortAssetId.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Assignment.AssetId);
                 else
                     queryable = queryable.OrderByDescending(x => x.Assignment.AssetId);
             }
-            else if(returnRequestParams.SortAssetName.HasValue)
+            else if (returnRequestParams.SortAssetName.HasValue)
             {
-                if(returnRequestParams.SortAssetName.Value == SortBy.ASC)
+                if (returnRequestParams.SortAssetName.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Assignment.AssetName);
                 else
                     queryable = queryable.OrderByDescending(x => x.Assignment.AssetName);
             }
-            else if(returnRequestParams.SortRequestedBy.HasValue)
+            else if (returnRequestParams.SortRequestedBy.HasValue)
             {
-                if(returnRequestParams.SortRequestedBy.Value == SortBy.ASC)
+                if (returnRequestParams.SortRequestedBy.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.RequestBy);
                 else
                     queryable = queryable.OrderByDescending(x => x.RequestBy);
             }
-            else if(returnRequestParams.SortAssignedDate.HasValue)
+            else if (returnRequestParams.SortAssignedDate.HasValue)
             {
                 if (returnRequestParams.SortAssignedDate.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Assignment.AssignedDate);
                 else
                     queryable = queryable.OrderByDescending(x => x.Assignment.AssignedDate);
             }
-            else if(returnRequestParams.SortAcceptedBy.HasValue)
+            else if (returnRequestParams.SortAcceptedBy.HasValue)
             {
                 if (returnRequestParams.SortAcceptedBy.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AcceptedBy);
                 else
                     queryable = queryable.OrderByDescending(x => x.AcceptedBy);
             }
-            else if(returnRequestParams.SortReturnedDate.HasValue)
+            else if (returnRequestParams.SortReturnedDate.HasValue)
             {
                 if (returnRequestParams.SortReturnedDate.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.ReturnDate);
@@ -155,6 +177,8 @@ namespace RookieOnlineAssetManagement.Repositories
                 else
                     queryable = queryable.OrderByDescending(x => x.State);
             }
+            var totalitem = queryable.Count();
+
             var result = Paging<ReturnRequest>(queryable, returnRequestParams.PageSize, returnRequestParams.Page);
             var list = await result.Sources.Select(x => new ReturnRequestModel
             {
@@ -166,7 +190,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 ReturnedDate = x.ReturnDate,
                 State = x.State
             }).ToListAsync();
-            return (list,result.TotalPage);
+            return (list, result.TotalPage, totalitem);
         }
     }
 }

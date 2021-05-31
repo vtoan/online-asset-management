@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RookieOnlineAssetManagement.Controllers;
 using RookieOnlineAssetManagement.Models;
@@ -78,6 +79,23 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             mockAssetSer.Setup(x => x.GetAssetByIdAsync(It.IsAny<string>())).ReturnsAsync(assetdetailModel);
             var assetContr = new AssetController(mockAssetSer.Object);
             var result = await assetContr.GetAsync(assetid);
+            Assert.IsType<OkObjectResult>(result.Result);
+            Assert.NotNull(result);
+        }
+        [Fact]
+        public async Task GetListHist0ry_Success()
+        {
+            var HttpContext = new DefaultHttpContext();
+            string assetid = Guid.NewGuid().ToString();
+            Mock<ISession> sessionMock = new Mock<ISession>();
+            var mokService = new Mock<IAssetService>();
+            List<AssetHistoryModel> collection = new List<AssetHistoryModel>();
+            mokService.Setup(x => x.GetListAssetHistoryAsync(It.IsAny<string>())).ReturnsAsync(collection);
+            AssetHistoryModel model = new AssetHistoryModel();
+            var controller = new AssetController(mokService.Object);
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            controller.ControllerContext.HttpContext.Session = sessionMock.Object;
+            var result = await controller.GetListHistoryAsync(assetid);
             Assert.IsType<OkObjectResult>(result.Result);
             Assert.NotNull(result);
         }

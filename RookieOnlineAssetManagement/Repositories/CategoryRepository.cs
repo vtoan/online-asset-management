@@ -19,10 +19,15 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<CategoryModel> CreateCategoryrAsync(CategoryModel category)
         {
-            var CateRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryName == category.CategoryName || x.ShortName == category.ShortName);
-            if (CateRepo != null)
+            var CateNameRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryName == category.CategoryName);
+            if (CateNameRepo != null)
             {
-                return null;
+                throw new Exception("Repository | Category Name is used");
+            }
+            var CatePrefixRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.ShortName == category.ShortName);
+            if(CatePrefixRepo!=null)
+            {
+                throw new Exception("Repository | Prefix is used");
             }
             category.CategoryId = Guid.NewGuid().ToString();
             category.ShortName = category.ShortName.ToUpper();
@@ -33,9 +38,13 @@ namespace RookieOnlineAssetManagement.Repositories
                 ShortName = category.ShortName,
                 NumIncrease = 0,
             };
-            _dbContext.Add(cate);
-            await _dbContext.SaveChangesAsync();
-            return category;
+            var create = _dbContext.Add(cate);
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return category;
+            }
+            throw new Exception("Repository | Create category fail");
         }
 
         public async Task<ICollection<CategoryModel>> GetListCategoryAsync()

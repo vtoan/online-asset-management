@@ -20,6 +20,15 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest)
         {
             var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryId == assetRequest.CategoryId);
+            if (category == null)
+            {
+                throw new Exception("Repository | Have not this category");
+            }
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assetRequest.LocationId);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             assetRequest.AssetId = category.ShortName + (100000 + category.NumIncrease + 1).ToString();
             var asset = new Asset
             {
@@ -31,49 +40,58 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = assetRequest.State,
                 LocationId = assetRequest.LocationId
             };
-            var assetmodel = new AssetModel
-            {
-                AssetId = asset.AssetId,
-                AssetName = asset.AssetName,
-                CategoryName = category.CategoryName,
-                State = asset.State
-            };
-            var transaction = _dbContext.Database.BeginTransaction();
+            
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
-                _dbContext.Assets.Add(asset);
+                var create = _dbContext.Assets.Add(asset);
                 category.NumIncrease = category.NumIncrease + 1;
-                await _dbContext.SaveChangesAsync();
+                var result = await _dbContext.SaveChangesAsync();
                 transaction.Commit();
+                if (result > 0)
+                {
+                    var assetmodel = new AssetModel
+                    {
+                        AssetId = create.Entity.AssetId,
+                        AssetName = create.Entity.AssetName,
+                        CategoryName = create.Entity.Category.CategoryName,
+                        State = create.Entity.State
+                    };
+                    return assetmodel;
+                }
             }
             catch
             {
-                return null;
+                throw new Exception("Repository | Create Asset Fail");
             }
-            return assetmodel;
+            throw new Exception("Repository | Create Asset Fail");
         }
         public async Task<bool> DeleteAssetAsync(string id)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == id);
             if (assignment != null)
             {
-                return false;
+                throw new Exception("Repository | Have not this assignment");
             }
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == id);
             if (asset == null)
             {
-                return false;
+                throw new Exception("Repository | Have not this asset");
             }
-            _dbContext.Assets.Remove(asset);
-            _dbContext.SaveChanges();
-            return true;
+            var deleted = _dbContext.Assets.Remove(asset);
+            var result = _dbContext.SaveChanges();
+            if (result > 0)
+            {
+                return true;
+            }
+            throw new Exception("Repository | Delete asset fail");
         }
         public async Task<AssetDetailModel> GetAssetByIdAsync(string id)
         {
             var asset = await _dbContext.Assets.Include(x => x.Category).Include(x => x.Location).FirstOrDefaultAsync(x => x.AssetId == id);
             if (asset == null)
             {
-                return null;
+                throw new Exception("Repository | Have not this asset");
             }
             var assetmodel = new AssetDetailModel
             {
@@ -91,6 +109,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(AssetRequestParams assetRequestParams)
         {
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assetRequestParams.LocationId);
+            if(location==null)
+            {
+                throw new Exception("Repository | Have not this loaction");
+            }
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == assetRequestParams.LocationId);
             if (assetRequestParams.State != null)
@@ -99,7 +122,9 @@ namespace RookieOnlineAssetManagement.Repositories
                 queryable = queryable.Where(x => stateNum.Contains(x.State));
             }
             if (assetRequestParams.CategoryId != null)
+            {
                 queryable = queryable.Where(x => assetRequestParams.CategoryId.Contains(x.CategoryId));
+            }
             if (!string.IsNullOrEmpty(assetRequestParams.Query))
                 queryable = queryable.Where(x => x.AssetId.Contains(assetRequestParams.Query) || x.AssetName.Contains(assetRequestParams.Query));
             //sort
@@ -146,6 +171,11 @@ namespace RookieOnlineAssetManagement.Repositories
         {
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == locationid);
+            var location = await _dbContext.Assets.FirstOrDefaultAsync(x => x.LocationId == locationid);
+            if (location == null)
+            {
+                throw new Exception("Repository | Have not this location");
+            }
             queryable = queryable.Where(x => x.State == (short)StateAsset.Avaiable);
             if (!string.IsNullOrEmpty(query))
                 queryable = queryable.Where(x => x.AssetId.Contains(query) || x.AssetName.Contains(query) || x.Category.CategoryName.Contains(query));
@@ -160,6 +190,10 @@ namespace RookieOnlineAssetManagement.Repositories
             if (!string.IsNullOrEmpty(currentassetid))
             {
                 var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
+                if (currentasset == null)
+                {
+                    throw new Exception("Repository | Have not asset");
+                }
                 var currentassetmodel = new AssetModel
                 {
                     AssetId = currentasset.AssetId,
@@ -199,6 +233,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId)
         {
+            var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assetId);
+            if (asset == null)
+            {
+                throw new Exception("Repository | Have not asset");
+            }
             var assetHistoryModel = await _dbContext.Assignments
                 .Where(x => x.AssetId == assetId && x.State == (int)StateAssignment.Completed)
                 .Include(x => x.ReturnRequest)
@@ -215,14 +254,18 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<AssetModel> UpdateAssetAsync(string id, AssetRequestModel assetRequest)
         {
             var asset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == id);
-            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
             if (asset == null)
             {
-                return (AssetModel)(null);
+                throw new Exception("Repository | Have not asset");
             }
+            if(asset.State==(int)StateAsset.Assigned)
+            {
+                throw new Exception("Repository | State is assigned");
+            }
+            var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == assetRequest.AssetId);
             if (assignment != null)
             {
-                return (AssetModel)(null);
+                throw new Exception("Repository | Have assignment");
             }
             asset.AssetName = assetRequest.AssetName;
             asset.Specification = assetRequest.Specification;
@@ -235,8 +278,12 @@ namespace RookieOnlineAssetManagement.Repositories
                 CategoryName = asset.Category.CategoryName,
                 State = asset.State
             };
-            await _dbContext.SaveChangesAsync();
-            return assetmodel;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return assetmodel;
+            }
+            throw new Exception("Repository | Update asset fail");
         }
     }
 }
