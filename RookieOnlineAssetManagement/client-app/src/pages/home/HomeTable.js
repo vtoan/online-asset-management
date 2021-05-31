@@ -1,4 +1,3 @@
-import "../../index.css";
 import TableItem from "../../common/TableItem";
 import NSTable from "../../common/NSTable";
 import { TiRefresh } from "react-icons/ti";
@@ -32,7 +31,6 @@ const tableTitles = [
 ];
 export default function HomeTable({
   datas,
-  totalPage,
   onChangePage,
   onChangeSort,
   onAccept,
@@ -109,7 +107,6 @@ export default function HomeTable({
     <NSTable
       titles={tableTitles}
       datas={datas}
-      totalPages={totalPage}
       itemRender={itemRender}
       onChangeSort={onChangeSort}
       onChangePage={onChangePage}

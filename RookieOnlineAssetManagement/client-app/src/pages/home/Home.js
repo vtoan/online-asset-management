@@ -2,8 +2,8 @@ import React from "react";
 import HomeTable from "./HomeTable";
 import http from "../../ultis/httpClient.js";
 import { _createQuery } from "../../ultis/helper.js";
-import {formatDate} from "../../ultis/helper";
-import {Table} from "reactstrap";
+import { formatDate } from "../../ultis/helper";
+import { Table } from "reactstrap";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import { stateOptions } from "../../enums/assetState.js";
 import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
@@ -20,8 +20,6 @@ function _refreshParams() {
 
 export default function Home() {
   const [homeData, setHome] = React.useState([]);
-  const [totalPages, setTotalPages] = React.useState(0);
-  const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
   //modal
   const modalConfirm = useNSConfirmModal();
@@ -34,8 +32,6 @@ export default function Home() {
       SortCategoryName: 0,
       SortAssignedDate: 0,
       SortState: 0,
-      pagesize: 8,
-      page: 1,
     };
     _fetchData();
   }, []);
@@ -45,14 +41,12 @@ export default function Home() {
       .get("/api/assignments/my-assignments" + _createQuery(params))
       .then((response) => {
         setHome(response.data);
-        let totalPages = response.headers["total-pages"];
-        setTotalPages(totalPages > 0 ? totalPages : 0);
-        setPageCurrent(params.page);
       });
   };
   //handleClick
   const handleChangePage = (page) => {
-    console.log(page);
+    _refreshParams();
+    params.page = page;
     _fetchData();
   };
 
@@ -62,6 +56,7 @@ export default function Home() {
     if (target < 0) return (params.SortAssetId = null);
     _fetchData();
   };
+
   const handleAcceptRequest = (item) => {
     modalConfirm.config({
       message: "Do you want to accept this assignment?",
@@ -69,17 +64,14 @@ export default function Home() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .put("​/api​/Assignments​/change-state​/" + item.assignmentId)
+          .put("/api/Assignments/accept/" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
+            showSuccessModal("Accept assignment successfully.");
           })
-          .catch((err) => {
-            // showDisableDeleteModal();
-          })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .catch(showErrorModal)
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -87,22 +79,19 @@ export default function Home() {
 
   const handleDenyRequest = (item) => {
     modalConfirm.config({
-      message: "Do you want to delete this assignment?",
-      btnName: "Delete",
+      message: "Do you want to decline this assignment?",
+      btnName: "Decline",
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete("/api/assignments/" + item.assignmentId)
+          .put("/api/Assignments/decline/" + item.assignmentId)
           .then((resp) => {
+            showSuccessModal("Decline assignment successfully.");
             _refreshParams();
             _fetchData();
           })
-          .catch((err) => {
-            showDisableDeleteModal();
-          })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .catch(showErrorModal)
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -110,31 +99,38 @@ export default function Home() {
   const handleReturn = (item) => {
     modalConfirm.config({
       message: "Do you want to create a returning request for this asset?",
-      btnName: "Yes",
+      btnName: "Create",
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .post("/api/ReturnRequests?assignmentId=" + item.assignmentId + "&requestedUserId=" + item.userId)
+          .post("/api/ReturnRequests?assignmentId=" + item.assignmentId)
           .then((resp) => {
+            showSuccessModal(
+              "Create a returning request  assignment successfully."
+            );
             _refreshParams();
             _fetchData();
           })
           .catch((err) => {
-            showDisableDeleteModal();
+            showErrorModal({ message: "Request Returning was exsist!" });
           })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
-    console.log(item)
   };
 
-  const showDisableDeleteModal = () => {
+  const showErrorModal = (err) => {
     modalAlert.show({
-      title: "Can't delete asset",
-      msg: "Cannot delete the Assignment!",
+      title: "Error",
+      msg: err.message ?? "Unknown",
+    });
+  };
+
+  const showSuccessModal = (message) => {
+    modalAlert.show({
+      title: "Success",
+      msg: message,
     });
   };
 
@@ -144,6 +140,7 @@ export default function Home() {
     });
     modalDetail.show();
   };
+
   return (
     <>
       <h5 className="name-list mb-4">My Assignments</h5>
@@ -154,8 +151,6 @@ export default function Home() {
         onAccept={handleAcceptRequest}
         onDeny={handleDenyRequest}
         onReturn={handleReturn}
-        totalPage={totalPages}
-        pageSelected={pageCurrent}
         onShowDetail={onShowDetail}
       />
       <NSConfirmModal hook={modalConfirm} />
