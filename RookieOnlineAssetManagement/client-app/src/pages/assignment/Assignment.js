@@ -43,7 +43,7 @@ export default function Assignment() {
       sortAssetName: 0,
       sortAssignedTo: 0,
       sortAssignedBy: 0,
-      sortAssignedDate: 0,
+      sortAssignedDate: "",
       sortState: 0,
       query: "",
       pageSize: 8,
@@ -53,6 +53,10 @@ export default function Assignment() {
     };
     _fetchData();
   }, []);
+
+  React.useEffect(() => {
+    console.log(assignmentData);
+  }, [assignmentData]);
 
   const _fetchData = () => {
     http
@@ -116,9 +120,7 @@ export default function Assignment() {
           .catch((err) => {
             showDisableDeleteModal();
           })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .finally(modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -129,19 +131,25 @@ export default function Assignment() {
       message: "Do you want to create a returning request for this asset?",
       btnName: "Yes",
       onSubmit: (item) => {
-        // modalLoading.show();
-        // http
-        //   .delete("/api/Assignments/" + item.assignmentId)
-        //   .then((resp) => {
-        //     _refreshParams();
-        //     _fetchData();
-        //   })
-        //   .catch((err) => {
-        //     showDisableDeleteModal();
-        //   })
-        //   .finally(() => {
-        //     modalLoading.close();
-        //   });
+        modalLoading.show();
+        http
+          .post(
+            "/api/ReturnRequests?assignmentId=" +
+              item.assignmentId +
+              "&requestedUserId=" +
+              item.userId
+          )
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+            showSuccessModal(
+              "Create a returning request  assignment successfully."
+            );
+          })
+          .catch((err) => {
+            showErrorModal({ message: "Request Returning was exsist!" });
+          })
+          .finally(modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -168,7 +176,7 @@ export default function Assignment() {
 
   const handleFilterDate = (date) => {
     _refreshParams();
-    params.AssignedDate = date;
+    params.ReturnedDate = date ?? "";
     _fetchData();
   };
 
@@ -177,6 +185,20 @@ export default function Assignment() {
       setItemDetail(response.data);
     });
     modalDetail.show();
+  };
+
+  const showErrorModal = (err) => {
+    modalAlert.show({
+      title: "Error",
+      msg: err.message ?? "Unknown",
+    });
+  };
+
+  const showSuccessModal = (message) => {
+    modalAlert.show({
+      title: "Success",
+      msg: message,
+    });
   };
 
   return (

@@ -2,39 +2,48 @@ import TableItem from "../../common/TableItem";
 import NSTable from "../../common/NSTable";
 import { BsCheck } from "react-icons/bs";
 import { TiDeleteOutline } from "react-icons/ti";
+import { requestOptions } from "../../enums/requestState";
+import { formatDate } from "../../ultis/helper";
 
 const tableTitles = [
   {
     title: "No",
-    nameSort: "sortId",
+    nameSort: "sortNumber",
+    width: "10%",
   },
   {
     title: "Asset Code",
-    nameSort: "sortCode",
+    nameSort: "SortAssetId",
+    width: "10%",
   },
   {
     title: "Asset Name",
-    nameSort: "sortName",
+    nameSort: "SortAssetName",
+    width: "15%",
   },
   {
     title: "Request by",
-    nameSort: "sortRequestby",
+    nameSort: "SortRequestedBy",
+    width: "10%",
   },
   {
     title: "Assigned Date",
-    nameSort: "sortAssignedDate",
+    nameSort: "SortAssignedDate",
+    width: "10%",
   },
   {
     title: "Accepted by",
-    nameSort: "sortAcceptedby",
+    nameSort: "SortAcceptedBy",
+    width: "10%",
   },
   {
     title: "Returned Date",
-    nameSort: "sortReturnedDate",
+    nameSort: "SortReturnedDate",
+    width: "10%",
   },
   {
     title: "State",
-    nameSort: "sortState",
+    nameSort: "SortState",
   },
 ];
 
@@ -46,38 +55,52 @@ export default function RequestTable({
   onAccept,
   onDeny,
 }) {
-  const itemRender = (item) => (
+  const itemRender = (request) => (
     <>
       <td>
-        <TableItem>{item.no}</TableItem>
+        <TableItem>{request.no}</TableItem>
       </td>
       <td>
-        <TableItem>{item.code}</TableItem>
+        <TableItem>{request.assetId}</TableItem>
       </td>
       <td>
-        <TableItem>{item.name}</TableItem>
+        <TableItem>{request.assetName}</TableItem>
       </td>
       <td>
-        <TableItem>{item.requestBy}</TableItem>
+        <TableItem>{request.requestBy}</TableItem>
       </td>
       <td>
-        <TableItem>{item.assignedDate}</TableItem>
+        <TableItem>{formatDate(request.assignedDate)}</TableItem>
       </td>
       <td>
-        <TableItem>{item.acceptedBy}</TableItem>
+        <TableItem>{request.acceptedBy ?? "*"}</TableItem>
       </td>
       <td>
-        <TableItem>{item.returnedDate}</TableItem>
+        <TableItem>{formatDate(request.returnedDate)}</TableItem>
       </td>
       <td>
-        <TableItem>Available</TableItem>
+        <TableItem>
+          {requestOptions.find((item) => item.value === request.state)?.label ??
+            "Unknown"}
+        </TableItem>
       </td>
       <td className="table-actions">
-        <span className="table-icon" onClick={() => onAccept && onAccept(item)}>
-          <BsCheck color="#dc3545" />
+        <span className="table-icon">
+          <BsCheck
+            color="#dc3545"
+            onClick={() => onAccept && onAccept(request)}
+            className={
+              "border-0" + (request.state === false ? " " : " disabled")
+            }
+          />
         </span>
-        <span className="table-icon" onClick={() => onDeny && onDeny(item)}>
-          <TiDeleteOutline className="border-0" />
+        <span className="table-icon">
+          <TiDeleteOutline
+            onClick={() => onDeny && onDeny(request)}
+            className={
+              "border-0" + (request.state === false ? " " : " disabled")
+            }
+          />
         </span>
       </td>
     </>

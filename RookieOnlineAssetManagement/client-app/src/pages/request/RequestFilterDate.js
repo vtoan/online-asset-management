@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "reactstrap";
 import { formatDate } from "../../ultis/helper";
 
-export default function AssignmenttFilterState({ onChange }) {
+export default function RequestFilterDate({ onChange }) {
   const handleChangeDate = (event) => {
     let date = event.target.value;
     if (date) date = formatDate(date);

@@ -182,10 +182,13 @@ namespace RookieOnlineAssetManagement.Repositories
             var result = Paging<ReturnRequest>(queryable, returnRequestParams.PageSize, returnRequestParams.Page);
             var list = await result.Sources.Select(x => new ReturnRequestModel
             {
+                AssignmentId = x.AssignmentId,
                 AssetId = x.Assignment.AssetId,
                 AssetName = x.Assignment.AssetName,
+                RequestUserId = x.RequestUserId,
                 RequestBy = x.RequestBy,
                 AssignedDate = x.Assignment.AssignedDate,
+                AcceptedUserId = x.AcceptedUserId,
                 AcceptedBy = x.AcceptedBy,
                 ReturnedDate = x.ReturnDate,
                 State = x.State

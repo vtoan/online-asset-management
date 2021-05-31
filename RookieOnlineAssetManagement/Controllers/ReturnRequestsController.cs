@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.CreateReturnRequestAsync(assignmentId, requestedUserId));
         }
         [HttpPut("accept")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string assignmentId)
         {
             bool accept = true;
@@ -35,6 +37,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
         }
         [HttpPut("cancel")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<bool>> ChangeStateCancelAsync(string assignmentId)
         {
             bool cancel = false;
@@ -42,8 +45,10 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.ChangeStateAsync(cancel, assignmentId, acceptedUserId));
         }
         [HttpGet]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<IEnumerable<ReturnRequestModel>>> GetListAsync([FromQuery] ReturnRequestParams returnRequestParams)
         {
+            returnRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
             var result = await _returnRequestService.GetListReturnRequestAsync(returnRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
             HttpContext.Response.Headers.Add("total-item", result.TotalItem.ToString());

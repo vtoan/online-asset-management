@@ -38,7 +38,34 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             Assert.IsType<OkObjectResult>(result.Result);
             Assert.NotNull(result);
         }
+        [Fact]
+        public async Task ChangeStateAccept_Success()
+        {
+            var mokService = new Mock<IReturnRequestService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
+            mokService.Setup(x => x.ChangeStateAsync(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
+            var controller = new ReturnRequestsController(mokService.Object);
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            controller.ControllerContext.HttpContext.Session = sessionMock.Object;
+
+            var result = await controller.ChangeStateAcceptAsync(Guid.NewGuid().ToString());
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+        [Fact]
+        public async Task ChangeStateCancel_Success()
+        {
+            var mokService = new Mock<IReturnRequestService>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
+            mokService.Setup(x => x.ChangeStateAsync(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+
+            var controller = new ReturnRequestsController(mokService.Object);
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            controller.ControllerContext.HttpContext.Session = sessionMock.Object;
+
+            var result = await controller.ChangeStateCancelAsync(Guid.NewGuid().ToString());
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
         [Fact]
         public async Task GetList_Success()
         {

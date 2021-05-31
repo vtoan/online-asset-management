@@ -1,7 +1,7 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
 import { Row, Col, Table } from "reactstrap";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
@@ -35,18 +35,6 @@ export default function Asset(props) {
   const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
   const { modalAlert, modalLoading } = useNSModals();
-
-  const showDisableDeleteModal = (itemId) => {
-    let msg = (
-      <>
-        Cannot delete the asset because it belongs to one or more historical
-        assignments.If the asset is not able to be used anymore, please update
-        its state in
-        <Link to={"/asset/" + itemId}>To Edit Page</Link>
-      </>
-    );
-    modalAlert.show({ title: "Can't delete asset", msg: msg });
-  };
   //handle
   React.useEffect(() => {
     params = {
@@ -92,6 +80,12 @@ export default function Asset(props) {
     _fetchData();
   };
 
+  const handleSearchKey = () => {
+    _refreshParams();
+    params.query = "";
+    _fetchData();
+  };
+
   const handleEdit = (item) => {
     history.push("/assets/" + item.assetId);
   };
@@ -108,12 +102,8 @@ export default function Asset(props) {
             _refreshParams();
             _fetchData();
           })
-          .catch((err) => {
-            showDisableDeleteModal();
-          })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .catch(showDisableDeleteModal)
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -135,12 +125,24 @@ export default function Asset(props) {
     params.assetId = item.assetId;
     Promise.all([
       http.get("/api/Asset/" + item.assetId),
-      http.get("/api/Asset/history" + _createQuery(params)),
+      http.get("/api/Asset/history?assetId=" + item.assetId),
     ]).then((responseArray) => {
       setItemDetail(responseArray[0].data);
       setItemHistory(responseArray[1].data);
     });
     modalDetail.show();
+  };
+
+  const showDisableDeleteModal = (itemId) => {
+    let msg = (
+      <>
+        Cannot delete the asset because it belongs to one or more historical
+        assignments.If the asset is not able to be used anymore, please update
+        its state in
+        <Link to={"/asset/" + itemId}>To Edit Page</Link>
+      </>
+    );
+    modalAlert.show({ title: "Can't delete asset", msg: msg });
   };
 
   return (
@@ -154,7 +156,7 @@ export default function Asset(props) {
           <AssetFilterCategory onChange={handleFilterCategory} />
         </Col>
         <Col>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
