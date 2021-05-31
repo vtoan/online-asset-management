@@ -42,6 +42,7 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             var result = await _returnRequestService.GetListReturnRequestAsync(returnRequestParams);
             HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
+            HttpContext.Response.Headers.Add("total-item", result.TotalItem.ToString());
             return Ok(result.Datas);
         }
     }
