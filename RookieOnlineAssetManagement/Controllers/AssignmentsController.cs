@@ -35,10 +35,15 @@ namespace RookieOnlineAssetManagement.Controllers
             assignmentRequestModel.AdminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _assignmentService.UpdateAssignmentAsync(id, assignmentRequestModel));
         }
-        [HttpPut("change-state/{id}")]
-        public async Task<ActionResult<bool>> ChangeStateAsync(string id, StateAssignment state)
+        [HttpPut("accept/{id}")]
+        public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string id)
         {
-            return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, state));
+            return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Accepted));
+        }
+        [HttpPut("decline/{id}")]
+        public async Task<ActionResult<bool>> ChangeStateDeclineAsync(string id)
+        {
+            return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Decline));
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)
