@@ -1,7 +1,7 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
 import { Row, Col, Table } from "reactstrap";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
@@ -135,11 +135,11 @@ export default function Asset(props) {
     params.assetId = item.assetId;
     Promise.all([
       http.get("/api/Asset/" + item.assetId),
-      http.get("/api/Asset/history-asset?assetId=" + item.assetId)
+      http.get("/api/Asset/history?assetId=" + item.assetId),
     ]).then((responseArray) => {
       setItemDetail(responseArray[0].data);
       setItemHistory(responseArray[1].data);
-    })
+    });
     modalDetail.show();
   };
 
