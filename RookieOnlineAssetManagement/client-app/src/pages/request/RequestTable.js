@@ -2,6 +2,8 @@ import TableItem from "../../common/TableItem";
 import NSTable from "../../common/NSTable";
 import { BsCheck } from "react-icons/bs";
 import { TiDeleteOutline } from "react-icons/ti";
+import { requestOptions } from "../../enums/requestState";
+import { formatDate } from "../../ultis/helper";
 
 const tableTitles = [
   {
@@ -46,38 +48,45 @@ export default function RequestTable({
   onAccept,
   onDeny,
 }) {
-  const itemRender = (item) => (
+  const itemRender = (request) => (
     <>
       <td>
-        <TableItem>{item.no}</TableItem>
+        <TableItem>{request.no}</TableItem>
       </td>
       <td>
-        <TableItem>{item.assetId}</TableItem>
+        <TableItem>{request.assetId}</TableItem>
       </td>
       <td>
-        <TableItem>{item.assetName}</TableItem>
+        <TableItem>{request.assetName}</TableItem>
       </td>
       <td>
-        <TableItem>{item.requestBy}</TableItem>
+        <TableItem>{request.requestBy}</TableItem>
       </td>
       <td>
-        <TableItem>{item.assignedDate}</TableItem>
+        <TableItem>{formatDate(request.assignedDate)}</TableItem>
       </td>
       <td>
-        <TableItem>{item.acceptedBy}</TableItem>
+        <TableItem>{request.acceptedBy}</TableItem>
       </td>
       <td>
-        <TableItem>{item.returnedDate}</TableItem>
+        <TableItem>{formatDate(request.returnedDate)}</TableItem>
       </td>
       <td>
-        <TableItem>Available</TableItem>
+        <TableItem>
+          {requestOptions.find((item) => item.value === request.state)
+            ?.label ?? "Unknown"}
+        </TableItem>
       </td>
       <td className="table-actions">
-        <span className="table-icon" onClick={() => onAccept && onAccept(item)}>
-          <BsCheck color="#dc3545" />
+        <span
+          onClick={() => onAccept && onAccept(request)}>
+          <BsCheck color="#dc3545" className={"border-0" + (request.state === false ? " " : " disabled")}
+          />
         </span>
-        <span className="table-icon" onClick={() => onDeny && onDeny(item)}>
-          <TiDeleteOutline className="border-0" />
+        <span
+          className="table-icon" onClick={() => onDeny && onDeny(request)}>
+          <TiDeleteOutline className={"border-0" + (request.state === false ? " " : " disabled")}
+          />
         </span>
       </td>
     </>

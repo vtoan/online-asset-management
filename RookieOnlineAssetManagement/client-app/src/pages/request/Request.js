@@ -3,8 +3,8 @@ import RequestTable from "./RequestTable";
 import { Row, Col } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
 import http from "../../ultis/httpClient";
-import AssignmenttFilterState from "./AssignmenttFilterState";
-import AssignmenttFilterDate from "./AssignmenttFilterDate";
+import RequestFilterState from "./RequestFilterState";
+import AssignmenttFilterDate from "../assignment/AssignmenttFilterDate";
 import { _createQuery } from "../../ultis/helper"
 let params = {}
 function _refreshParams() {
@@ -32,8 +32,8 @@ export default function Request() {
       query: "",
       pagesize: 8,
       page: 1,
-      state: [],
-      categoryid: [],
+      RequestAssignments: [],
+      AssignedDate: "",
     };
     _fetchData();
   }, []);
@@ -67,11 +67,36 @@ export default function Request() {
     console.log(item);
   };
 
+  const handleFilterState = (item) => {
+    // _refreshParams();
+    // console.log(item);
+    // params.RequestAssignments = item;
+    // _fetchData();
+  }
+
+  const handleFilterDate = (date) => {
+    // _refreshParams();
+    // params.AssignedDate = date;
+    // _fetchData();
+  }
+ 
+  const handleSearch = (query) => {
+    _refreshParams();
+    params.query = query;
+    _fetchData();
+  }
+
   const handleDenyRequest = (item) => {
     console.log(item);
   };
   const handleChangeSort = (target) => {
-    console.log(target);
+    _refreshParams();
+    if ("sortNumber" in target) {
+      params.sortNo = target.sortNumber;
+      target = { sortAssetId: target.sortNumber };
+    }
+    params = { ...params, ...target };
+    if (target < 0) return (params.sortCode = null);
     _fetchData();
   };
   const handleChangePage = (page) => {
@@ -84,12 +109,12 @@ export default function Request() {
       <h5 className="name-list mb-4">Request List</h5>
       <Row className="filter-bar mb-3">
         <Col xs={2}>
-          <AssignmenttFilterState onChange={handleFilterState} />
+          <RequestFilterState onChange={handleFilterState} />
         </Col>
         <Col xs={2}>
           <AssignmenttFilterDate onChange={handleFilterDate} />
         </Col>
-        <Col>
+        <Col xs={3}>
           <SearchBar onSearch={handleSearch} />
         </Col>
       </Row>
