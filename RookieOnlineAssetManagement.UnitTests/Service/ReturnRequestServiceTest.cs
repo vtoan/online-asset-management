@@ -35,5 +35,33 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             Assert.NotNull(result.Datas);
         }
 
+        [Fact]
+        public async Task ChangeStateAccept_Success()
+        {
+            bool state = true;
+            var assignId = Guid.NewGuid().ToString();
+            var acceoptId = Guid.NewGuid().ToString();
+            var mockRequestRepo = new Mock<IReturnRequestRepository>();
+            ReturnRequestModel Model = new ReturnRequestModel();
+            mockRequestRepo.Setup(x => x.ChangeStateAsync(It.IsAny<bool>(), It.IsAny<string>(),It.IsAny<string>())).ReturnsAsync(true);
+            var request = new ReturnRequestService(mockRequestRepo.Object);
+            var result = await request.ChangeStateAsync(state, assignId, acceoptId);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task ChangeStateCancel_Success()
+        {
+            bool state = false;
+            var assignId = Guid.NewGuid().ToString();
+            var acceoptId = Guid.NewGuid().ToString();
+            var mockRequestRepo = new Mock<IReturnRequestRepository>();
+            ReturnRequestModel Model = new ReturnRequestModel();
+            mockRequestRepo.Setup(x => x.ChangeStateAsync(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+            var request = new ReturnRequestService(mockRequestRepo.Object);
+            var result = await request.ChangeStateAsync(state, assignId, acceoptId);
+            Assert.True(result);
+        }
+
     }
 }
