@@ -1,4 +1,5 @@
-﻿using RookieOnlineAssetManagement.Enums;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using RookieOnlineAssetManagement.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace RookieOnlineAssetManagement.Models
     {
         public bool[] StateReturnRequests { get; set; }
         public string ReturnedDate { get; set; }
+        [BindNever]
         public string LocationId { get; set; }
         public string Query { get; set; }
         public SortBy? SortAssetId { get; set; }
