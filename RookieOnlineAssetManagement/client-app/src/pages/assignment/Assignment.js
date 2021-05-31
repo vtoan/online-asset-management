@@ -1,6 +1,6 @@
 import React from "react";
 import AssignmentTable from "./AssignmentTable";
-import { Row, Col, Table } from "reactstrap";
+import { Row, Col, Table, Button } from "reactstrap";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
 import { useHistory, Link } from "react-router-dom";
@@ -43,7 +43,7 @@ export default function Assignment() {
       sortAssetName: 0,
       sortAssignedTo: 0,
       sortAssignedBy: 0,
-      sortAssignedDate: 0,
+      sortAssignedDate: "",
       sortState: 0,
       query: "",
       pageSize: 8,
@@ -53,6 +53,10 @@ export default function Assignment() {
     };
     _fetchData();
   }, []);
+
+  React.useEffect(() => {
+    console.log(assignmentData);
+  }, [assignmentData]);
 
   const _fetchData = () => {
     http
@@ -131,7 +135,12 @@ export default function Assignment() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .post("/api/ReturnRequests?assignmentId=" + item.assignmentId + "&requestedUserId=" + item.userId)
+          .post(
+            "/api/ReturnRequests?assignmentId=" +
+              item.assignmentId +
+              "&requestedUserId=" +
+              item.userId
+          )
           .then((resp) => {
             _refreshParams();
             _fetchData();
@@ -170,6 +179,13 @@ export default function Assignment() {
     _refreshParams();
     params.AssignedDate = date;
     _fetchData();
+    console.log(assignmentData);
+    if (assignmentData.length == 0) {
+      setTimeout(() => {
+        params.AssignedDate = "";
+        _fetchData();
+      }, 1000);
+    }
   };
 
   const handleShowDetail = (item) => {
