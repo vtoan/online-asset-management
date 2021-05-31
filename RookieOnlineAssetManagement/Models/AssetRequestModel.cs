@@ -17,6 +17,7 @@ namespace RookieOnlineAssetManagement.Models
         [Required(ErrorMessage = "Asset Name cannot null")]
         public string AssetName { get; set; }
 
+        [RegularExpression(@"^\d$")]
         public short State { get; set; }
 
         [Required(ErrorMessage = "Specification cannot null")]

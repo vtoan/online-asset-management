@@ -20,6 +20,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ICollection<ReportModel>> ExportReportAsync(string locationId)
         {
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == locationId);
+            if (location == null)
+            {
+                throw new Exception("Have not this location");
+            }
             var report = await _dbContext.Assets
                 .Where(x => x.LocationId == locationId)
                 .Include(x => x.Category)

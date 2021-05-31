@@ -81,6 +81,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             var result = await assetSer.GetAssignmentById(Model.AssignmentId);
             Assert.NotNull(result);
         }
+        [Fact]
         public async Task GetAssignment_Success()
         {
             var mockAssignRepo = new Mock<IAssignmentRepository>();
