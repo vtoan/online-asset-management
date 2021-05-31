@@ -11,7 +11,7 @@ using Xunit;
 
 namespace RookieOnlineAssetManagement.UnitTests.Repositories
 {
-   public class ReturnRequestRepoTest : IClassFixture<SqliteInMemoryFixture>
+    public class ReturnRequestRepoTest : IClassFixture<SqliteInMemoryFixture>
     {
         private readonly SqliteInMemoryFixture _fixture;
 
@@ -127,7 +127,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
             var returnRequestModel = new ReturnRequestModel
             {
                 AssignmentId = assignment.AssignmentId,
-                AssetId = AssetId,
+                AssetId =asset.AssetId,
                 AssetName = "User",
                 ReturnedDate = DateTime.Now,
             };
@@ -139,10 +139,129 @@ namespace RookieOnlineAssetManagement.UnitTests.Repositories
                 LocationId = locationId,
                 SortAssetId = Enums.SortBy.ASC,
             };
+         
             var RequestParam = await request.GetListReturnRequestAsync(Params);
             Assert.NotNull(Params);
             Assert.IsType<List<ReturnRequestModel>>(RequestParam.Datas);
             Assert.True(RequestParam.TotalPage >= 0);
         }
+
+        [Fact]
+        public async Task ChangeStateTestAccept_Success()
+        {
+            var dbContext = _fixture.Context;
+            var locationId = Guid.NewGuid().ToString();
+            var AssetId = Guid.NewGuid().ToString();
+            var Assignid = Guid.NewGuid().ToString();
+            var userId = Guid.NewGuid().ToString();
+            var adminId = Guid.NewGuid().ToString();
+            var categoryId = Guid.NewGuid().ToString();
+            var assignId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
+            await dbContext.SaveChangesAsync();
+            var user = new User
+            {
+                Id = userId,
+            };
+            var admin = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "AssignedToUser",
+                FirstName = "admin",
+                LastName = "hcm",
+                Gender = true,
+                JoinedDate = DateTime.Now,
+                IsChange = true,
+                StaffCode = "SD00002",
+                LocationId = locationId,
+            };
+            dbContext.Users.Add(admin);
+            await dbContext.SaveChangesAsync();
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
+            var asset = new Asset
+            {
+                CategoryId = categoryId,
+                AssetId = AssetId,
+                AssetName = "Test",
+            };
+            dbContext.Assets.Add(asset);
+            var assignment = new Assignment
+            {
+                UserId = user.Id,
+                AssignmentId = Assignid,
+                AssetId = asset.AssetId,
+                AdminId = admin.Id,
+                State = (int)StateAssignment.Accepted,
+            };
+            dbContext.Assignments.Add(assignment);
+            await dbContext.SaveChangesAsync();
+            var request = new ReturnRequestRepository(dbContext);
+            var creste= await request.CreateReturnRequestAsync(assignment.AssignmentId, userId);
+
+            var changestate = await request.ChangeStateAsync(true, assignment.AssignmentId, admin.Id);
+            Assert.True(changestate);
+        }
+        [Fact]
+        public async Task ChangeStateTestCancle_Success()
+        {
+            var dbContext = _fixture.Context;
+            var locationId = Guid.NewGuid().ToString();
+            var AssetId = Guid.NewGuid().ToString();
+            var Assignid = Guid.NewGuid().ToString();
+            var userId = Guid.NewGuid().ToString();
+            var adminId = Guid.NewGuid().ToString();
+            var categoryId = Guid.NewGuid().ToString();
+            var assignId = Guid.NewGuid().ToString();
+            // add mock data
+            dbContext.Locations.Add(new Location() { LocationId = locationId, LocationName = "HCM" });
+            dbContext.Categories.Add(new Category() { CategoryId = categoryId, CategoryName = "Laptop", ShortName = "LA" });
+            await dbContext.SaveChangesAsync();
+            var user = new User
+            {
+                Id = userId,
+            };
+            var admin = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "AssignedToUser",
+                FirstName = "admin",
+                LastName = "hcm",
+                Gender = true,
+                JoinedDate = DateTime.Now,
+                IsChange = true,
+                StaffCode = "SD00002",
+                LocationId = locationId,
+            };
+            dbContext.Users.Add(admin);
+            await dbContext.SaveChangesAsync();
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
+            var asset = new Asset
+            {
+                CategoryId = categoryId,
+                AssetId = AssetId,
+                AssetName = "Test",
+            };
+            dbContext.Assets.Add(asset);
+            var assignment = new Assignment
+            {
+                UserId = user.Id,
+                AssignmentId = Assignid,
+                AssetId = asset.AssetId,
+                AdminId = admin.Id,
+                State = (int)StateAssignment.Accepted,
+            };
+            dbContext.Assignments.Add(assignment);
+            await dbContext.SaveChangesAsync();
+            var request = new ReturnRequestRepository(dbContext);
+            var creste = await request.CreateReturnRequestAsync(assignment.AssignmentId, userId);
+
+            var changestate = await request.ChangeStateAsync(false, assignment.AssignmentId, admin.Id);
+            Assert.True(changestate);
+        }
     }
-}
+  }
+
