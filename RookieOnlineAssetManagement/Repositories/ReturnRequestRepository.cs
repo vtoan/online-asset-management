@@ -85,7 +85,7 @@ namespace RookieOnlineAssetManagement.Repositories
                     var acceptedUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == acceptedUserId);
                     if (acceptedUser == null)
                     {
-                        throw new Exception("Have not this accept user");
+                        throw new Exception("Repository | Have not this accept user");
                     }
                     asset.State = (short)StateAsset.Avaiable;
                     assignment.State = (int)StateAssignment.Completed;
@@ -114,6 +114,7 @@ namespace RookieOnlineAssetManagement.Repositories
         public async Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
             var queryable = _dbContext.ReturnRequests.Include(x => x.Assignment).Where(x => x.Assignment.LocationId == returnRequestParams.LocationId);
+            var totalitem = queryable.Count();
             if (returnRequestParams.StateReturnRequests != null)
             {
                 //var stateNum = Convert.ToInt32(returnRequestParams.StateReturnRequests);
@@ -177,7 +178,6 @@ namespace RookieOnlineAssetManagement.Repositories
                 else
                     queryable = queryable.OrderByDescending(x => x.State);
             }
-            var totalitem = queryable.Count();
 
             var result = Paging<ReturnRequest>(queryable, returnRequestParams.PageSize, returnRequestParams.Page);
             var list = await result.Sources.Select(x => new ReturnRequestModel

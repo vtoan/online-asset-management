@@ -1,10 +1,10 @@
 import React from "react";
 import RequestTable from "./RequestTable";
 import { Row, Col } from "reactstrap";
-import SelectDate from "../../common/SelectDate";
 import SearchBar from "../../common/SearchBar";
-import FilterState from "../../common/FilterState";
 import http from "../../ultis/httpClient";
+import AssignmenttFilterState from "./AssignmenttFilterState";
+import AssignmenttFilterDate from "./AssignmenttFilterDate";
 import { _createQuery } from "../../ultis/helper"
 let params = {}
 function _refreshParams() {
@@ -82,15 +82,15 @@ export default function Request() {
   return (
     <>
       <h5 className="name-list mb-4">Request List</h5>
-      <Row className="filter-bar">
-        <Col>
-          <FilterState namefilter="State" />
+      <Row className="filter-bar mb-3">
+        <Col xs={2}>
+          <AssignmenttFilterState onChange={handleFilterState} />
+        </Col>
+        <Col xs={2}>
+          <AssignmenttFilterDate onChange={handleFilterDate} />
         </Col>
         <Col>
-          <SelectDate namedate="Returned Date" />
-        </Col>
-        <Col>
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
         </Col>
       </Row>
       <RequestTable
