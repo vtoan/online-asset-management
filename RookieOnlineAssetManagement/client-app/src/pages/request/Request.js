@@ -80,11 +80,13 @@ export default function Request() {
   const handleDenyRequest = (item) => {
     modalConfirm.config({
       message: "Do you want to cancel this returning request?",
-      btnName: "Yes",
+      btnName: "Ok",
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete("/api/ReturnRequests/cancel" + item.assignmentId)
+          .delete(
+            "/api/ReturnRequests/cancel?assignmentId=" + item.assignmentId
+          )
           .then((resp) => {
             _refreshParams();
             _fetchData();
@@ -103,11 +105,11 @@ export default function Request() {
   const handleAcceptRequest = (item) => {
     modalConfirm.config({
       message: "Do you want to mark this returning request as 'Completed'?",
-      btnName: "Yes",
+      btnName: "Accept",
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .delete("/api/ReturnRequests/accept" + item.assignmentId)
+          .put("/api/ReturnRequests/accept?assignmentId=" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
