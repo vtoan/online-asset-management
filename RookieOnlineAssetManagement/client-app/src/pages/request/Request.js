@@ -6,6 +6,9 @@ import http from "../../ultis/httpClient";
 import RequestFilterState from "./RequestFilterState";
 import AssignmenttFilterDate from "../assignment/AssignmenttFilterDate";
 import { _createQuery } from "../../ultis/helper"
+import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
+import { useNSModals } from "../../containers/ModalContainer";
+
 let params = {}
 function _refreshParams() {
   params.SortAssetId = 0;
@@ -18,7 +21,9 @@ export default function Request() {
   const [requestDatas, setRequests] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(0);
   const [currentPage, setCurrentPage] = React.useState(0);
-  
+  //modal
+  const modalConfirm = useNSConfirmModal();
+  const { modalAlert, modalLoading } = useNSModals();
   React.useEffect(() => {
     params = {
       locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
@@ -64,7 +69,27 @@ export default function Request() {
   };
 
   const handleAcceptRequest = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to accept this assignment?",
+      btnName: "Accept",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .put("/api/ReturnRequests/accept?assignmentId=" + item.assignmentId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+            _fetchData();
+          });
+      },
+    });
+    modalConfirm.show(item);
   };
 
   const handleFilterState = (item) => {
@@ -86,8 +111,35 @@ export default function Request() {
     _fetchData();
   }
 
+  const showDisableDeleteModal = () => {
+    modalAlert.show({
+      title: "Can't delete asset",
+      msg: "Cannot delete the Assignment!",
+    });
+  };
+
   const handleDenyRequest = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to Deny this assignment?",
+      btnName: "Deny",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .put("/api/ReturnRequests/cancel?assignmentId=" + item.assignmentId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showDisableDeleteModal();
+          })
+          .finally(() => {
+            modalLoading.close();
+            _fetchData();
+          });
+      },
+    });
+    modalConfirm.show(item);
   };
   const handleChangeSort = (target) => {
     _refreshParams();
@@ -127,6 +179,7 @@ export default function Request() {
         onChangePage={handleChangePage}
         pageSelected={currentPage}
       />
+      <NSConfirmModal hook={modalConfirm} />
     </>
   );
 }
