@@ -387,7 +387,7 @@ form.example button {
 
 #checkboxes {
   border: 1px #dadada solid;
-  width: 310px;
+  width: 270px;
   display: none;
   background-color: rgb(245, 245, 245);
   padding-top: 10px;
@@ -421,7 +421,7 @@ form.example button {
 }
 
 #nameCate {
-  width: 145px;
+  /* width: 145px; */
   margin-left: 5px;
   font-size: 14px;
 }

@@ -13,6 +13,8 @@ export default function UserForm() {
   const [nameHeader, setnameHeader] = React.useState("");
   const [selectType, setSelectType] = React.useState("");
   const [typeRole, setTypeRole] = React.useState([]);
+  const [firstName, setFirstName] = React.useState(false);
+  const [lastName, setLastName] = React.useState(false);
   const [joinedDate, setjoinedDate] = React.useState(formatDate(Date.now()));
   const [dateOfBirth, setDateOfBirth] = React.useState([]);
   const [gender, setGender] = React.useState(0);
@@ -33,6 +35,7 @@ export default function UserForm() {
           : setTypeRole(userType.reverse());
         console.log(dataEdit);
         console.log(selectType);
+        console.log(formatDate(resp.data.dateOfBirth))
       })
       .catch((err) => console.log(err));
   };
@@ -58,6 +61,10 @@ export default function UserForm() {
       joinedDate: String(event.target.dateAddUser.value),
       type: Number(event.target.nameCategoryType.value),
     };
+    if (user.firstName === "") setFirstName(true)
+    if (user.lastName === "") setLastName(true)
+    if (user.dateOfBirth === "") setDateOfBirth(true)
+    if (user.joinedDate === "") setjoinedDate(true)
     modalLoading.show();
     if (id) {
       http
@@ -68,8 +75,8 @@ export default function UserForm() {
         })
         .catch((err) => {
           modalAlert.show({
-            title: "Created User Successfully",
-            msg: "Created Failed",
+            title: "Edited User Successfully",
+            msg: "Edited Failed",
           });
         })
         .finally(() => {
@@ -133,6 +140,7 @@ export default function UserForm() {
               name="firstName"
               defaultValue={dataEdit?.firstName ?? ""}
               disabled={id}
+              invalid={firstName}
             />
           </Col>
         </FormGroup>
@@ -147,6 +155,7 @@ export default function UserForm() {
               name="lastName"
               defaultValue={dataEdit?.lastName ?? ""}
               disabled={id}
+              invalid={lastName}
             />
           </Col>
         </FormGroup>
@@ -161,6 +170,7 @@ export default function UserForm() {
               name="dobUser"
               defaultValue={dateOfBirth}
               onChange={handleChangeDateBOB}
+              invalid={!dateOfBirth ? false : true}
             />
           </Col>
         </FormGroup>
@@ -208,6 +218,7 @@ export default function UserForm() {
               name="dateAddUser"
               defaultValue={joinedDate}
               onChange={handleChangeDateJoined}
+              invalid={joinedDate == "" ? true : false}
             />
           </Col>
         </FormGroup>

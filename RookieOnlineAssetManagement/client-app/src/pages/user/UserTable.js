@@ -54,16 +54,28 @@ export default function UserTable({
 }) {
   const itemRender = (item) => (
     <>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{item.staffCode}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{item.fullName}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{item.userName}</TableItem>
       </td>
-      <td>
+      <td
+        style={{ cursor: "pointer" }}
+        onClick={() => onShowDetail && onShowDetail(item)}
+      >
         <TableItem>{formatDate(item.joinedDate)}</TableItem>
       </td>
       <td
