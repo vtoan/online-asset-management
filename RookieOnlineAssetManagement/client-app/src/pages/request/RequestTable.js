@@ -76,7 +76,7 @@ export default function RequestTable({
         <TableItem>{request.acceptedBy ?? "*"}</TableItem>
       </td>
       <td>
-        <TableItem>{formatDate(request.returnedDate)}</TableItem>
+        <TableItem>{formatDate(request.returnedDate, false) ?? "*"}</TableItem>
       </td>
       <td>
         <TableItem>
