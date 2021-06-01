@@ -28,14 +28,14 @@ namespace RookieOnlineAssetManagement.Controllers
             var requestedUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _returnRequestService.CreateReturnRequestAsync(assignmentId, requestedUserId));
         }
-        [HttpPut("accept")]
+        [HttpPut("accept/{assignmentId}")]
         public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string assignmentId)
         {
             bool accept = true;
             var acceptedUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
         }
-        [HttpPut("cancel")]
+        [HttpPut("cancel/{assignmentId}")]
         public async Task<ActionResult<bool>> ChangeStateCancelAsync(string assignmentId)
         {
             bool cancel = false;
