@@ -25,7 +25,7 @@ function _refreshParams() {
 }
 
 export default function Asset(props) {
-  const [assetDatas, setAssets] = React.useState([]);
+  const [assetDatas, setAssets] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);

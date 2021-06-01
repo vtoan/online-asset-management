@@ -22,7 +22,7 @@ function _refreshParams() {
 }
 
 export default function User() {
-  const [userDatas, setUser] = React.useState([]);
+  const [userDatas, setUser] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
@@ -94,7 +94,6 @@ export default function User() {
     params.query = "";
     _fetchData();
   };
-
 
   const handleEdit = (item) => {
     history.push("/users/" + item.userId);
