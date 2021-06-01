@@ -22,7 +22,7 @@ function _refreshParams() {
 }
 
 export default function Request() {
-  const [requestDatas, setRequests] = React.useState([]);
+  const [requestDatas, setRequests] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
   const [currentPage, setCurrentPage] = React.useState(0);
   //modal

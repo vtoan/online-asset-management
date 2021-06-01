@@ -33,7 +33,7 @@ const seedData = [
   },
 ];
 export default function Report() {
-  const [reportData, setReport] = React.useState([]);
+  const [reportData, setReport] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
 
   React.useEffect(() => {

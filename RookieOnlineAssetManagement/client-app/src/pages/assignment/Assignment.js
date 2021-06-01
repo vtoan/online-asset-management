@@ -26,7 +26,7 @@ function _refreshParams() {
 }
 
 export default function Assignment() {
-  const [assignmentData, setAssignment] = React.useState([]);
+  const [assignmentData, setAssignment] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);

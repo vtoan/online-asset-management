@@ -19,7 +19,7 @@ function _refreshParams() {
 }
 
 export default function Home() {
-  const [homeData, setHome] = React.useState([]);
+  const [homeData, setHome] = React.useState(null);
   const [itemDetail, setItemDetail] = React.useState(null);
   //modal
   const modalConfirm = useNSConfirmModal();
