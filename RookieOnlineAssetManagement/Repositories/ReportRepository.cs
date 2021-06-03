@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class ReportRepository : IReportRepository
+    public class ReportRepository :BaseRepository,IReportRepository
     {
         private readonly ApplicationDbContext _dbContext;
         public ReportRepository(ApplicationDbContext dbContext)
@@ -41,7 +41,7 @@ namespace RookieOnlineAssetManagement.Repositories
 
             return report;
         }
-        public async Task<ICollection<ReportModel>> GetListReportAsync(ReportRequestParams reportParams)
+        public async Task<(ICollection<ReportModel> Datas, int TotalPage)> GetListReportAsync(ReportRequestParams reportParams)
         {
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == reportParams.LocationId);
             if (location == null)
@@ -112,7 +112,9 @@ namespace RookieOnlineAssetManagement.Repositories
                 else
                     queryable = queryable.OrderByDescending(x => x.WatingRecyclingTotal);
             }
-            return await queryable.ToListAsync();
+            var result = Paging<ReportModel>(queryable, reportParams.PageSize, reportParams.Page);
+            var list = await result.Sources.ToListAsync();
+            return (list, result.TotalPage);
         }
 
     }
