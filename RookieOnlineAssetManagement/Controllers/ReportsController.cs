@@ -24,9 +24,10 @@ namespace RookieOnlineAssetManagement.Controllers
             _reportService = reportService;
         }
         [HttpPost]
-        public async Task<ActionResult<ICollection<ReportModel>>> ExportAsync(string locationId)
+        public async Task<ActionResult<ICollection<ReportModel>>> ExportAsync([FromQuery]ReportRequestParams reportRequestParams)
         {
-            var report = await _reportService.ExportReportAsync(locationId);
+            reportRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            var report = await _reportService.ExportReportAsync(reportRequestParams);
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Report Category");
