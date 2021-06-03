@@ -18,9 +18,9 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _reportRepository.ExportReportAsync(locationId);
         }
-        public async Task<ICollection<ReportModel>> GetListReportAsync(string locationId)
+        public async Task<(ICollection<ReportModel> Datas, int TotalPage)> GetListReportAsync(ReportRequestParams reportParams)
         {
-            return await _reportRepository.GetListReportAsync(locationId);
+            return await _reportRepository.GetListReportAsync(reportParams);
         }
     }
 }

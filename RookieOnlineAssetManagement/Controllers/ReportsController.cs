@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,9 +67,12 @@ namespace RookieOnlineAssetManagement.Controllers
             }
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync(string locationId)
+        public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync([FromQuery]ReportRequestParams reportParams)
         {
-            return Ok(await _reportService.GetListReportAsync(locationId));
+            reportParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            var result = await _reportService.GetListReportAsync(reportParams);
+            HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
+            return Ok(result.Datas);
         }
     }
 }
