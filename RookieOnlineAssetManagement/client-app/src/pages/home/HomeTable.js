@@ -91,12 +91,17 @@ export default function HomeTable({
           <TiRefresh
             onClick={() => onReturn && onReturn(item)}
             style={{
-              color: item.state === 2 || item.state === 3 ? "" : " blue",
+              color:
+                item.state === 2 || item.state === 3 || item.isReturning
+                  ? ""
+                  : " blue",
               fontSize: "1.5em",
             }}
             className={
               "border-0" +
-              (item.state === 2 || item.state === 3 ? " disabled" : "")
+              (item.state === 2 || item.state === 3 || item.isReturning
+                ? " disabled"
+                : "")
             }
           />
         </span>
