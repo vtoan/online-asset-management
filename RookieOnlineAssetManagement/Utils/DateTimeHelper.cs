@@ -9,7 +9,7 @@ namespace RookieOnlineAssetManagement.Utils
     {
         public static bool CheckDateGreaterThan(DateTime SmallDate, DateTime BigDate)
         {
-            return !(SmallDate > BigDate);
+            return !(SmallDate.Date > BigDate.Date);
         }
         public static bool CheckAgeGreaterThan(int age, DateTime BirthOfDate)
         {
