@@ -115,12 +115,17 @@ export default function AssignmentTable({
           <TiRefresh
             onClick={() => onReturn && onReturn(assign)}
             style={{
-              color: assign.state === 2 || assign.state === 3 ? "" : " blue",
+              color:
+                assign.state === 2 || assign.state === 3 || assign.isReturning
+                  ? ""
+                  : " blue",
               fontSize: "1.3em",
             }}
             className={
               "border-0" +
-              (assign.state === 2 || assign.state === 3 ? " disabled" : "")
+              (assign.state === 2 || assign.state === 3 || assign.isReturning
+                ? " disabled"
+                : "")
             }
           />
         </span>

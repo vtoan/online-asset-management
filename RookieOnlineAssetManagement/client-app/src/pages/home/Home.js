@@ -41,6 +41,9 @@ export default function Home() {
       .get("/api/assignments/my-assignments" + _createQuery(params))
       .then((response) => {
         setHome(response.data);
+      })
+      .catch((err) => {
+        setHome([]);
       });
   };
   //handleClick
