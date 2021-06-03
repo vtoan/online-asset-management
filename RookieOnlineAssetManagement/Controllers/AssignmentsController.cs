@@ -16,6 +16,7 @@ namespace RookieOnlineAssetManagement.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AssignmentsController : ControllerBase
     {
         private readonly IAssignmentService _assignmentService;
@@ -24,6 +25,7 @@ namespace RookieOnlineAssetManagement.Controllers
             _assignmentService = assignmentService;
         }
         [HttpPost]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<AssignmentModel>> CreateAsync(AssignmentRequestModel assignmentRequestModel)
         {
             assignmentRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
@@ -31,6 +33,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.CreateAssignmentAsync(assignmentRequestModel));
         }
         [HttpPut("{id}")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<AssignmentModel>> UpdateAsync(string id, AssignmentRequestModel assignmentRequestModel)
         {
             assignmentRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
@@ -48,6 +51,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Decline));
         }
         [HttpDelete("{id}")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
             return Ok(await _assignmentService.DeleteAssignmentAsync(id));
@@ -60,6 +64,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _assignmentService.GetListMyAssignmentAsync(myAssignmentRequestParams));
         }
         [HttpGet]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<IEnumerable<AssignmentModel>>> GetListAsync([FromQuery] AssignmentRequestParams assignmentRequestParams)
         {
             assignmentRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);

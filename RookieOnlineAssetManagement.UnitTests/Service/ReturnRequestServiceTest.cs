@@ -32,7 +32,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
                 ReturnedDate = DateTime.Now,
                 RequestUserId = Guid.NewGuid().ToString()
             };
-            mockReturnRequestRepo.Setup(m => m.CreateReturnRequestAsync(It.IsAny<string>(),It.IsAny<string>())).ReturnsAsync(returnRequestModel);
+            mockReturnRequestRepo.Setup(m => m.CreateReturnRequestAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(returnRequestModel);
             var returnSer = new ReturnRequestService(mockReturnRequestRepo.Object);
             var result = await returnSer.CreateReturnRequestAsync(returnRequestModel.AssignmentId, returnRequestModel.RequestUserId);
         }
@@ -44,7 +44,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Service
             List<ReturnRequestModel> collection = new List<ReturnRequestModel>();
             int totalP = 0;
             int totalI = 0;
-            (ICollection<ReturnRequestModel> Datas, int totalpage, int totalitem) List = new(collection, totalP, totalI);
+            (ICollection<ReturnRequestModel> Datas, int totalpage, int totalI) List = new(collection, totalP, totalI);
             mockRequestRepo.Setup(x => x.GetListReturnRequestAsync(It.IsAny<ReturnRequestParams>())).ReturnsAsync(List);
             var request = new ReturnRequestService(mockRequestRepo.Object);
             var requestParams = new ReturnRequestParams();

@@ -43,7 +43,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         {
             var mokService = new Mock<IReturnRequestService>();
             Mock<ISession> sessionMock = new Mock<ISession>();
-            mokService.Setup(x => x.ChangeStateAsync(It.IsAny<bool>(),It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+            mokService.Setup(x => x.ChangeStateAsync(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
             var controller = new ReturnRequestsController(mokService.Object);
             controller.ControllerContext.HttpContext = new DefaultHttpContext();
@@ -77,7 +77,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             List<ReturnRequestModel> collection = new List<ReturnRequestModel>();
             int totalP = 0;
             int totalI = 0;
-            (ICollection<ReturnRequestModel> Datas, int totalpage, int totalitem) List = new(collection, totalP, totalI);
+            (ICollection<ReturnRequestModel> Datas, int totalpage, int totalItem) List = new(collection, totalP, totalI);
             mokService.Setup(x => x.GetListReturnRequestAsync(It.IsAny<ReturnRequestParams>())).ReturnsAsync(List);
             ReturnRequestModel model = new ReturnRequestModel();
             var Request = new ReturnRequestParams();

@@ -14,7 +14,7 @@ namespace RookieOnlineAssetManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize("ADMIN")]
     public class AssetController : ControllerBase
     {
         private readonly IAssetService _assetService;

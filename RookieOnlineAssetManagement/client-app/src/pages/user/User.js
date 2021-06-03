@@ -18,10 +18,11 @@ function _refreshParams() {
   params.sortFullName = 0;
   params.sortDate = 0;
   params.sortType = 0;
+  params.page = 1;
 }
 
 export default function User() {
-  const [userDatas, setUser] = React.useState([]);
+  const [userDatas, setUser] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
@@ -33,7 +34,7 @@ export default function User() {
 
   const { modalAlert, modalLoading } = useNSModals();
 
-  const showDisableModal = (itemId) => {
+  const showDisableModal = () => {
     let msg = (
       <>
         Cannot delete the asset because it belongs to one or more historical
@@ -85,6 +86,12 @@ export default function User() {
   const handleSearch = (query) => {
     _refreshParams();
     params.query = query;
+    _fetchData();
+  };
+
+  const handleSearchKey = () => {
+    _refreshParams();
+    params.query = "";
     _fetchData();
   };
 
@@ -142,7 +149,7 @@ export default function User() {
           <UserFilterState onChange={handleFilterType} />
         </Col>
         <Col xs={4}>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-user">

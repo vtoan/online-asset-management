@@ -29,6 +29,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.CreateReturnRequestAsync(assignmentId, requestedUserId));
         }
         [HttpPut("accept/{assignmentId}")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string assignmentId)
         {
             bool accept = true;
@@ -36,6 +37,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.ChangeStateAsync(accept, assignmentId, acceptedUserId));
         }
         [HttpPut("cancel/{assignmentId}")]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<bool>> ChangeStateCancelAsync(string assignmentId)
         {
             bool cancel = false;
@@ -43,6 +45,7 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(await _returnRequestService.ChangeStateAsync(cancel, assignmentId, acceptedUserId));
         }
         [HttpGet]
+        [Authorize("ADMIN")]
         public async Task<ActionResult<IEnumerable<ReturnRequestModel>>> GetListAsync([FromQuery] ReturnRequestParams returnRequestParams)
         {
             returnRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);

@@ -23,7 +23,7 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _returnRequestRepository.ChangeStateAsync(accept, assignmentId, acceptedUserId);
         }
-        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
+        public async Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
             if (returnRequestParams.ReturnedDate != null)
             {
@@ -31,7 +31,7 @@ namespace RookieOnlineAssetManagement.Services
                 if (checkDate == false)
                     throw new Exception("Return date not valid !");
             }
-            if(returnRequestParams.Page < 0 || returnRequestParams.PageSize < 0)
+            if (returnRequestParams.Page < 0 || returnRequestParams.PageSize < 0)
             {
                 throw new Exception("Page and Page size not valid !");
             }

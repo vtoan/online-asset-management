@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class ReturnRequestRepository :  BaseRepository, IReturnRequestRepository
+    public class ReturnRequestRepository : BaseRepository, IReturnRequestRepository
     {
         private readonly ApplicationDbContext _dbContext;
         public ReturnRequestRepository(ApplicationDbContext dbContext)
@@ -116,7 +116,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 throw new Exception("Repository | Change state return request fail");
             }
         }
-        public async Task<(ICollection<ReturnRequestModel>Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
+        public async Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
             var queryable = _dbContext.ReturnRequests.Include(x => x.Assignment).Where(x => x.Assignment.LocationId == returnRequestParams.LocationId);
             var totalitem = queryable.Count();
@@ -125,51 +125,51 @@ namespace RookieOnlineAssetManagement.Repositories
                 //var stateNum = Convert.ToInt32(returnRequestParams.StateReturnRequests);
                 queryable = queryable.Where(x => returnRequestParams.StateReturnRequests.Contains(x.State));
             }
-            if(!string.IsNullOrEmpty(returnRequestParams.ReturnedDate))
+            if (!string.IsNullOrEmpty(returnRequestParams.ReturnedDate))
             {
                 var Date = Convert.ToDateTime(returnRequestParams.ReturnedDate);
                 queryable = queryable.Where(x => Date.Day == x.ReturnDate.Value.Day && Date.Month == x.ReturnDate.Value.Month && Date.Year == x.ReturnDate.Value.Year);
             }
-            if(!string.IsNullOrEmpty(returnRequestParams.Query) )
+            if (!string.IsNullOrEmpty(returnRequestParams.Query))
             {
                 queryable = queryable.Where(x => x.Assignment.AssetId.Contains(returnRequestParams.Query) || x.Assignment.AssetName.Contains(returnRequestParams.Query) || x.RequestBy.Contains(returnRequestParams.Query));
             }
-            if(returnRequestParams.SortAssetId.HasValue)
+            if (returnRequestParams.SortAssetId.HasValue)
             {
-                if(returnRequestParams.SortAssetId.Value == SortBy.ASC)
+                if (returnRequestParams.SortAssetId.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Assignment.AssetId);
                 else
                     queryable = queryable.OrderByDescending(x => x.Assignment.AssetId);
             }
-            else if(returnRequestParams.SortAssetName.HasValue)
+            else if (returnRequestParams.SortAssetName.HasValue)
             {
-                if(returnRequestParams.SortAssetName.Value == SortBy.ASC)
+                if (returnRequestParams.SortAssetName.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Assignment.AssetName);
                 else
                     queryable = queryable.OrderByDescending(x => x.Assignment.AssetName);
             }
-            else if(returnRequestParams.SortRequestedBy.HasValue)
+            else if (returnRequestParams.SortRequestedBy.HasValue)
             {
-                if(returnRequestParams.SortRequestedBy.Value == SortBy.ASC)
+                if (returnRequestParams.SortRequestedBy.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.RequestBy);
                 else
                     queryable = queryable.OrderByDescending(x => x.RequestBy);
             }
-            else if(returnRequestParams.SortAssignedDate.HasValue)
+            else if (returnRequestParams.SortAssignedDate.HasValue)
             {
                 if (returnRequestParams.SortAssignedDate.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.Assignment.AssignedDate);
                 else
                     queryable = queryable.OrderByDescending(x => x.Assignment.AssignedDate);
             }
-            else if(returnRequestParams.SortAcceptedBy.HasValue)
+            else if (returnRequestParams.SortAcceptedBy.HasValue)
             {
                 if (returnRequestParams.SortAcceptedBy.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.AcceptedBy);
                 else
                     queryable = queryable.OrderByDescending(x => x.AcceptedBy);
             }
-            else if(returnRequestParams.SortReturnedDate.HasValue)
+            else if (returnRequestParams.SortReturnedDate.HasValue)
             {
                 if (returnRequestParams.SortReturnedDate.Value == SortBy.ASC)
                     queryable = queryable.OrderBy(x => x.ReturnDate);
@@ -183,6 +183,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 else
                     queryable = queryable.OrderByDescending(x => x.State);
             }
+
             var result = Paging<ReturnRequest>(queryable, returnRequestParams.PageSize, returnRequestParams.Page);
             var list = await result.Sources.Select(x => new ReturnRequestModel
             {

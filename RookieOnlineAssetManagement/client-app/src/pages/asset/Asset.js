@@ -1,7 +1,7 @@
 import React from "react";
 import AssetTable from "./AssetTable.js";
 import { Row, Col, Table } from "reactstrap";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useNSModals } from "../../containers/ModalContainer.js";
 import SearchBar from "../../common/SearchBar";
 import CreateNew from "../../common/CreateNew";
@@ -12,7 +12,6 @@ import http from "../../ultis/httpClient.js";
 import NSConfirmModal, {
   useNSConfirmModal,
 } from "../../common/NSConfirmModal.js";
-
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 
 let params = {};
@@ -26,33 +25,19 @@ function _refreshParams() {
 }
 
 export default function Asset(props) {
-  const [assetDatas, setAssets] = React.useState([]);
+  const [assetDatas, setAssets] = React.useState(null);
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
+  const [itemHistory, setItemHistory] = React.useState(null);
   const history = useHistory();
-  const location = useLocation();
-  console.log(location);
   //modal
   const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
   const { modalAlert, modalLoading } = useNSModals();
-
-  const showDisableDeleteModal = (itemId) => {
-    let msg = (
-      <>
-        Cannot delete the asset because it belongs to one or more historical
-        assignments.If the asset is not able to be used anymore, please update
-        its state in
-        <Link to={"/asset/" + itemId}>To Edit Page</Link>
-      </>
-    );
-    modalAlert.show({ title: "Can't delete asset", msg: msg });
-  };
   //handle
   React.useEffect(() => {
     params = {
-      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
       sortCode: 0,
       sortName: 0,
       sortCate: 0,
@@ -62,6 +47,7 @@ export default function Asset(props) {
       page: 1,
       state: [],
       categoryid: [],
+      assetId: "",
     };
     _fetchData();
   }, []);
@@ -94,6 +80,12 @@ export default function Asset(props) {
     _fetchData();
   };
 
+  const handleSearchKey = () => {
+    _refreshParams();
+    params.query = "";
+    _fetchData();
+  };
+
   const handleEdit = (item) => {
     history.push("/assets/" + item.assetId);
   };
@@ -110,12 +102,8 @@ export default function Asset(props) {
             _refreshParams();
             _fetchData();
           })
-          .catch((err) => {
-            showDisableDeleteModal();
-          })
-          .finally(() => {
-            modalLoading.close();
-          });
+          .catch(showDisableDeleteModal)
+          .finally(() => modalLoading.close());
       },
     });
     modalConfirm.show(item);
@@ -134,12 +122,27 @@ export default function Asset(props) {
   };
 
   const handleShowDetail = (item) => {
-    console.log("object");
-    console.log(item);
-    http.get("/api/Asset/" + item.assetId).then((response) => {
-      setItemDetail(response.data);
+    params.assetId = item.assetId;
+    Promise.all([
+      http.get("/api/Asset/" + item.assetId),
+      http.get("/api/Asset/history?assetId=" + item.assetId),
+    ]).then((responseArray) => {
+      setItemDetail(responseArray[0].data);
+      setItemHistory(responseArray[1].data);
     });
     modalDetail.show();
+  };
+
+  const showDisableDeleteModal = (itemId) => {
+    let msg = (
+      <>
+        Cannot delete the asset because it belongs to one or more historical
+        assignments.If the asset is not able to be used anymore, please update
+        its state in
+        <Link to={"/asset/" + itemId}>To Edit Page</Link>
+      </>
+    );
+    modalAlert.show({ title: "Can't delete asset", msg: msg });
   };
 
   return (
@@ -153,7 +156,7 @@ export default function Asset(props) {
           <AssetFilterCategory onChange={handleFilterCategory} />
         </Col>
         <Col>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-asset">
@@ -173,7 +176,11 @@ export default function Asset(props) {
       />
       <NSConfirmModal hook={modalConfirm} />
 
-      <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
+      <NSDetailModal
+        hook={modalDetail}
+        title="Detailed Asset Information"
+        size="lg"
+      >
         <Table borderless className="table-detailed ">
           <tbody>
             <tr>
@@ -204,6 +211,32 @@ export default function Asset(props) {
             <tr>
               <td>Specification :</td>
               <td>{itemDetail?.specification}</td>
+            </tr>
+            <tr>
+              <td>History :</td>
+              {itemHistory &&
+                itemHistory.map((item) => {
+                  return (
+                    <Table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Assigned to</th>
+                          <th>Assigned by</th>
+                          <th>Returned date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{formatDate(item.date)}</td>
+                          <td>{item.assignedTo}</td>
+                          <td>{item.assignedBy}</td>
+                          <td>{formatDate(item.returnedDate)}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  );
+                })}
             </tr>
           </tbody>
         </Table>

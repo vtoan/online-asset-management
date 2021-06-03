@@ -7,7 +7,7 @@ import SearchBar from "../../common/SearchBar";
 
 let params = {
   query: "",
-  currenassetid: "",
+  currentAssetId: "",
   AssetIdSort: 0,
   AssetNameSort: 0,
   CategoryNameSort: 0,
@@ -16,16 +16,16 @@ let params = {
 const tableTitles = [
   {
     title: "Asset Code",
-    nameSort: "sortCodeA",
+    nameSort: "AssetIdSort",
   },
   {
     title: "Asset Name",
-    nameSort: "sortName",
+    nameSort: "AssetNameSort",
     width: "30%",
   },
   {
     title: "Category",
-    nameSort: "sortCate",
+    nameSort: "CategoryNameSort",
     width: "30%",
   },
 ];
@@ -42,7 +42,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
 
   React.useEffect(() => {
     if (assetCurrentId) {
-      params.currenassetid = assetCurrentId;
+      params.currentAssetId = assetCurrentId;
       setSelectAsset(assetCurrentId);
     }
     _fetchDataAsset();
@@ -80,6 +80,7 @@ export default function AssetTable({ assetCurrentId, onSelectedItem }) {
     _refreshParams();
     params.query = query;
     _fetchDataAsset();
+    params.query = "";
   };
 
   const itemRender = (asset) => (

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
 using System;
@@ -11,6 +12,7 @@ namespace RookieOnlineAssetManagement.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize("ADMIN")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

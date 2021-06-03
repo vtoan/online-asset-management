@@ -1,11 +1,13 @@
 import React from "react";
-import HomeTable from "./Table";
+import HomeTable from "./HomeTable";
 import http from "../../ultis/httpClient.js";
 import { _createQuery } from "../../ultis/helper.js";
-import {formatDate} from "../../ultis/helper";
-import {Table} from "reactstrap";
+import { formatDate } from "../../ultis/helper";
+import { Table } from "reactstrap";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import { stateOptions } from "../../enums/assetState.js";
+import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
+import { useNSModals } from "../../containers/ModalContainer";
 let params = {};
 
 function _refreshParams() {
@@ -14,41 +16,37 @@ function _refreshParams() {
   params.SortCategoryName = 0;
   params.SortAssignedDate = 0;
   params.SortState = 0;
-};
+}
 
 export default function Home() {
-  const [homeData, setHome] = React.useState([]);
-  const [totalPages, setTotalPages] = React.useState(0);
-  const [pageCurrent, setPageCurrent] = React.useState(0);
+  const [homeData, setHome] = React.useState(null);
   const [itemDetail, setItemDetail] = React.useState(null);
   //modal
-
+  const modalConfirm = useNSConfirmModal();
   const modalDetail = useNSDetailModal();
+  const { modalAlert, modalLoading } = useNSModals();
   React.useEffect(() => {
     params = {
-      locationid: "9fdbb02a-244d-49ae-b979-362b4696479c",
       SortAssetId: 0,
       SortAssetName: 0,
       SortCategoryName: 0,
       SortAssignedDate: 0,
       SortState: 0,
-      pagesize: 8,
-      page: 1,
     };
     _fetchData();
   }, []);
 
   const _fetchData = () => {
-    http.get('/api/Assignments/my-assignments' + _createQuery(params)).then((response) => {
-      setHome(response.data);
-      let totalPages = response.headers["total-pages"];
-      setTotalPages(totalPages > 0 ? totalPages : 0);
-      setPageCurrent(params.page);
-    })
+    http
+      .get("/api/assignments/my-assignments" + _createQuery(params))
+      .then((response) => {
+        setHome(response.data);
+      });
   };
   //handleClick
   const handleChangePage = (page) => {
-    console.log(page);
+    _refreshParams();
+    params.page = page;
     _fetchData();
   };
 
@@ -58,23 +56,91 @@ export default function Home() {
     if (target < 0) return (params.SortAssetId = null);
     _fetchData();
   };
+
   const handleAcceptRequest = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to accept this assignment?",
+      btnName: "Accept",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .put("/api/Assignments/accept/" + item.assignmentId)
+          .then((resp) => {
+            _refreshParams();
+            _fetchData();
+            showSuccessModal("Accept assignment successfully.");
+          })
+          .catch(showErrorModal)
+          .finally(() => modalLoading.close());
+      },
+    });
+    modalConfirm.show(item);
   };
 
   const handleDenyRequest = (item) => {
-    console.log(item);
+    modalConfirm.config({
+      message: "Do you want to decline this assignment?",
+      btnName: "Decline",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .put("/api/Assignments/decline/" + item.assignmentId)
+          .then((resp) => {
+            showSuccessModal("Decline assignment successfully.");
+            _refreshParams();
+            _fetchData();
+          })
+          .catch(showErrorModal)
+          .finally(() => modalLoading.close());
+      },
+    });
+    modalConfirm.show(item);
   };
-  const onRefresh = (item) => {
-    console.log(item);
+  const handleReturn = (item) => {
+    modalConfirm.config({
+      message: "Do you want to create a returning request for this asset?",
+      btnName: "Create",
+      onSubmit: (item) => {
+        modalLoading.show();
+        http
+          .post("/api/ReturnRequests?assignmentId=" + item.assignmentId)
+          .then((resp) => {
+            showSuccessModal(
+              "Create a returning request  assignment successfully."
+            );
+            _refreshParams();
+            _fetchData();
+          })
+          .catch((err) => {
+            showErrorModal({ message: "Request Returning was exsist!" });
+          })
+          .finally(() => modalLoading.close());
+      },
+    });
+    modalConfirm.show(item);
+  };
+
+  const showErrorModal = (err) => {
+    modalAlert.show({
+      title: "Error",
+      msg: err.message ?? "Unknown",
+    });
+  };
+
+  const showSuccessModal = (message) => {
+    modalAlert.show({
+      title: "Success",
+      msg: message,
+    });
   };
 
   const onShowDetail = (item) => {
-    http.get('/api/Assignments/' + item.assignmentId).then(response => {
+    http.get("/api/assignments/" + item.assignmentId).then((response) => {
       setItemDetail(response.data);
-    })
+    });
     modalDetail.show();
-  }
+  };
+
   return (
     <>
       <h5 className="name-list mb-4">My Assignments</h5>
@@ -84,12 +150,10 @@ export default function Home() {
         onChangeSort={handleChangeSort}
         onAccept={handleAcceptRequest}
         onDeny={handleDenyRequest}
-        onRefresh={onRefresh}
-        totalPage={totalPages}
-        pageSelected={pageCurrent}
+        onReturn={handleReturn}
         onShowDetail={onShowDetail}
       />
-
+      <NSConfirmModal hook={modalConfirm} />
       <NSDetailModal hook={modalDetail} title="Detailed Asset Information">
         <Table borderless className="table-detailed ">
           <tbody>
@@ -120,7 +184,10 @@ export default function Home() {
             </tr>
             <tr>
               <td>State :</td>
-              <td>{stateOptions.find((items) => items.value === itemDetail?.state)?.label ?? "Unknown"}</td>
+              <td>
+                {stateOptions.find((items) => items.value === itemDetail?.state)
+                  ?.label ?? "Unknown"}
+              </td>
             </tr>
             <tr>
               <td>Note : </td>
