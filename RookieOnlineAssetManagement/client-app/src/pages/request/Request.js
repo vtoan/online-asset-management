@@ -83,7 +83,7 @@ export default function Request() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .put("/api/ReturnRequests/cancel?assignmentId=" + item.assignmentId)
+          .put("/api/ReturnRequests/cancel/" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
@@ -104,7 +104,7 @@ export default function Request() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .put("/api/ReturnRequests/accept?assignmentId=" + item.assignmentId)
+          .put("/api/ReturnRequests/accept/" + item.assignmentId)
           .then((resp) => {
             _refreshParams();
             _fetchData();
