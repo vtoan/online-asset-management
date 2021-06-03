@@ -40,9 +40,9 @@ namespace RookieOnlineAssetManagement.Services
         public Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
         {
             DayOfWeek dayofweek;
-            var checkage = CheckDateAgeGreaterThan(18, userRequest.DateOfBirth.Value);
-            var checkjoineddate = CheckIsSaturdayOrSunday(userRequest.JoinedDate.Value, out dayofweek);
-            var checkjoineddategreaterthanbirthofdate = CheckDateGreaterThan(userRequest.DateOfBirth.Value, userRequest.JoinedDate.Value);
+            var checkage = DateTimeHelper.CheckAgeGreaterThan(18, userRequest.DateOfBirth.Value);
+            var checkjoineddate =DateTimeHelper.CheckIsSaturdayOrSunday(userRequest.JoinedDate.Value, out dayofweek);
+            var checkjoineddategreaterthanbirthofdate = DateTimeHelper.CheckDateGreaterThan(userRequest.DateOfBirth.Value, userRequest.JoinedDate.Value);
             if (checkage == false)
             {
                 throw new Exception("Age is not valid");
@@ -61,44 +61,5 @@ namespace RookieOnlineAssetManagement.Services
         {
             return _userRepo.GetUserByIdAsync(id);
         }
-        public bool CheckDateGreaterThan(DateTime SmallDate, DateTime BigDate)
-        {
-            // if (SmallDate > BigDate)
-            // {
-            //     return false;
-            // }
-            // else
-            // {
-            //     return true;
-            // }
-            return !(SmallDate > BigDate);
-        }
-        public bool CheckDateAgeGreaterThan(int age, DateTime BirthOfDate)
-        {
-            // if (DateTime.Now.Year - BirthOfDate.Year >= 18)
-            // {
-            //     return true;
-            // }
-            // else
-            // {
-            //     return false;
-            // }
-            return (DateTime.Now.Year - BirthOfDate.Year >= 18);
-        }
-        public bool CheckIsSaturdayOrSunday(DateTime JoinedDate, out DayOfWeek dayofweek)
-        {
-            dayofweek = JoinedDate.DayOfWeek;
-            // if (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday)
-            // {
-            //     return true;
-            // }
-            // else
-            // {
-            //     return false;
-            // }
-            return (dayofweek == DayOfWeek.Sunday || dayofweek == DayOfWeek.Sunday);
-        }
-
-
     }
 }

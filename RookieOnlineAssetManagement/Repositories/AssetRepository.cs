@@ -68,7 +68,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssetId == id);
             if (assignment != null)
             {
-                throw new Exception("Repository | Have not this assignment");
+                throw new Exception("Repository | This asset have a assignment");
             }
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == id);
             if (asset == null)

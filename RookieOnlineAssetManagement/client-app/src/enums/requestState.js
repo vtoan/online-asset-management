@@ -1,11 +1,10 @@
 export const requestOptions = [
-    {
-      label: "Completed",
-      value: true,
-    },
-    {
-      label: "Wating For Acceptance",
-      value: false,
-    },
-  ];
-  
+  {
+    label: "Completed",
+    value: true,
+  },
+  {
+    label: "Waiting for returning",
+    value: false,
+  },
+];

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Services;
+using RookieOnlineAssetManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,9 +24,10 @@ namespace RookieOnlineAssetManagement.Controllers
             _reportService = reportService;
         }
         [HttpPost]
-        public async Task<ActionResult<ICollection<ReportModel>>> ExportAsync(string locationId)
+        public async Task<ActionResult<ICollection<ReportModel>>> ExportAsync([FromQuery]ReportRequestParams reportRequestParams)
         {
-            var report = await _reportService.ExportReportAsync(locationId);
+            reportRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            var report = await _reportService.ExportReportAsync(reportRequestParams);
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Report Category");
@@ -66,9 +68,12 @@ namespace RookieOnlineAssetManagement.Controllers
             }
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync(string locationId)
+        public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync([FromQuery]ReportRequestParams reportParams)
         {
-            return Ok(await _reportService.GetListReportAsync(locationId));
+            reportParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            var result = await _reportService.GetListReportAsync(reportParams);
+            HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
+            return Ok(result.Datas);
         }
     }
 }

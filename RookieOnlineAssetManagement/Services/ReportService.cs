@@ -14,13 +14,13 @@ namespace RookieOnlineAssetManagement.Services
         {
             _reportRepository = reportRepository;
         }
-        public async Task<ICollection<ReportModel>> ExportReportAsync(string locationId)
+        public async Task<ICollection<ReportModel>> ExportReportAsync(ReportRequestParams reportRequestParams)
         {
-            return await _reportRepository.ExportReportAsync(locationId);
+            return await _reportRepository.ExportReportAsync(reportRequestParams);
         }
-        public async Task<ICollection<ReportModel>> GetListReportAsync(string locationId)
+        public async Task<(ICollection<ReportModel> Datas, int TotalPage)> GetListReportAsync(ReportRequestParams reportParams)
         {
-            return await _reportRepository.GetListReportAsync(locationId);
+            return await _reportRepository.GetListReportAsync(reportParams);
         }
     }
 }

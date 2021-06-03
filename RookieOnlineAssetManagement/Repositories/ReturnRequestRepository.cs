@@ -19,6 +19,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId)
         {
+            var returning = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
+            if (returning != null)
+            {
+                throw new Exception("Repository | This assignment is returing");
+            }
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (assignment == null)
             {
