@@ -17,5 +17,6 @@ namespace RookieOnlineAssetManagement.Models
         public string AssetName { get; set; }
         public DateTime? AssignedDate { get; set; }
         public int State { get; set; }
+        public bool? IsReturning { get; set; }
     }
 }
