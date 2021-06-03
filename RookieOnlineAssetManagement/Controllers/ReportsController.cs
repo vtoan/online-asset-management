@@ -23,7 +23,7 @@ namespace RookieOnlineAssetManagement.Controllers
         {
             _reportService = reportService;
         }
-        [HttpPost]
+        [HttpGet("export")]
         public async Task<ActionResult<ICollection<ReportModel>>> ExportAsync([FromQuery]ReportRequestParams reportRequestParams)
         {
             reportRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
