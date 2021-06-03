@@ -18,5 +18,7 @@ namespace RookieOnlineAssetManagement.Models
         public SortBy? SortNotAvailableTotal { get; set; }
         public SortBy? SortWatingRecyclingTotal { get; set; }
         public SortBy? SortRecycledTotal { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
     }
 }
