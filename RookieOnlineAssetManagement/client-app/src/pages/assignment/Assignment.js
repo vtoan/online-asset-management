@@ -68,6 +68,9 @@ export default function Assignment() {
         setAssignment(data);
         setTotalPages(totalPages > 0 ? totalPages : 0);
         setPageCurrent(params.page);
+      })
+      .catch((err) => {
+        setAssignment([]);
       });
   };
 
