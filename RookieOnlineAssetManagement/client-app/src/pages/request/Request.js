@@ -59,6 +59,9 @@ export default function Request() {
         setRequests(data);
         setTotalPages(totalPages > 0 ? totalPages : 0);
         setCurrentPage(params.page);
+      })
+      .catch((err) => {
+        setRequests([]);
       });
   };
 

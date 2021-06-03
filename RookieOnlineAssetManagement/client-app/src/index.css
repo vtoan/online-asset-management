@@ -512,9 +512,10 @@ hr {
 
 /* customer form */
 .form-control:focus {
-  border-color: #4285f4;
+  /* border-color: #4285f4;
   box-shadow: none;
-  border-width: 2px;
+  border-width: 2px; */
+  box-shadow: 0 0 0 0.1em rgb(13 110 253 / 25%);
 }
 
 /* --- Assignment Form --- */
