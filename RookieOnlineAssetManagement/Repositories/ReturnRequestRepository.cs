@@ -76,7 +76,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 throw new Exception("Repository | State is completed");
             }
-            var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 if (accept == true)
@@ -113,8 +113,9 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
         {
+            await this.LocationIsExist(_dbContext, returnRequestParams.LocationId);
+            //filter
             var queryable = _dbContext.ReturnRequests.Include(x => x.Assignment).Where(x => x.Assignment.LocationId == returnRequestParams.LocationId);
-            var totalitem = queryable.Count();
             if (returnRequestParams.StateReturnRequests != null)
             {
                 //var stateNum = Convert.ToInt32(returnRequestParams.StateReturnRequests);
@@ -129,58 +130,8 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 queryable = queryable.Where(x => x.Assignment.AssetId.Contains(returnRequestParams.Query) || x.Assignment.AssetName.Contains(returnRequestParams.Query) || x.RequestBy.Contains(returnRequestParams.Query));
             }
-            if (returnRequestParams.SortAssetId.HasValue)
-            {
-                if (returnRequestParams.SortAssetId.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Assignment.AssetId);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Assignment.AssetId);
-            }
-            else if (returnRequestParams.SortAssetName.HasValue)
-            {
-                if (returnRequestParams.SortAssetName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Assignment.AssetName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Assignment.AssetName);
-            }
-            else if (returnRequestParams.SortRequestedBy.HasValue)
-            {
-                if (returnRequestParams.SortRequestedBy.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.RequestBy);
-                else
-                    queryable = queryable.OrderByDescending(x => x.RequestBy);
-            }
-            else if (returnRequestParams.SortAssignedDate.HasValue)
-            {
-                if (returnRequestParams.SortAssignedDate.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Assignment.AssignedDate);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Assignment.AssignedDate);
-            }
-            else if (returnRequestParams.SortAcceptedBy.HasValue)
-            {
-                if (returnRequestParams.SortAcceptedBy.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AcceptedBy);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AcceptedBy);
-            }
-            else if (returnRequestParams.SortReturnedDate.HasValue)
-            {
-                if (returnRequestParams.SortReturnedDate.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.ReturnDate);
-                else
-                    queryable = queryable.OrderByDescending(x => x.ReturnDate);
-            }
-            else if (returnRequestParams.SortState.HasValue)
-            {
-                if (returnRequestParams.SortState.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.State);
-                else
-                    queryable = queryable.OrderByDescending(x => x.State);
-            }
-
-            var result = Paging<ReturnRequest>(queryable, returnRequestParams.PageSize, returnRequestParams.Page);
-            var list = await result.Sources.Select(x => new ReturnRequestModel
+            //sort
+            var q = queryable.Select(x => new ReturnRequestModel
             {
                 AssignmentId = x.AssignmentId,
                 AssetId = x.Assignment.AssetId,
@@ -192,8 +143,12 @@ namespace RookieOnlineAssetManagement.Repositories
                 AcceptedBy = x.AcceptedBy,
                 ReturnedDate = x.ReturnDate,
                 State = x.State
-            }).ToListAsync();
-            return (list, result.TotalPage, totalitem);
+            });
+            q = this.SortData<ReturnRequestModel, ReturnRequestParams>(q, returnRequestParams);
+            //paging
+            var result = Paging<ReturnRequestModel>(q, returnRequestParams.PageSize, returnRequestParams.Page);
+            var list = await result.Sources.ToListAsync();
+            return (list, result.TotalPage, result.TotalItem);
         }
     }
 }
