@@ -66,13 +66,15 @@ export default function AssetTable({
         </TableItem>
       </td>
       <td className="table-actions">
-        <span className="table-icon" onClick={() => onEdit && onEdit(asset)} style={{ pointerEvents: (asset.state === 1) ? 'none' : 'auto' }}>
-          <BsPencil color={(asset.state === 1) ? "gray" : "#0d6efd"} />
+        <span className="table-icon">
+          <BsPencil color="#0d6efd"
+            onClick={() => onEdit && onEdit(asset)}
+            className={"border-0" + (asset.state === 1 ? " disabled" : " ")} />
         </span>
-        <span
-          className="table-icon"
-          onClick={() => onDelete && onDelete(asset)} style={{ pointerEvents: (asset.state === 1) ? 'none' : 'auto' }}>
-          <TiDeleteOutline color={(asset.state === 1) ? "gray" : "#dc3545"} />
+        <span className="table-icon">
+          <TiDeleteOutline color="rgb(207, 35, 56)"
+            onClick={() => onDelete && onDelete(asset)}
+            className={"border-0" + (asset.state === 1 ? " disabled" : " ")} />
         </span>
       </td>
     </>
