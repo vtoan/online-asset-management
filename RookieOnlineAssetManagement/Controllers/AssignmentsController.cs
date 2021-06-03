@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
