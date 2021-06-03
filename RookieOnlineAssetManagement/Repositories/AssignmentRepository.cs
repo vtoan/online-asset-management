@@ -36,7 +36,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 throw new Exception("Repository | Have not this Assign To User");
             }
             var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
-            if(AssignByAdminId==null)
+            if (AssignByAdminId == null)
             {
                 throw new Exception("Repository | Have not this Assign By Admin");
             }
@@ -44,6 +44,10 @@ namespace RookieOnlineAssetManagement.Repositories
             if (Asset == null)
             {
                 throw new Exception("Repository | Have not this asset");
+            }
+            if (Asset.State != (short)StateAsset.Avaiable)
+            {
+                throw new Exception("Repository | This asset is not available");
             }
             var assignment = new Assignment
             {
@@ -113,50 +117,56 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 throw new Exception("Repository | Have not this assignment");
             }
-
+            if (assignment.UserId != assignmentRequestModel.UserId)
+            {
+                var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
+                if (AssignToUserId == null)
+                {
+                    throw new Exception("Repository | Have not this Assign To User");
+                }
+                assignment.UserId = assignmentRequestModel.UserId;
+                assignment.AssignTo = AssignToUserId.UserName;
+            }
+            if (assignment.AdminId != assignmentRequestModel.AdminId)
+            {
+                var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
+                if (AssignByAdminId == null)
+                {
+                    throw new Exception("Repository | Have not this Assign By Admin");
+                }
+                assignment.AdminId = assignmentRequestModel.AdminId;
+                assignment.AssignBy = AssignByAdminId.UserName;
+            }
+            if (assignment.AssetId != assignmentRequestModel.AssetId)
+            {
+                var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
+                if (Asset == null)
+                {
+                    throw new Exception("Repository | Have not this new asset");
+                }
+                if (Asset.State != (short)StateAsset.Avaiable)
+                {
+                    throw new Exception("Repository | This asset is available");
+                }
+                var AssetOld = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
+                if (AssetOld == null)
+                {
+                    throw new Exception("Repository | Have not this old asset");
+                }
+                AssetOld.State = (int)StateAsset.Avaiable;
+                Asset.State = (int)StateAsset.Assigned;
+                assignment.AssetId = assignmentRequestModel.AssetId;
+                assignment.AssetName = Asset.AssetName;
+            }
+            assignment.Note = assignmentRequestModel.Note;
+            if (assignment.AssignedDate != assignmentRequestModel.AssignedDate)
+            {
+                assignment.AssignedDate = assignmentRequestModel.AssignedDate;
+            }
 
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
-                if (assignment.UserId != assignmentRequestModel.UserId)
-                {
-                    var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
-                    if (AssignToUserId == null)
-                    {
-                        throw new Exception("Repository | Have not this Assign To User");
-                    }
-                    assignment.UserId = assignmentRequestModel.UserId;
-                    assignment.AssignTo = AssignToUserId.UserName;
-                }
-                if (assignment.AdminId != assignmentRequestModel.AdminId)
-                {
-                    var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
-                    if (AssignByAdminId == null)
-                    {
-                        throw new Exception("Repository | Have not this Assign By Admin");
-                    }
-                    assignment.AdminId = assignmentRequestModel.AdminId;
-                    assignment.AssignBy = AssignByAdminId.UserName;
-                }
-                if (assignment.AssetId != assignmentRequestModel.AssetId)
-                {
-                    var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
-                    if (Asset == null)
-                    {
-                        throw new Exception("Repository | Have not this new asset");
-                    }
-                    var AssetOld = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
-                    if (AssetOld == null)
-                    {
-                        throw new Exception("Repository | Have not this old asset");
-                    }
-                    AssetOld.State = (int)StateAsset.Avaiable;
-                    Asset.State = (int)StateAsset.Assigned;
-                    assignment.AssetId = assignmentRequestModel.AssetId;
-                    assignment.AssetName = Asset.AssetName;
-                }
-                assignment.Note = assignmentRequestModel.Note;
-                assignment.AssignedDate = assignmentRequestModel.AssignedDate;
                 var result = await _dbContext.SaveChangesAsync();
                 if (result > 0)
                 {
@@ -219,6 +229,10 @@ namespace RookieOnlineAssetManagement.Repositories
             if (asset == null)
             {
                 throw new Exception("Repository | Have not this asset");
+            }
+            if (asset.State == (short)StateAsset.Avaiable)
+            {
+                throw new Exception("Repository | This asset is available");
             }
             using var transaction = _dbContext.Database.BeginTransaction();
             try
@@ -322,7 +336,10 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 throw new Exception("Repository | Have not this location");
             }
-            var queryable = _dbContext.Assignments.Include(x => x.Location).Where(x => x.LocationId == assignmentRequestParams.LocationId);
+            var queryable = _dbContext.Assignments
+                .Include(x => x.Location)
+                .AsSplitQuery()
+                .Where(x => x.LocationId == assignmentRequestParams.LocationId);
             queryable = queryable.Where(x => x.State != (int)StateAssignment.Completed);
             if (assignmentRequestParams.StateAssignments != null)
             {
