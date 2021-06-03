@@ -70,7 +70,9 @@ namespace RookieOnlineAssetManagement.Controllers
         public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync([FromQuery]ReportRequestParams reportParams)
         {
             reportParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
-            return Ok(await _reportService.GetListReportAsync(reportParams));
+            var result = await _reportService.GetListReportAsync(reportParams);
+            HttpContext.Response.Headers.Add("total-pages", result.TotalPage.ToString());
+            return Ok(result.Datas);
         }
     }
 }
