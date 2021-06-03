@@ -4,31 +4,38 @@ import NSTable from "../../common/NSTable";
 const tableTitles = [
   {
     title: "Category",
-    nameSort: "sort Category",
+    nameSort: "sortCategoryName",
+    width: "20%",
   },
   {
     title: "Total",
-    nameSort: "sort Total",
+    nameSort: "sortTotal",
+    width: "10%",
   },
   {
     title: "Assigned",
-    nameSort: "sort Assigned",
+    nameSort: "sortAssignedTotal",
+    width: "10%",
   },
   {
     title: "Available",
-    nameSort: "sort Available",
+    nameSort: "sortAvailableTotal",
+    width: "10%",
   },
   {
     title: "Not Available",
-    nameSort: "sort Not Available",
+    nameSort: "sortNotAvailableTotal",
+    width: "10%",
   },
   {
     title: "Waiting for recycling",
-    nameSort: "sort Waiting for recycling",
+    nameSort: "sortWatingRecyclingTotal",
+    width: "15%",
   },
   {
     title: "Recycled",
-    nameSort: "sort Recycled",
+    nameSort: "sortRecycledTotal",
+    width: "10%",
   },
 ];
 export default function ReportTable({
@@ -36,29 +43,30 @@ export default function ReportTable({
   totalPage,
   onChangePage,
   onChangeSort,
+  pageSelected,
 }) {
   const itemRender = (item) => (
     <>
       <td>
-        <TableItem>{item.Category}</TableItem>
+        <TableItem>{item.categoryName}</TableItem>
       </td>
       <td>
-        <TableItem>{item.Total}</TableItem>
+        <TableItem>{item.total}</TableItem>
       </td>
       <td>
-        <TableItem>{item.Assigned}</TableItem>
+        <TableItem>{item.assignedTotal}</TableItem>
       </td>
       <td>
-        <TableItem>{item.Available}</TableItem>
+        <TableItem>{item.availableTotal}</TableItem>
       </td>
       <td>
-        <TableItem>{item.NotAvailable}</TableItem>
+        <TableItem>{item.notAvailableTotal}</TableItem>
       </td>
       <td>
-        <TableItem>{item.Waitingforrecycling}</TableItem>
+        <TableItem>{item.watingRecyclingTotal}</TableItem>
       </td>
       <td>
-        <TableItem>{item.Recycled}</TableItem>
+        <TableItem>{item.recycledTotal}</TableItem>
       </td>
     </>
   );
@@ -70,6 +78,7 @@ export default function ReportTable({
       itemRender={itemRender}
       onChangeSort={onChangeSort}
       onChangePage={onChangePage}
+      pageSelected={pageSelected}
     />
   );
 }
