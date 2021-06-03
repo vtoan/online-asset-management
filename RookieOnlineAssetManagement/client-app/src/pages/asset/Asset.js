@@ -214,18 +214,18 @@ export default function Asset(props) {
             </tr>
             <tr>
               <td>History :</td>
-              {itemHistory &&
-                itemHistory.map((item) => {
-                  return (
-                    <Table>
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Assigned to</th>
-                          <th>Assigned by</th>
-                          <th>Returned date</th>
-                        </tr>
-                      </thead>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Assigned to</th>
+                    <th>Assigned by</th>
+                    <th>Returned date</th>
+                  </tr>
+                </thead>
+                {itemHistory &&
+                  itemHistory.map((item) => {
+                    return (
                       <tbody>
                         <tr>
                           <td>{formatDate(item.date)}</td>
@@ -234,9 +234,11 @@ export default function Asset(props) {
                           <td>{formatDate(item.returnedDate)}</td>
                         </tr>
                       </tbody>
-                    </Table>
-                  );
-                })}
+                    );
+                  }
+                  )}
+              </Table>
+
             </tr>
           </tbody>
         </Table>
