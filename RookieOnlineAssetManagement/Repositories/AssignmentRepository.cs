@@ -3,7 +3,7 @@ using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Models;
-
+using RookieOnlineAssetManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,7 +146,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
                 if (Asset.State != (short)StateAsset.Avaiable)
                 {
-                    throw new Exception("Repository | This asset is available");
+                    throw new Exception("Repository | This asset is not available");
                 }
                 var AssetOld = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
                 if (AssetOld == null)
@@ -161,6 +161,10 @@ namespace RookieOnlineAssetManagement.Repositories
             assignment.Note = assignmentRequestModel.Note;
             if (assignment.AssignedDate != assignmentRequestModel.AssignedDate)
             {
+                if(DateTimeHelper.CheckDateGreaterThan(DateTime.Now,assignmentRequestModel.AssignedDate.Value)==false)
+                {
+                    throw new Exception("Repository | Assigned Date is smaller than Today");
+                }
                 assignment.AssignedDate = assignmentRequestModel.AssignedDate;
             }
 
@@ -230,9 +234,9 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 throw new Exception("Repository | Have not this asset");
             }
-            if (asset.State == (short)StateAsset.Avaiable)
+            if (asset.State == (short)StateAsset.Assigned)
             {
-                throw new Exception("Repository | This asset is available");
+                throw new Exception("Repository | This asset is Assigned");
             }
             using var transaction = _dbContext.Database.BeginTransaction();
             try
