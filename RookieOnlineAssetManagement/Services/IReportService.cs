@@ -7,6 +7,6 @@ namespace RookieOnlineAssetManagement.Services
     public interface IReportService
     {
         Task<ICollection<ReportModel>> ExportReportAsync(string locationId);
-        Task<ICollection<ReportModel>> GetListReportAsync(ReportRequestParams reportParams);
+        Task<(ICollection<ReportModel> Datas, int TotalPage)> GetListReportAsync(ReportRequestParams reportParams);
     }
 }
