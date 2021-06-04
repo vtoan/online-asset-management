@@ -138,9 +138,9 @@ export default function Assignment() {
         http
           .post(
             "/api/ReturnRequests?assignmentId=" +
-              item.assignmentId +
-              "&requestedUserId=" +
-              item.userId
+            item.assignmentId +
+            "&requestedUserId=" +
+            item.userId
           )
           .then((resp) => {
             _refreshParams();
@@ -170,6 +170,13 @@ export default function Assignment() {
     params.query = query;
     _fetchData();
   };
+
+  const handleSearchKey = () => {
+    _refreshParams();
+    params.query = "";
+    _fetchData();
+  };
+
 
   const handleFilterState = (items) => {
     _refreshParams();
@@ -215,7 +222,7 @@ export default function Assignment() {
           <AssignmenttFilterDate onChange={handleFilterDate} />
         </Col>
         <Col>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
         <Col style={{ textAlign: "right" }}>
           <Link to="/new-assignments">
