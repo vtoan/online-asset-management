@@ -9,7 +9,7 @@ const tableTitles = [
   {
     title: "No",
     nameSort: "sortNumber",
-    width: "10%",
+    width: "1%",
   },
   {
     title: "Asset Code",
