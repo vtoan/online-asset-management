@@ -29,6 +29,7 @@ export default function AssetFilterCategory({ onChange }) {
       onChange={handleSelected}
       labelledBy="Select State"
       ArrowRenderer={() => <span className="fa fa-filter" />}
+      overrideStrings={{ selectSomeItems: "Laptop, Monitor, Headphone..." }}
     />
   );
 }
