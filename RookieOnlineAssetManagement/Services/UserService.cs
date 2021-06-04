@@ -11,11 +11,9 @@ namespace RookieOnlineAssetManagement.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepo;
-        private ServiceException e;
         public UserService(IUserRepository userRepo)
         {
             _userRepo = userRepo;
-            e = new ServiceException();
         }
 
         public async Task<bool> DisableUserAsync(string id)
@@ -47,15 +45,15 @@ namespace RookieOnlineAssetManagement.Services
             var checkjoineddategreaterthanbirthofdate = DateTimeHelper.CheckDateGreaterThan(userRequest.DateOfBirth.Value, userRequest.JoinedDate.Value);
             if (checkage == false)
             {
-                throw e.AgeNoValidException();
+                throw new ServiceException("Age is not valid");
             }
             if (checkjoineddate == true)
             {
-                throw e.JoinDateException();
+                throw new ServiceException("Joined Date is : " + dayofweek.ToString());
             }
             if (checkjoineddategreaterthanbirthofdate == false)
             {
-                throw e.CompareDateException();
+                throw new ServiceException("Joined Date is smaller tham Birth Of Date");
             }
             return _userRepo.CreateUserAsync(userRequest);
         }
