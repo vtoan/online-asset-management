@@ -20,7 +20,7 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ICollection<ReportModel>> ExportReportAsync(ReportRequestParams reportRequestParams)
         {
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId ==reportRequestParams.LocationId);
+            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == reportRequestParams.LocationId);
             if (location == null)
             {
                 throw new Exception("Repository | Have not this location");
@@ -39,56 +39,7 @@ namespace RookieOnlineAssetManagement.Repositories
                   WatingRecyclingTotal = t.Where(x => x.State == (short)StateAsset.WatingRecycling).Count(),
                   RecycledTotal = t.Where(x => x.State == (short)StateAsset.Recycled).Count()
               }).AsQueryable();
-
-            if (reportRequestParams.SortCategoryName.HasValue)
-            {
-                if (reportRequestParams.SortCategoryName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.CategoryName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.CategoryName);
-            }
-            else if (reportRequestParams.SortTotal.HasValue)
-            {
-                if (reportRequestParams.SortTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Total);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Total);
-            }
-            else if (reportRequestParams.SortAssignedTotal.HasValue)
-            {
-                if (reportRequestParams.SortAssignedTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssignedTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignedTotal);
-            }
-            else if (reportRequestParams.SortAvailableTotal.HasValue)
-            {
-                if (reportRequestParams.SortAvailableTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AvailableTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AvailableTotal);
-            }
-            else if (reportRequestParams.SortNotAvailableTotal.HasValue)
-            {
-                if (reportRequestParams.SortNotAvailableTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.NotAvailableTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.NotAvailableTotal);
-            }
-            else if (reportRequestParams.SortRecycledTotal.HasValue)
-            {
-                if (reportRequestParams.SortRecycledTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.RecycledTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.RecycledTotal);
-            }
-            else if (reportRequestParams.SortWatingRecyclingTotal.HasValue)
-            {
-                if (reportRequestParams.SortWatingRecyclingTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.WatingRecyclingTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.WatingRecyclingTotal);
-            }
+            queryable = this.SortData<ReportModel, ReportRequestParams>(queryable, reportRequestParams);
             return await queryable.ToListAsync();
         }
         public async Task<(ICollection<ReportModel> Datas, int TotalPage)> GetListReportAsync(ReportRequestParams reportParams)
@@ -112,60 +63,10 @@ namespace RookieOnlineAssetManagement.Repositories
                   WatingRecyclingTotal = t.Where(x => x.State == (short)StateAsset.WatingRecycling).Count(),
                   RecycledTotal = t.Where(x => x.State == (short)StateAsset.Recycled).Count()
               }).AsQueryable();
-
-            if (reportParams.SortCategoryName.HasValue)
-            {
-                if (reportParams.SortCategoryName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.CategoryName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.CategoryName);
-            }
-            else if (reportParams.SortTotal.HasValue)
-            {
-                if (reportParams.SortTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Total);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Total);
-            }
-            else if (reportParams.SortAssignedTotal.HasValue)
-            {
-                if (reportParams.SortAssignedTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssignedTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignedTotal);
-            }
-            else if (reportParams.SortAvailableTotal.HasValue)
-            {
-                if (reportParams.SortAvailableTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AvailableTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AvailableTotal);
-            }
-            else if (reportParams.SortNotAvailableTotal.HasValue)
-            {
-                if (reportParams.SortNotAvailableTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.NotAvailableTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.NotAvailableTotal);
-            }
-            else if (reportParams.SortRecycledTotal.HasValue)
-            {
-                if (reportParams.SortRecycledTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.RecycledTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.RecycledTotal);
-            }
-            else if (reportParams.SortWatingRecyclingTotal.HasValue)
-            {
-                if (reportParams.SortWatingRecyclingTotal.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.WatingRecyclingTotal);
-                else
-                    queryable = queryable.OrderByDescending(x => x.WatingRecyclingTotal);
-            }
+            queryable = this.SortData<ReportModel, ReportRequestParams>(queryable, reportParams);
             var result = Paging<ReportModel>(queryable, reportParams.PageSize, reportParams.Page);
             var list = await result.Sources.ToListAsync();
             return (list, result.TotalPage);
         }
-
     }
 }

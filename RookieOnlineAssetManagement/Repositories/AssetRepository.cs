@@ -135,18 +135,18 @@ namespace RookieOnlineAssetManagement.Repositories
             var list = await result.Sources.ToListAsync();
             return (list, result.TotalPage);
         }
-        public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currentassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
+        public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(AssetAssignmentRequestParams requestParams)
         {
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
-            queryable = queryable.Where(x => x.LocationId == locationid);
-            var location = await _dbContext.Assets.FirstOrDefaultAsync(x => x.LocationId == locationid);
+            queryable = queryable.Where(x => x.LocationId == requestParams.LocationId);
+            var location = await _dbContext.Assets.FirstOrDefaultAsync(x => x.LocationId == requestParams.LocationId);
             if (location == null)
             {
                 throw new Exception("Repository | Have not this location");
             }
             queryable = queryable.Where(x => x.State == (short)StateAsset.Avaiable);
-            if (!string.IsNullOrEmpty(query))
-                queryable = queryable.Where(x => x.AssetId.Contains(query) || x.AssetName.Contains(query) || x.Category.CategoryName.Contains(query));
+            if (!string.IsNullOrEmpty(requestParams.Query))
+                queryable = queryable.Where(x => x.AssetId.Contains(requestParams.Query) || x.AssetName.Contains(requestParams.Query) || x.Category.CategoryName.Contains(requestParams.Query));
             var list = await queryable.Select(x => new AssetModel
             {
                 AssetId = x.AssetId,
@@ -155,9 +155,9 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = x.State
             }).ToListAsync();
 
-            if (!string.IsNullOrEmpty(currentassetid))
+            if (!string.IsNullOrEmpty(requestParams.CurrentAssetId))
             {
-                var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == currentassetid);
+                var currentasset = await _dbContext.Assets.Include(x => x.Category).FirstOrDefaultAsync(x => x.AssetId == requestParams.CurrentAssetId);
                 if (currentasset == null)
                 {
                     throw new Exception("Repository | Have not asset");
@@ -171,33 +171,10 @@ namespace RookieOnlineAssetManagement.Repositories
                 };
                 list.Add(currentassetmodel);
             }
-
-            if (AssetIdSort.HasValue)
-            {
-                if (AssetIdSort.Value == SortBy.ASC)
-                    list = list.OrderBy(x => x.AssetId).ToList();
-                else
-                    list = list.OrderByDescending(x => x.AssetId).ToList();
-            }
-            else if (AssetNameSort.HasValue)
-            {
-                if (AssetNameSort.Value == SortBy.ASC)
-                    list = list.OrderBy(x => x.AssetName).ToList();
-                else
-                    list = list.OrderByDescending(x => x.AssetName).ToList();
-            }
-            else if (CategoryNameSort.HasValue)
-            {
-                if (CategoryNameSort.Value == SortBy.ASC)
-                    list = list.OrderBy(x => x.CategoryName).ToList();
-                else
-                    list = list.OrderByDescending(x => x.CategoryName).ToList();
-            }
-            else
-            {
-                list = list.OrderBy(x => x.AssetId).ToList();
-            }
-            return list;
+            var q = list.AsQueryable();
+            q = this.SortData<AssetModel, AssetAssignmentRequestParams>(q, requestParams);
+            var finalList = q.ToList();
+            return finalList;
         }
         public async Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId)
         {

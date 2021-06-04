@@ -253,23 +253,8 @@ namespace RookieOnlineAssetManagement.Repositories
             var queryable = _dbContext.Assignments.Where(x => x.LocationId == myAssignmentRequestParams.LocationId && x.UserId == myAssignmentRequestParams.UserId).AsQueryable();
             queryable = queryable.Include(x => x.Asset).ThenInclude(x => x.Category);
             queryable = queryable.Where(x => x.AssignedDate.Value.Date <= DateTime.Now.Date);
-            queryable = queryable.Where(x => x.State == (int)StateAssignment.Accepted || x.State == (int)StateAssignment.WaitingForAcceptance);
-            //sort
-            var q = queryable.Select(x => new MyAssigmentModel
-            {
-                AssignmentId = x.AssignmentId,
-                UserId = x.UserId,
-                AssignedTo = x.AssignTo,
-                AssetId = x.AssetId,
-                AdminId = x.AdminId,
-                AssignedBy = x.AssignBy,
-                LocationId = x.LocationId,
-                AssetName = x.AssetName,
-                AssignedDate = x.AssignedDate,
-                State = x.State,
-                CategoryName = x.Asset.Category.CategoryName
-            });
-            q = this.SortData<MyAssigmentModel, MyAssignmentRequestParams>(q, myAssignmentRequestParams);
+            queryable = queryable.Where(x => x.State == (int)StateAssignment.Accepted || x.State == (int)StateAssignment.WaitingForAcceptance);           
+            
             var list = await queryable.Include(x => x.ReturnRequest).ToListAsync();
             var AssignmentList = new List<MyAssigmentModel>();
             foreach (var x in list)
@@ -299,7 +284,9 @@ namespace RookieOnlineAssetManagement.Repositories
                     AssignmentList.Add(AssignmentModel);
                 }
             }
-            return AssignmentList;
+            var q = AssignmentList.AsQueryable();
+            q = this.SortData<MyAssigmentModel, MyAssignmentRequestParams>(q, myAssignmentRequestParams);
+            return q.ToList();
         }
 
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
