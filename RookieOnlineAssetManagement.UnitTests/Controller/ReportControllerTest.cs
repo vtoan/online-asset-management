@@ -22,6 +22,27 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
             _fixture.CreateDatabase();
         }
         [Fact]
+        public async Task ExportReport_Success()
+        {
+            var HttpContext = new DefaultHttpContext();
+            Mock<ISession> sessionMock = new Mock<ISession>();
+            var mockService = new Mock<IReportService>();
+            List<ReportModel> collection = new List<ReportModel>();
+            mockService.Setup(x => x.ExportReportAsync(It.IsAny<ReportRequestParams>())).ReturnsAsync(collection);
+            var Request = new ReportRequestParams();
+            var controller = new ReportsController(mockService.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = HttpContext,
+                }
+            };
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            controller.ControllerContext.HttpContext.Session = sessionMock.Object;
+            var result = await controller.ExportAsync(Request);
+            Assert.Null(result);
+        }
+        [Fact]
         public async Task GetListReport_Success()
         {
             var HttpContext = new DefaultHttpContext();
