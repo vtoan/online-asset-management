@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Utils;
 
@@ -16,6 +17,7 @@ namespace RookieOnlineAssetManagement.Repositories
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<User> _userManager;
+        private RepoException e = new RepoException();
         public UserRepository(ApplicationDbContext dbContext, UserManager<User> userManager)
         {
             _dbContext = dbContext;
@@ -27,7 +29,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequestParmas.LocationId);
             if (location == null)
             {
-                throw new Exception("Repository | Have not this location");
+                throw e.LocationException();
             }
             var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.LocationId);
             if (!string.IsNullOrEmpty(userRequestParmas.Query))
@@ -110,17 +112,17 @@ namespace RookieOnlineAssetManagement.Repositories
             var user = await _dbContext.Users.Where(item => item.Id == id).Include(item => item.Location).FirstOrDefaultAsync();
             if (user == null)
             {
-                throw new Exception("Repository | Have not this user");
+                throw e.UserException();
             }
             var userRole = await _dbContext.UserRoles.Where(item => item.UserId == user.Id).FirstOrDefaultAsync();
             if (userRole == null)
             {
-                throw new Exception("Repository | Have not user role");
+                throw e.UserRoleException();
             }
             var role = await _dbContext.Roles.Where(item => item.Id == userRole.RoleId).FirstOrDefaultAsync();
             if (role == null)
             {
-                throw new Exception("Repository | Have not role");
+                throw e.RoleException();
             }
             var userdetail = new UserDetailModel
             {
@@ -145,7 +147,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequest.LocationId);
             if (location == null)
             {
-                throw new Exception("Repository | Have not this location");
+                throw e.LocationException();
             }
             string username = userRequest.FirstName.ToLower();
             var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
@@ -218,7 +220,7 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             catch
             {
-                throw new Exception("Repository | Create user fail");
+                throw e.CreateUserException();
             }
         }
 
@@ -227,22 +229,22 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequest.LocationId);
             if (location == null)
             {
-                throw new Exception("Repository | Have not this location");
+                throw e.LocationException();
             }
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                throw new Exception("Repository | Have not this user");
+                throw e.LocationException();
             }
             if (user.FirstName != userRequest.FirstName || user.LastName != userRequest.LastName)
             {
-                throw new Exception("Repository | First name or Last name is not valid");
+                throw e.UseNamerException();
             }
             // user.Id = userRequest.UserId;
             var checkrole = await _dbContext.Roles.FirstOrDefaultAsync(x => x.NormalizedName == userRequest.Type.ToString().ToUpper());
             if (checkrole == null)
             {
-                throw new Exception("Repository | Have not this role");
+                throw e.RoleException();
             }
             var role = userRequest.Type.ToString();
             user.DateOfBirth = userRequest.DateOfBirth.Value;
@@ -264,7 +266,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 };
                 return usermodel;
             }
-            throw new Exception("Repository | Update user fail");
+            throw e.UpdateUserxception();
         }
 
         public async Task<bool> DisableUserAsync(string id)
@@ -272,7 +274,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                throw new Exception("Repository | Have not this user");
+                throw e.LocationException();
             }
             var assignments = await _dbContext.Assignments.Where(x => x.UserId == id).ToListAsync();
             if (assignments.Count > 0)
@@ -281,7 +283,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 {
                     if (assignments[i].State == (int)StateAssignment.Accepted)
                     {
-                        throw new Exception("Repository | Have not this assignment");
+                        throw e.AssignmentException();
                     }
                 }
                 
