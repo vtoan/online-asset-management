@@ -13,18 +13,16 @@ namespace RookieOnlineAssetManagement.Services
     public class AssignmentService : IAssignmentService
     {
         private readonly IAssignmentRepository _assignmentRepository;
-        private ServiceException e;
         public AssignmentService(IAssignmentRepository assignmentRepository)
         {
-            _assignmentRepository = assignmentRepository;
-            e = new ServiceException();
+            _assignmentRepository = assignmentRepository;        
         }
         public async Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel)
         {
             var checkassigneddate = DateTimeHelper.CheckDateGreaterThan(DateTime.Now, assignmentRequestModel.AssignedDate.Value);
             if (checkassigneddate == false)
             {
-                throw e.CompareDateAssignedException();
+                throw new ServiceException("Assigned Date is smaller than Today");
             }
             return await _assignmentRepository.CreateAssignmentAsync(assignmentRequestModel);
         }
