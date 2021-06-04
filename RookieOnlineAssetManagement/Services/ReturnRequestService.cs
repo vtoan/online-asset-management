@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Extensions;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Utils;
@@ -12,9 +13,11 @@ namespace RookieOnlineAssetManagement.Services
     public class ReturnRequestService : IReturnRequestService
     {
         private readonly IReturnRequestRepository _returnRequestRepository;
+        private ServiceException e;
         public ReturnRequestService(IReturnRequestRepository returnRequestRepository)
         {
             _returnRequestRepository = returnRequestRepository;
+            e = new ServiceException();
         }
         public async Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId)
         {
@@ -30,11 +33,11 @@ namespace RookieOnlineAssetManagement.Services
             {
                 var checkDate = DateTimeHelper.IsDateTime(returnRequestParams.ReturnedDate);
                 if (checkDate == false)
-                    throw new Exception("Return date not valid !");
+                    throw e.ReturnDateNotValidException();
             }
             if (returnRequestParams.Page < 0 || returnRequestParams.PageSize < 0)
             {
-                throw new Exception("Page and Page size not valid !");
+                throw e.PageException();
             }
             return await _returnRequestRepository.GetListReturnRequestAsync(returnRequestParams);
         }
