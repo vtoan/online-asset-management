@@ -1,4 +1,5 @@
 ﻿using RookieOnlineAssetManagement.Enums;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Utils;
@@ -12,16 +13,18 @@ namespace RookieOnlineAssetManagement.Services
     public class AssignmentService : IAssignmentService
     {
         private readonly IAssignmentRepository _assignmentRepository;
+        private ServiceException e;
         public AssignmentService(IAssignmentRepository assignmentRepository)
         {
             _assignmentRepository = assignmentRepository;
+            e = new ServiceException();
         }
         public async Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel)
         {
             var checkassigneddate = DateTimeHelper.CheckDateGreaterThan(DateTime.Now, assignmentRequestModel.AssignedDate.Value);
             if (checkassigneddate == false)
             {
-                throw new Exception("Assigned Date is smaller than Today");
+                throw e.CompareDateAssignedException();
             }
             return await _assignmentRepository.CreateAssignmentAsync(assignmentRequestModel);
         }
