@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class AssignmentRepository: BaseRepository,IAssignmentRepository
+    public class AssignmentRepository : BaseRepository, IAssignmentRepository
     {
         private readonly ApplicationDbContext _dbContext;
         private RepoException e;
@@ -23,15 +23,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel)
         {
+            await this.LocationIsExist(_dbContext, assignmentRequestModel.LocationId);
             var returnrequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentRequestModel.AssignmentId);
             if (returnrequest != null)
             {
                 throw e.RetuenRequestExistsException();
-            }
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestModel.LocationId);
-            if (location == null)
-            {
-                throw e.LocationException();
             }
             var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
             if (AssignToUserId == null)
@@ -67,13 +63,12 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = (int)StateAssignment.WaitingForAcceptance,
             };
             using var transaction = _dbContext.Database.BeginTransaction();
+
             try
             {
                 Asset.State = (short)StateAsset.Assigned;
-
                 var create = _dbContext.Assignments.Add(assignment);
                 var result = await _dbContext.SaveChangesAsync();
-
                 if (result > 0)
                 {
                     var assignmentmodel = new AssignmentModel
@@ -101,15 +96,10 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 throw e.CreateAssignmentException();
             }
-            
         }
         public async Task<AssignmentModel> UpdateAssignmentAsync(string id, AssignmentRequestModel assignmentRequestModel)
         {
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestModel.LocationId);
-            if (location == null)
-            {
-                throw e.LocationException();
-            }
+            await this.LocationIsExist(_dbContext, assignmentRequestModel.LocationId);
             if (!assignmentRequestModel.State.Equals((int)StateAssignment.WaitingForAcceptance))
             {
                 throw e.SateAsignmentException();
@@ -164,7 +154,7 @@ namespace RookieOnlineAssetManagement.Repositories
             assignment.Note = assignmentRequestModel.Note;
             if (assignment.AssignedDate != assignmentRequestModel.AssignedDate)
             {
-                if(DateTimeHelper.CheckDateGreaterThan(DateTime.Now,assignmentRequestModel.AssignedDate.Value)==false)
+                if (DateTimeHelper.CheckDateGreaterThan(DateTime.Now, assignmentRequestModel.AssignedDate.Value) == false)
                 {
                     throw e.CheckDateAssignmentException();
                 }
@@ -262,49 +252,27 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(MyAssignmentRequestParams myAssignmentRequestParams)
         {
+            await this.LocationIsExist(_dbContext, myAssignmentRequestParams.LocationId);
             var queryable = _dbContext.Assignments.Where(x => x.LocationId == myAssignmentRequestParams.LocationId && x.UserId == myAssignmentRequestParams.UserId).AsQueryable();
             queryable = queryable.Include(x => x.Asset).ThenInclude(x => x.Category);
             queryable = queryable.Where(x => x.AssignedDate.Value.Date <= DateTime.Now.Date);
             queryable = queryable.Where(x => x.State == (int)StateAssignment.Accepted || x.State == (int)StateAssignment.WaitingForAcceptance);
-            if (myAssignmentRequestParams.SortAssetId.HasValue)
+            //sort
+            var q = queryable.Select(x => new MyAssigmentModel
             {
-                if (myAssignmentRequestParams.SortAssetId.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssetId);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssetId);
-            }
-            else if (myAssignmentRequestParams.SortAssetName.HasValue)
-            {
-                if (myAssignmentRequestParams.SortAssetName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssetName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssetName);
-            }
-            else if (myAssignmentRequestParams.SortCategoryName.HasValue)
-            {
-                if (myAssignmentRequestParams.SortCategoryName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Asset.Category.CategoryName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Asset.Category.CategoryName);
-            }
-            else if(myAssignmentRequestParams.SortAssignedDate.HasValue)
-            {
-                if (myAssignmentRequestParams.SortAssignedDate.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssignedDate);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignedDate);
-            }
-            else if(myAssignmentRequestParams.SortState.HasValue)
-            {
-                if (myAssignmentRequestParams.SortState.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.State);
-                else
-                    queryable = queryable.OrderByDescending(x => x.State);
-            }
-            else
-            {
-                queryable = queryable.OrderBy(x => x.AssetId);
-            }
+                AssignmentId = x.AssignmentId,
+                UserId = x.UserId,
+                AssignedTo = x.AssignTo,
+                AssetId = x.AssetId,
+                AdminId = x.AdminId,
+                AssignedBy = x.AssignBy,
+                LocationId = x.LocationId,
+                AssetName = x.AssetName,
+                AssignedDate = x.AssignedDate,
+                State = x.State,
+                CategoryName = x.Asset.Category.CategoryName
+            });
+            q = this.SortData<MyAssigmentModel, MyAssignmentRequestParams>(q, myAssignmentRequestParams);
             var list = await queryable.Include(x => x.ReturnRequest).ToListAsync();
             var AssignmentList = new List<MyAssigmentModel>();
             foreach (var x in list)
@@ -336,6 +304,7 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             return AssignmentList;
         }
+
         public async Task<(ICollection<AssignmentModel> Datas, int TotalPage, int TotalItem)> GetListAssignmentAsync(AssignmentRequestParams assignmentRequestParams)
         {
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestParams.LocationId);
@@ -362,50 +331,9 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 queryable = queryable.Where(x => x.AssetId.Contains(assignmentRequestParams.Query) || x.AssetName.Contains(assignmentRequestParams.Query) || x.AssignTo.Contains(assignmentRequestParams.Query));
             }
-            if (assignmentRequestParams.SortAssetId.HasValue)
-            {
-                if (assignmentRequestParams.SortAssetId.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssetId);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssetId);
-            }
-            else if (assignmentRequestParams.SortAssetName.HasValue)
-            {
-                if (assignmentRequestParams.SortAssetName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssetName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssetName);
-            }
-            else if (assignmentRequestParams.SortAssignedBy.HasValue)
-            {
-                if (assignmentRequestParams.SortAssignedBy.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssignBy);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignBy);
-            }
-            else if (assignmentRequestParams.SortAssignedTo.HasValue)
-            {
-                if (assignmentRequestParams.SortAssignedTo.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssignTo);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignTo);
-            }
-            else if (assignmentRequestParams.SortAssignedDate.HasValue)
-            {
-                if (assignmentRequestParams.SortAssignedDate.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssignedDate);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignedDate);
-            }
-            else if (assignmentRequestParams.SortState.HasValue)
-            {
-                if (assignmentRequestParams.SortState.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.State);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssignTo);
-            }
-            var totalitem = queryable.Count();
-
+            //sort
+            queryable = this.SortData<Assignment, AssignmentRequestParams>(queryable, assignmentRequestParams);
+            //paging
             var result = Paging<Assignment>(queryable, assignmentRequestParams.PageSize, assignmentRequestParams.Page);
             var list = await result.Sources.Include(x => x.ReturnRequest).ToListAsync();
             var AssignmentList = new List<AssignmentModel>();
@@ -435,12 +363,12 @@ namespace RookieOnlineAssetManagement.Repositories
                     AssignmentList.Add(AssignmentModel);
                 }
             }
-            return (AssignmentList, result.TotalPage, totalitem);
+            return (AssignmentList, result.TotalPage, result.TotalItem);
         }
         public async Task<AssignmentDetailModel> GetAssignmentById(string id)
         {
             var assignment = await _dbContext.Assignments.Include(x => x.Asset).Include(x => x.Location).Include(x => x.User).FirstOrDefaultAsync(x => x.AssignmentId == id);
-            if(assignment == null)
+            if (assignment == null)
             {
                 return null;
             }

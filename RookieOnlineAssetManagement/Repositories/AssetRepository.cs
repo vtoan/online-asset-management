@@ -4,6 +4,7 @@ using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
 using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
+using RookieOnlineAssetManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +23,11 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<AssetModel> CreateAssetAsync(AssetRequestModel assetRequest)
         {
+            await this.LocationIsExist(_dbContext, assetRequest.LocationId);
             var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryId == assetRequest.CategoryId);
             if (category == null)
             {
                 throw e.CaterogytException();
-            }
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assetRequest.LocationId);
-            if (location == null)
-            {
-                throw e.LocationException();
             }
             assetRequest.AssetId = category.ShortName + (100000 + category.NumIncrease + 1).ToString();
             var asset = new Asset
@@ -43,7 +40,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 State = assetRequest.State,
                 LocationId = assetRequest.LocationId
             };
-            
+
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
@@ -112,11 +109,8 @@ namespace RookieOnlineAssetManagement.Repositories
         }
         public async Task<(ICollection<AssetModel> Datas, int TotalPage)> GetListAssetAsync(AssetRequestParams assetRequestParams)
         {
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assetRequestParams.LocationId);
-            if(location==null)
-            {
-                throw e.LocationException();
-            }
+            await this.LocationIsExist(_dbContext, assetRequestParams.LocationId);
+            //filter
             var queryable = _dbContext.Assets.Include(x => x.Category).AsQueryable();
             queryable = queryable.Where(x => x.LocationId == assetRequestParams.LocationId);
             if (assetRequestParams.State != null)
@@ -131,43 +125,17 @@ namespace RookieOnlineAssetManagement.Repositories
             if (!string.IsNullOrEmpty(assetRequestParams.Query))
                 queryable = queryable.Where(x => x.AssetId.Contains(assetRequestParams.Query) || x.AssetName.Contains(assetRequestParams.Query));
             //sort
-            if (assetRequestParams.SortCode.HasValue)
-            {
-                if (assetRequestParams.SortCode.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssetId);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssetId);
-            }
-            else if (assetRequestParams.SortName.HasValue)
-            {
-                if (assetRequestParams.SortName.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.AssetName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.AssetName);
-            }
-            else if (assetRequestParams.SortCate.HasValue)
-            {
-                if (assetRequestParams.SortCate.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.Category.CategoryName);
-                else
-                    queryable = queryable.OrderByDescending(x => x.Category.CategoryName);
-            }
-            else if (assetRequestParams.SortState.HasValue)
-            {
-                if (assetRequestParams.SortState.Value == SortBy.ASC)
-                    queryable = queryable.OrderBy(x => x.State);
-                else
-                    queryable = queryable.OrderByDescending(x => x.State);
-            }
-
-            var result = Paging<Asset>(queryable, assetRequestParams.PageSize, assetRequestParams.Page);
-            var list = await result.Sources.Select(x => new AssetModel
+            var q = queryable.Select(x => new AssetModel()
             {
                 AssetId = x.AssetId,
                 AssetName = x.AssetName,
                 CategoryName = x.Category.CategoryName,
                 State = x.State
-            }).ToListAsync();
+            });
+            q = this.SortData<AssetModel, AssetRequestParams>(q, assetRequestParams);
+            //paging
+            var result = this.Paging<AssetModel>(q, assetRequestParams.PageSize, assetRequestParams.Page);
+            var list = await result.Sources.ToListAsync();
             return (list, result.TotalPage);
         }
         public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currentassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)

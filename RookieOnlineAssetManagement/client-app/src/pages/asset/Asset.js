@@ -53,12 +53,17 @@ export default function Asset(props) {
   }, []);
 
   const _fetchData = () => {
-    http.get("/api/asset" + _createQuery(params)).then((resp) => {
-      setAssets(resp.data);
-      let totalPages = resp.headers["total-pages"];
-      setTotalPages(totalPages > 0 ? totalPages : 0);
-      setPageCurrent(params.page);
-    });
+    http
+      .get("/api/asset" + _createQuery(params))
+      .then((resp) => {
+        setAssets(resp.data);
+        let totalPages = resp.headers["total-pages"];
+        setTotalPages(totalPages > 0 ? totalPages : 0);
+        setPageCurrent(params.page);
+      })
+      .catch((err) => {
+        setAssets([]);
+      });
   };
 
   const handleChangePage = (page) => {

@@ -26,74 +26,22 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<(ICollection<UserModel> Datas, int TotalPage)> GetListUserAsync(UserRequestParmas userRequestParmas)
         {
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequestParmas.LocationId);
-            if (location == null)
-            {
-                throw e.LocationException();
-            }
+            await this.LocationIsExist(_dbContext, userRequestParmas.LocationId);
+            //fliter
             var queryable = _dbContext.Users.Where(item => item.LocationId == userRequestParmas.LocationId);
             if (!string.IsNullOrEmpty(userRequestParmas.Query))
             {
                 queryable = queryable.Where(x => x.StaffCode.Contains(userRequestParmas.Query) || x.UserName.Contains(userRequestParmas.Query) || x.FirstName.Contains(userRequestParmas.Query) || x.LastName.Contains(userRequestParmas.Query));
             }
             queryable = queryable.Where(x => x.LockoutEnabled == false);
-            if (userRequestParmas.SortCode != null)
-                switch (userRequestParmas.SortCode)
-                {
-                    case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.StaffCode);
-                        break;
-                    case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.StaffCode);
-                        break;
-                }
-            if (userRequestParmas.SortFullName.HasValue)
-            {
-                switch (userRequestParmas.SortFullName)
-                {
-                    case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
-                        break;
-                    case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.FirstName).ThenBy(x => x.LastName);
-                        break;
-                }
-            }
-            else if (userRequestParmas.SortDate.HasValue)
-            {
-                switch (userRequestParmas.SortDate)
-                {
-                    case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.JoinedDate);
-                        break;
-                    case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.JoinedDate);
-                        break;
-                }
-            }
-            //include role
             queryable.Include(item => item.Roles);
-
             if (userRequestParmas.Type?.Length > 0)
             {
                 var stringType = userRequestParmas.Type.Select(x => x.ToString()).ToArray();
                 queryable = queryable.Where(x => x.Roles.Any(r => stringType.Contains(r.NormalizedName)));
             }
-            if (userRequestParmas.SortType.HasValue)
-            {
-                switch (userRequestParmas.SortType)
-                {
-                    case SortBy.ASC:
-                        queryable = queryable.OrderBy(item => item.Roles.First());
-                        break;
-                    case SortBy.DESC:
-                        queryable = queryable.OrderByDescending(item => item.Roles.First());
-                        break;
-                }
-            }
-
-            var result = Paging<User>(queryable, userRequestParmas.PageSize, userRequestParmas.Page);
-            var list = await result.Sources.Select(x => new UserModel
+            //sort
+            var q = queryable.Select(x => new UserModel
             {
                 UserId = x.Id,
                 StaffCode = x.StaffCode,
@@ -103,7 +51,24 @@ namespace RookieOnlineAssetManagement.Repositories
                 RoleName = x.Roles.First().NormalizedName,
                 Status = x.LockoutEnabled
 
-            }).ToListAsync();
+            });
+            q = this.SortData<UserModel, UserRequestParmas>(q, userRequestParmas);
+            // if (userRequestParmas.SortFullName.HasValue)
+            // {
+            //     switch (userRequestParmas.SortFullName)
+            //     {
+            //         case SortBy.ASC:
+            //             queryable = queryable.OrderBy(item => item.FirstName).ThenBy(x => x.LastName);
+            //             break;
+            //         case SortBy.DESC:
+            //             queryable = queryable.OrderByDescending(item => item.FirstName).ThenBy(x => x.LastName);
+            //             break;
+            //     }
+            // }
+            //include role
+            //paging
+            var result = Paging<UserModel>(q, userRequestParmas.PageSize, userRequestParmas.Page);
+            var list = await result.Sources.ToListAsync();
             return (list, result.TotalPage);
         }
 
@@ -114,12 +79,12 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 throw e.UserException();
             }
-            var userRole = await _dbContext.UserRoles.Where(item => item.UserId == user.Id).FirstOrDefaultAsync();
+            var userRole = await _dbContext.UserRoles.FirstOrDefaultAsync(item => item.UserId == user.Id);
             if (userRole == null)
             {
                 throw e.UserRoleException();
             }
-            var role = await _dbContext.Roles.Where(item => item.Id == userRole.RoleId).FirstOrDefaultAsync();
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(item => item.Id == userRole.RoleId);
             if (role == null)
             {
                 throw e.RoleException();
@@ -144,11 +109,7 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<UserModel> CreateUserAsync(UserRequestModel userRequest)
         {
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequest.LocationId);
-            if (location == null)
-            {
-                throw e.LocationException();
-            }
+            await this.LocationIsExist(_dbContext, userRequest.LocationId);
             string username = userRequest.FirstName.ToLower();
             var firstChars = userRequest.LastName.Split(' ').Select(s => s[0]).ToArray();
             string prefix = new string(firstChars).ToLower();
@@ -158,7 +119,6 @@ namespace RookieOnlineAssetManagement.Repositories
             int number = _dbContext.UserExtensions.Sum(x => x.NumIncrease) + 1;
 
             var usermodel = new UserModel();
-
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
@@ -177,7 +137,6 @@ namespace RookieOnlineAssetManagement.Repositories
                     username = username + UserExtension.NumIncrease.ToString();
                     UserExtension.NumIncrease = (short)(UserExtension.NumIncrease + 1);
                 }
-
                 // var password = username + "@" + userRequest.DateOfBirth.Value.ToString("ddMMyyyy");
                 var password = AccountHelper.GenerateAccountPass(username, userRequest.DateOfBirth.Value);
                 var role = userRequest.Type.ToString();
@@ -226,11 +185,7 @@ namespace RookieOnlineAssetManagement.Repositories
 
         public async Task<UserModel> UpdateUserAsync(string id, UserRequestModel userRequest)
         {
-            var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == userRequest.LocationId);
-            if (location == null)
-            {
-                throw e.LocationException();
-            }
+            await this.LocationIsExist(_dbContext, userRequest.LocationId);
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
@@ -286,7 +241,6 @@ namespace RookieOnlineAssetManagement.Repositories
                         throw e.AssignmentException();
                     }
                 }
-                
             }
             var createResultLockend = await _userManager.SetLockoutEnabledAsync(user, true);
             if (!createResultLockend.Succeeded)
@@ -294,19 +248,16 @@ namespace RookieOnlineAssetManagement.Repositories
                 return false;
             }
             await _userManager.SetLockoutEndDateAsync(user, DateTime.MaxValue);
-            // user.LockoutEnabled = true;
-            // user.LockoutEnd = DateTime.MaxValue;
-            var result = await _dbContext.SaveChangesAsync();
-
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
         private async Task _changeRoleUserAsync(string userId, TypeUser typeUser)
         {
             if (typeUser == 0) return;
-            var role = await _dbContext.Roles.Where(item => item.NormalizedName == typeUser.ToString()).FirstOrDefaultAsync();
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(item => item.NormalizedName == typeUser.ToString());
             if (role == null) return;
-            var roleUser = await _dbContext.UserRoles.Where(item => item.UserId == userId).FirstOrDefaultAsync();
+            var roleUser = await _dbContext.UserRoles.FirstOrDefaultAsync(item => item.UserId == userId);
             if (roleUser != null)
                 _dbContext.UserRoles.Remove(roleUser);
             _dbContext.UserRoles.Add(new IdentityUserRole<string>() { UserId = userId, RoleId = role.Id });

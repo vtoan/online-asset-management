@@ -60,12 +60,17 @@ export default function User() {
   }, []);
 
   const _fetchData = () => {
-    http.get("/api/users" + _createQuery(params)).then((resp) => {
-      setUser(resp.data);
-      let totalPages = resp.headers["total-pages"];
-      setTotalPages(totalPages > 0 ? totalPages : 0);
-      setPageCurrent(params.page);
-    });
+    http
+      .get("/api/users" + _createQuery(params))
+      .then((resp) => {
+        setUser(resp.data);
+        let totalPages = resp.headers["total-pages"];
+        setTotalPages(totalPages > 0 ? totalPages : 0);
+        setPageCurrent(params.page);
+      })
+      .catch((err) => {
+        setUser([]);
+      });
   };
 
   //handleClick
