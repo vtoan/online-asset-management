@@ -10,10 +10,9 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository  :ICategoryRepository
     {
         public readonly ApplicationDbContext _dbContext;
-        private RepoException e = new RepoException();
         public CategoryRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -23,12 +22,12 @@ namespace RookieOnlineAssetManagement.Repositories
             var CateNameRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryName == category.CategoryName);
             if (CateNameRepo != null)
             {
-                throw e.CateNameException();
+                throw new RepoException("Category Name is used");
             }
             var CatePrefixRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.ShortName == category.ShortName);
             if(CatePrefixRepo!=null)
             {
-                throw e.CatePrefixException();
+                throw new RepoException("Prefix is used");
             }
             category.CategoryId = Guid.NewGuid().ToString();
             category.ShortName = category.ShortName.ToUpper();
@@ -45,7 +44,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return category;
             }
-            throw e.CreateCateException();
+            throw new RepoException("Create category fail");
         }
 
         public async Task<ICollection<CategoryModel>> GetListCategoryAsync()
