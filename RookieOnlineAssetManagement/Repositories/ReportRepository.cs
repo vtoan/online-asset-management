@@ -25,7 +25,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId ==reportRequestParams.LocationId);
             if (location == null)
             {
-                throw e.LocationException();
+                throw new RepoException("Have not this location");
             }
 
             var queryable = _dbContext.Assets
@@ -98,7 +98,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == reportParams.LocationId);
             if (location == null)
             {
-                throw e.LocationException();
+                throw new RepoException("Have not this location");
             }
 
             var queryable = _dbContext.Assets
