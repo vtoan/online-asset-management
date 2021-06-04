@@ -13,11 +13,9 @@ namespace RookieOnlineAssetManagement.Services
     public class ReturnRequestService : IReturnRequestService
     {
         private readonly IReturnRequestRepository _returnRequestRepository;
-        private ServiceException e;
         public ReturnRequestService(IReturnRequestRepository returnRequestRepository)
         {
             _returnRequestRepository = returnRequestRepository;
-            e = new ServiceException();
         }
         public async Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId)
         {
@@ -33,11 +31,11 @@ namespace RookieOnlineAssetManagement.Services
             {
                 var checkDate = DateTimeHelper.IsDateTime(returnRequestParams.ReturnedDate);
                 if (checkDate == false)
-                    throw e.ReturnDateNotValidException();
+                    throw new ServiceException("Return date not valid !");
             }
             if (returnRequestParams.Page < 0 || returnRequestParams.PageSize < 0)
             {
-                throw e.PageException();
+                throw new ServiceException("Page and Page size not valid !");
             }
             return await _returnRequestRepository.GetListReturnRequestAsync(returnRequestParams);
         }
