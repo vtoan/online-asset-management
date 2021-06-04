@@ -8,6 +8,8 @@ import NSConfirmModal, {
 } from "../../common/NSConfirmModal.js";
 import { _createQuery } from "../../ultis/helper";
 import { useNSModals } from "../../containers/ModalContainer.js";
+import { saveAs } from "file-saver";
+import { formatDate } from "../../ultis/helper";
 
 let params = {};
 
@@ -80,9 +82,14 @@ export default function Report() {
       onSubmit: (item) => {
         modalLoading.show();
         http
-          .post("/api/reports" + _createQuery(params))
-          .then((resp) => {})
+          .get("/api/reports/export" + _createQuery(params), {
+            responseType: "blob",
+          })
+          .then((resp) => {
+            saveAs(resp.data, "report_" + formatDate(Date.now()));
+          })
           .catch((err) => {
+            console.log(err);
             modalAlert.show({
               title: "Can't export report",
               msg: err.msg,

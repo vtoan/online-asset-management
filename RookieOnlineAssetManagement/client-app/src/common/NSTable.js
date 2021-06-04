@@ -46,6 +46,16 @@ export default function NSTable({
     setPageCurrent(page);
   };
 
+  const handlePrevPage = () => {
+    let prevPage = pageSelected - 1;
+    if (prevPage >= 1) handleChangePage(prevPage);
+  };
+
+  const handleNextPage = () => {
+    let nextPage = pageSelected + 1;
+    if (nextPage <= totalPages) handleChangePage(nextPage);
+  };
+
   const pageItems = [];
   if (totalPages > 1)
     for (let i = 1; i <= totalPages; i++) {
@@ -122,12 +132,12 @@ export default function NSTable({
       </Table>
       {!isLoading && datas?.length > 0 && totalPages > 1 && (
         <Pagination listClassName="justify-content-end">
-          <PaginationItem>
-            <PaginationLink href="#" children="Prev" />
+          <PaginationItem onClick={handlePrevPage}>
+            <PaginationLink children="Prev" />
           </PaginationItem>
           {pageItems}
-          <PaginationItem>
-            <PaginationLink href="#" children="Next" />
+          <PaginationItem onClick={handleNextPage}>
+            <PaginationLink children="Next" />
           </PaginationItem>
         </Pagination>
       )}
