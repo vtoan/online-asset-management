@@ -15,11 +15,9 @@ namespace RookieOnlineAssetManagement.Repositories
     public class AssignmentRepository : BaseRepository, IAssignmentRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        private RepoException e;
         public AssignmentRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            e = new RepoException();
         }
         public async Task<AssignmentModel> CreateAssignmentAsync(AssignmentRequestModel assignmentRequestModel)
         {
@@ -27,26 +25,26 @@ namespace RookieOnlineAssetManagement.Repositories
             var returnrequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentRequestModel.AssignmentId);
             if (returnrequest != null)
             {
-                throw e.RetuenRequestExistsException();
+                throw new RepoException("Return request have exists");
             }
             var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
             if (AssignToUserId == null)
             {
-                throw e.AssignToUserException();
+                throw new RepoException("Have not this Assign To User");
             }
             var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
             if (AssignByAdminId == null)
             {
-                throw e.AssignByAdminException();
+                throw new RepoException("Have not this Assign By Admin");
             }
             var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
             if (Asset == null)
             {
-                throw e.AssetException();
+                throw new RepoException("Have not this asse");
             }
             if (Asset.State != (short)StateAsset.Avaiable)
             {
-                throw e.NotAvailableException();
+                throw new RepoException(" This asset is not available");
             }
             var assignment = new Assignment
             {
@@ -89,12 +87,12 @@ namespace RookieOnlineAssetManagement.Repositories
                 }
                 else
                 {
-                    throw e.CreateAssignmentException();
+                    throw new RepoException("  Create assignment fail");
                 }
             }
             catch
             {
-                throw e.CreateAssignmentException();
+                throw new RepoException(" This asset is not available");
             }
         }
         public async Task<AssignmentModel> UpdateAssignmentAsync(string id, AssignmentRequestModel assignmentRequestModel)
@@ -102,20 +100,20 @@ namespace RookieOnlineAssetManagement.Repositories
             await this.LocationIsExist(_dbContext, assignmentRequestModel.LocationId);
             if (!assignmentRequestModel.State.Equals((int)StateAssignment.WaitingForAcceptance))
             {
-                throw e.SateAsignmentException();
+                throw new RepoException(" State must be waiting for acceptance");
             }
 
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
             if (assignment == null)
             {
-                throw e.AssignmentException();
+                throw new RepoException(" Have not this assignment");
             }
             if (assignment.UserId != assignmentRequestModel.UserId)
             {
                 var AssignToUserId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.UserId);
                 if (AssignToUserId == null)
                 {
-                    throw e.AssignToUserException();
+                    throw new RepoException(" Have not this Assign To User");
                 }
                 assignment.UserId = assignmentRequestModel.UserId;
                 assignment.AssignTo = AssignToUserId.UserName;
@@ -125,7 +123,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 var AssignByAdminId = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == assignmentRequestModel.AdminId);
                 if (AssignByAdminId == null)
                 {
-                    throw e.AssignByAdminException();
+                    throw new RepoException(" Have not this Assign By Admin");
                 }
                 assignment.AdminId = assignmentRequestModel.AdminId;
                 assignment.AssignBy = AssignByAdminId.UserName;
@@ -135,16 +133,16 @@ namespace RookieOnlineAssetManagement.Repositories
                 var Asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignmentRequestModel.AssetId);
                 if (Asset == null)
                 {
-                    throw e.AssetException();
+                    throw new RepoException("Have not this new asset");
                 }
                 if (Asset.State != (short)StateAsset.Avaiable)
                 {
-                    throw e.NotAvailableException();
+                    throw new RepoException(" This asset is not available");
                 }
                 var AssetOld = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
                 if (AssetOld == null)
                 {
-                    throw e.ErrorAssetException();
+                    throw new RepoException("  Have not this old asset");
                 }
                 AssetOld.State = (int)StateAsset.Avaiable;
                 Asset.State = (int)StateAsset.Assigned;
@@ -156,7 +154,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 if (DateTimeHelper.CheckDateGreaterThan(DateTime.Now, assignmentRequestModel.AssignedDate.Value) == false)
                 {
-                    throw e.CheckDateAssignmentException();
+                    throw new RepoException(" Assigned Date is smaller than Today");
                 }
                 assignment.AssignedDate = assignmentRequestModel.AssignedDate;
             }
@@ -184,11 +182,11 @@ namespace RookieOnlineAssetManagement.Repositories
                     return assignmentmodel;
                 }
                 else
-                    throw e.UpdateAssignmentException();
+                    throw new RepoException("  Update assignment fail");
             }
             catch
             {
-                throw e.UpdateAssignmentException();
+                throw new RepoException("  Update assignment fail");
             }
         }
         public async Task<bool> ChangeStateAssignmentAsync(string id, StateAssignment state)
@@ -196,7 +194,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
             if (assignment == null)
             {
-                throw e.AssignmentException();
+                throw new RepoException(" Have not this assignment");
             }
             assignment.State = (int)state;
             var result = await _dbContext.SaveChangesAsync();
@@ -204,32 +202,32 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return true;
             }
-            throw e.ChangeStateException();
+            throw new RepoException(" Change state assignment fail");
         }
         public async Task<bool> DeleteAssignmentAsync(string id)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == id);
             if (assignment == null)
             {
-                throw e.AssignmentException();
+                throw new RepoException("Have not this assignment");
             }
             if (assignment.State.Equals((int)StateAssignment.Accepted) || assignment.State.Equals((int)StateAssignment.Completed))
             {
-                throw e.NotValidException();
+                throw new RepoException(" State is not valid");
             }
             var returnrequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignment.AssignmentId);
             if (returnrequest != null)
             {
-                throw e.AssignmentSateExistsException();
+                throw new RepoException(" This assignment have a return request");
             }
             var asset = await _dbContext.Assets.FirstOrDefaultAsync(x => x.AssetId == assignment.AssetId);
             if (asset == null)
             {
-                throw e.AssetException();
+                throw new RepoException(" Have not this asset");
             }
             if (asset.State == (short)StateAsset.Assigned)
             {
-                throw e.AssetIsAssignException();
+                throw new RepoException(" This asset is Assigned");
             }
             using var transaction = _dbContext.Database.BeginTransaction();
             try
@@ -243,11 +241,11 @@ namespace RookieOnlineAssetManagement.Repositories
                     return true;
                 }
                 else
-                    throw e.DeleteAssigmentException();
+                    throw new RepoException(" Delete assignment fail");
             }
             catch
             {
-                throw e.DeleteAssigmentException();
+                throw new RepoException(" Delete assignment fail");
             }
         }
         public async Task<ICollection<MyAssigmentModel>> GetListMyAssignmentAsync(MyAssignmentRequestParams myAssignmentRequestParams)
@@ -310,7 +308,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == assignmentRequestParams.LocationId);
             if (location == null)
             {
-                throw e.LocationException();
+                throw new RepoException("  Have not this location");
             }
             var queryable = _dbContext.Assignments
                 .Include(x => x.Location)
