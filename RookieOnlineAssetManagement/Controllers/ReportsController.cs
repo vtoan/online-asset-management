@@ -24,14 +24,14 @@ namespace RookieOnlineAssetManagement.Controllers
             _reportService = reportService;
         }
         [HttpGet("export")]
-        public async Task<FileContentResult> ExportAsync([FromQuery]ReportRequestParams reportRequestParams)
+        public async Task<FileContentResult> ExportAsync([FromQuery] ReportRequestParams reportRequestParams)
         {
             reportRequestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
             var report = await _reportService.ExportReportAsync(reportRequestParams);
             return ExportFileHelper.ExportExcel(report, "Report Category", "Reports");
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync([FromQuery]ReportRequestParams reportParams)
+        public async Task<ActionResult<IEnumerable<ReportModel>>> GetListAsync([FromQuery] ReportRequestParams reportParams)
         {
             reportParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
             var result = await _reportService.GetListReportAsync(reportParams);
