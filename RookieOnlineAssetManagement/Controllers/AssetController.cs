@@ -31,19 +31,21 @@ namespace RookieOnlineAssetManagement.Controllers
             return Ok(result.Datas);
         }
         [HttpGet("assignment-asset")]
-        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListForAssignmentAsync(string currentAssetId, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
+        public async Task<ActionResult<IEnumerable<AssetModel>>> GetListForAssignmentAsync([FromQuery] AssetAssignmentRequestParams requestParams)
         {
-            var locationId = RequestHelper.GetLocationSession(HttpContext);
-            return Ok(await _assetService.GetListAssetForAssignmentAsync(currentAssetId, locationId, query, AssetIdSort, AssetNameSort, CategoryNameSort));
+            requestParams.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            return Ok(await _assetService.GetListAssetForAssignmentAsync(requestParams));
         }
         [HttpGet("history")]
         public async Task<ActionResult<IEnumerable<AssetHistoryModel>>> GetListHistoryAsync(string assetId)
         {
+            if (assetId == null) return BadRequest(null);
             return Ok(await _assetService.GetListAssetHistoryAsync(assetId));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<AssetDetailModel>> GetAsync(string id)
         {
+            if (id == null) return BadRequest(null);
             return Ok(await _assetService.GetAssetByIdAsync(id));
         }
         [HttpPost]
@@ -63,6 +65,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
+            if (id == null) return BadRequest(null);
             return Ok(await _assetService.DeleteAssetAsync(id));
         }
     }
