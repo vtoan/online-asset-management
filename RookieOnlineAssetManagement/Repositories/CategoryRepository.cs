@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,9 @@ using System.Threading.Tasks;
 
 namespace RookieOnlineAssetManagement.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository  :ICategoryRepository
     {
         public readonly ApplicationDbContext _dbContext;
-
         public CategoryRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -22,12 +22,12 @@ namespace RookieOnlineAssetManagement.Repositories
             var CateNameRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.CategoryName == category.CategoryName);
             if (CateNameRepo != null)
             {
-                throw new Exception("Repository | Category Name is used");
+                throw new RepoException("Category Name is used");
             }
             var CatePrefixRepo = await _dbContext.Categories.FirstOrDefaultAsync(x => x.ShortName == category.ShortName);
             if(CatePrefixRepo!=null)
             {
-                throw new Exception("Repository | Prefix is used");
+                throw new RepoException("Prefix is used");
             }
             category.CategoryId = Guid.NewGuid().ToString();
             category.ShortName = category.ShortName.ToUpper();
@@ -44,7 +44,7 @@ namespace RookieOnlineAssetManagement.Repositories
             {
                 return category;
             }
-            throw new Exception("Repository | Create category fail");
+            throw new RepoException("Create category fail");
         }
 
         public async Task<ICollection<CategoryModel>> GetListCategoryAsync()

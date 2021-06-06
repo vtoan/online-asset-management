@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Enums;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace RookieOnlineAssetManagement.Repositories
     public class ReportRepository :BaseRepository,IReportRepository
     {
         private readonly ApplicationDbContext _dbContext;
+        private RepoException e = new RepoException();
         public ReportRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -23,7 +25,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId ==reportRequestParams.LocationId);
             if (location == null)
             {
-                throw new Exception("Repository | Have not this location");
+                throw new RepoException("Have not this location");
             }
 
             var queryable = _dbContext.Assets
@@ -96,7 +98,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == reportParams.LocationId);
             if (location == null)
             {
-                throw new Exception("Repository | Have not this loaction");
+                throw new RepoException("Have not this location");
             }
 
             var queryable = _dbContext.Assets

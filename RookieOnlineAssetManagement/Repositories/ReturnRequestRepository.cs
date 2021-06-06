@@ -2,6 +2,7 @@
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -13,30 +14,32 @@ namespace RookieOnlineAssetManagement.Repositories
     public class ReturnRequestRepository : BaseRepository, IReturnRequestRepository
     {
         private readonly ApplicationDbContext _dbContext;
+        private RepoException e;
         public ReturnRequestRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+            e = new RepoException();
         }
         public async Task<ReturnRequestModel> CreateReturnRequestAsync(string assignmentId, string requestedUserId)
         {
             var returning = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (returning != null)
             {
-                throw new Exception("Repository | This assignment is returing");
+                throw new RepoException("This assignment is returing");
             }
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (assignment == null)
             {
-                throw new Exception("Repository | Have not this assignment");
+                throw new RepoException("Have not this assignment");
             }
             if (!assignment.State.Equals((int)StateAssignment.Accepted))
             {
-                throw new Exception("Repository | State is not valid");
+                throw new RepoException("State is not valid");
             }
             var requestedUser = await _dbContext.Users.FindAsync(requestedUserId);
             if (requestedUser == null)
             {
-                throw new Exception("Repository | Request User not exists");
+                throw new RepoException(" Request User not exists");
             }
             var returnRequest = new ReturnRequest
             {
@@ -63,23 +66,27 @@ namespace RookieOnlineAssetManagement.Repositories
                 };
                 return returnRequestModel;
             }
-            throw new Exception("Repository | Create return request fail");
+            else
+            {
+                throw new RepoException("Create return request fail");
+            }
+               
         }
         public async Task<bool> ChangeStateAsync(bool accept, string assignmentId, string acceptedUserId)
         {
             var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (assignment == null)
             {
-                throw new Exception("Repository | Have not this assignment");
+                throw new RepoException("Have not this assignment");
             }
             if (assignment.State != (int)StateAssignment.Accepted)
             {
-                throw new Exception("Repository | State must be accepted");
+                throw new RepoException(" State must be accepted");
             }
             var returnRequest = await _dbContext.ReturnRequests.FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (returnRequest.State == true)
             {
-                throw new Exception("Repository | State is completed");
+                throw new RepoException("State is completed");
             }
             using var transaction = _dbContext.Database.BeginTransaction();
             try
@@ -90,7 +97,7 @@ namespace RookieOnlineAssetManagement.Repositories
                     var acceptedUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == acceptedUserId);
                     if (acceptedUser == null)
                     {
-                        throw new Exception("Repository | Have not this accept user");
+                        throw new RepoException("Have not this accept user");
                     }
                     asset.State = (short)StateAsset.Avaiable;
                     assignment.State = (int)StateAssignment.Completed;
@@ -109,11 +116,11 @@ namespace RookieOnlineAssetManagement.Repositories
                     transaction.Commit();
                     return true;
                 }
-                throw new Exception("Repository | Change state return request fail");
+                throw new RepoException("Change state return request fail");
             }
             catch
             {
-                throw new Exception("Repository | Change state return request fail");
+                throw new RepoException("Change state return request fail");
             }
         }
         public async Task<(ICollection<ReturnRequestModel> Datas, int TotalPage, int TotalItem)> GetListReturnRequestAsync(ReturnRequestParams returnRequestParams)
@@ -123,7 +130,6 @@ namespace RookieOnlineAssetManagement.Repositories
             var queryable = _dbContext.ReturnRequests.Include(x => x.Assignment).Where(x => x.Assignment.LocationId == returnRequestParams.LocationId);
             if (returnRequestParams.StateReturnRequests != null)
             {
-                //var stateNum = Convert.ToInt32(returnRequestParams.StateReturnRequests);
                 queryable = queryable.Where(x => returnRequestParams.StateReturnRequests.Contains(x.State));
             }
             if (!string.IsNullOrEmpty(returnRequestParams.ReturnedDate))

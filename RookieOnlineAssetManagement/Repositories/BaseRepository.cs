@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Atributes;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Enums;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Utils;
 
 namespace RookieOnlineAssetManagement.Repositories
@@ -18,7 +19,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var location = await dbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == locationId);
             if (location == null)
             {
-                throw new Exception("Repository | Have not this loaction");
+                 throw new RepoException("Have not this Location");
             }
             return true;
         }

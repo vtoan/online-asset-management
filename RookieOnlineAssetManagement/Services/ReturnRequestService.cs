@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Extensions;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Repositories;
 using RookieOnlineAssetManagement.Utils;
@@ -30,11 +31,11 @@ namespace RookieOnlineAssetManagement.Services
             {
                 var checkDate = DateTimeHelper.IsDateTime(returnRequestParams.ReturnedDate);
                 if (checkDate == false)
-                    throw new Exception("Return date not valid !");
+                    throw new ServiceException("Return date not valid !");
             }
             if (returnRequestParams.Page < 0 || returnRequestParams.PageSize < 0)
             {
-                throw new Exception("Page and Page size not valid !");
+                throw new ServiceException("Page and Page size not valid !");
             }
             return await _returnRequestRepository.GetListReturnRequestAsync(returnRequestParams);
         }

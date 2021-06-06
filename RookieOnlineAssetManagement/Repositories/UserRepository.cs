@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Data;
 using RookieOnlineAssetManagement.Entities;
 using RookieOnlineAssetManagement.Enums;
+using RookieOnlineAssetManagement.Exceptions;
 using RookieOnlineAssetManagement.Models;
 using RookieOnlineAssetManagement.Utils;
 
@@ -75,17 +76,17 @@ namespace RookieOnlineAssetManagement.Repositories
             var user = await _dbContext.Users.Where(item => item.Id == id).Include(item => item.Location).FirstOrDefaultAsync();
             if (user == null)
             {
-                throw new Exception("Repository | Have not this user");
+                throw new RepoException("Have not this user");
             }
             var userRole = await _dbContext.UserRoles.FirstOrDefaultAsync(item => item.UserId == user.Id);
             if (userRole == null)
             {
-                throw new Exception("Repository | Have not user role");
+                throw new RepoException("Have not user role");
             }
             var role = await _dbContext.Roles.FirstOrDefaultAsync(item => item.Id == userRole.RoleId);
             if (role == null)
             {
-                throw new Exception("Repository | Have not role");
+                throw new RepoException(" Have not role");
             }
             var userdetail = new UserDetailModel
             {
@@ -177,7 +178,7 @@ namespace RookieOnlineAssetManagement.Repositories
             }
             catch
             {
-                throw new Exception("Repository | Create user fail");
+                throw new RepoException("Create user fail");
             }
         }
 
@@ -187,17 +188,17 @@ namespace RookieOnlineAssetManagement.Repositories
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                throw new Exception("Repository | Have not this user");
+                throw new RepoException("Have not this user");
             }
             if (user.FirstName != userRequest.FirstName || user.LastName != userRequest.LastName)
             {
-                throw new Exception("Repository | First name or Last name is not valid");
+                throw new RepoException(" First name or Last name is not valid");
             }
             // user.Id = userRequest.UserId;
             var checkrole = await _dbContext.Roles.FirstOrDefaultAsync(x => x.NormalizedName == userRequest.Type.ToString().ToUpper());
             if (checkrole == null)
             {
-                throw new Exception("Repository | Have not this role");
+                throw new RepoException("Have not this role");
             }
             var role = userRequest.Type.ToString();
             user.DateOfBirth = userRequest.DateOfBirth.Value;
@@ -219,7 +220,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 };
                 return usermodel;
             }
-            throw new Exception("Repository | Update user fail");
+            throw new RepoException(" Update user fail");
         }
 
         public async Task<bool> DisableUserAsync(string id)
@@ -227,7 +228,7 @@ namespace RookieOnlineAssetManagement.Repositories
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
-                throw new Exception("Repository | Have not this user");
+                throw new RepoException("Have not this user");
             }
             var assignments = await _dbContext.Assignments.Where(x => x.UserId == id).ToListAsync();
             if (assignments.Count > 0)
@@ -236,7 +237,7 @@ namespace RookieOnlineAssetManagement.Repositories
                 {
                     if (assignments[i].State == (int)StateAssignment.Accepted)
                     {
-                        throw new Exception("Repository | Have not this assignment");
+                        throw new RepoException("Have not this assignment");
                     }
                 }
             }
