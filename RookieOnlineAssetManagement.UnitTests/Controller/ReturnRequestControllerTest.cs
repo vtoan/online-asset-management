@@ -70,7 +70,7 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
         public async Task GetList_Success()
         {
             var HttpContext = new DefaultHttpContext();
-            //Mock<ISession> sessionMock = new Mock<ISession>();
+            Mock<ISession> sessionMock = new Mock<ISession>();
             HttpContext.Request.Headers["total-pages"] = "0";
             HttpContext.Request.Headers["total-item"] = "0";
             var mokService = new Mock<IReturnRequestService>();
@@ -88,8 +88,8 @@ namespace RookieOnlineAssetManagement.UnitTests.Controller
                     HttpContext = HttpContext,
                 }
             };
-            //controller.ControllerContext.HttpContext = new DefaultHttpContext();
-            //controller.ControllerContext.HttpContext.Session = sessionMock.Object;
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            controller.ControllerContext.HttpContext.Session = sessionMock.Object;
             var result = await controller.GetListAsync(Request);
             Assert.IsType<OkObjectResult>(result.Result);
             Assert.NotNull(result);

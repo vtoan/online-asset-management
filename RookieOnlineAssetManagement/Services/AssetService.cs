@@ -19,9 +19,9 @@ namespace RookieOnlineAssetManagement.Services
         {
             return await _assetRepository.GetListAssetAsync(assetRequestParams);
         }
-        public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(string currenassetid, string locationid, string query, SortBy? AssetIdSort, SortBy? AssetNameSort, SortBy? CategoryNameSort)
+        public async Task<ICollection<AssetModel>> GetListAssetForAssignmentAsync(AssetAssignmentRequestParams requestParams)
         {
-            return await _assetRepository.GetListAssetForAssignmentAsync(currenassetid, locationid, query, AssetIdSort, AssetNameSort, CategoryNameSort);
+            return await _assetRepository.GetListAssetForAssignmentAsync(requestParams);
         }
         public async Task<ICollection<AssetHistoryModel>> GetListAssetHistoryAsync(string assetId)
         {

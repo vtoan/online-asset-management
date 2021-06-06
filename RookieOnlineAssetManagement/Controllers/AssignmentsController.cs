@@ -27,6 +27,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [Authorize("ADMIN")]
         public async Task<ActionResult<AssignmentModel>> CreateAsync(AssignmentRequestModel assignmentRequestModel)
         {
+            if(!ModelState.IsValid) return BadRequest(assignmentRequestModel);
             assignmentRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
             assignmentRequestModel.AdminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _assignmentService.CreateAssignmentAsync(assignmentRequestModel));
@@ -35,6 +36,8 @@ namespace RookieOnlineAssetManagement.Controllers
         [Authorize("ADMIN")]
         public async Task<ActionResult<AssignmentModel>> UpdateAsync(string id, AssignmentRequestModel assignmentRequestModel)
         {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Assignment Id is not valid");
+            if (!ModelState.IsValid) return BadRequest(assignmentRequestModel);
             assignmentRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
             assignmentRequestModel.AdminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(await _assignmentService.UpdateAssignmentAsync(id, assignmentRequestModel));
@@ -42,17 +45,20 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpPut("accept/{id}")]
         public async Task<ActionResult<bool>> ChangeStateAcceptAsync(string id)
         {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Assignment Id is not valid ");
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Accepted));
         }
         [HttpPut("decline/{id}")]
         public async Task<ActionResult<bool>> ChangeStateDeclineAsync(string id)
         {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Assignment Id is not valid ");
             return Ok(await _assignmentService.ChangeStateAssignmentAsync(id, StateAssignment.Decline));
         }
         [HttpDelete("{id}")]
         [Authorize("ADMIN")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Assignment Id is not valid ");
             return Ok(await _assignmentService.DeleteAssignmentAsync(id));
         }
         [HttpGet("my-assignments")]
@@ -75,6 +81,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AssignmentDetailModel>> GetAssignmentById(string id)
         {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Assignment Id is not valid ");
             return Ok(await _assignmentService.GetAssignmentById(id));
         }
     }
