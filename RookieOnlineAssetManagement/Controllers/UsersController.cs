@@ -31,14 +31,14 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDetailModel>> GetAsync(string id)
         {
-            if (id == null) return BadRequest(null);
+            if (string.IsNullOrEmpty(id)) return BadRequest("User Id is not valid");
             return Ok(await _userSer.GetUserByIdAsync(id));
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UserModel>> UpdateAsync(string id, UserRequestModel userRequest)
         {
-            if (id == null) return BadRequest(userRequest);
+            if (string.IsNullOrEmpty(id)) return BadRequest("User Id is not valid");
             if (!ModelState.IsValid) return BadRequest(userRequest);
             userRequest.LocationId = RequestHelper.GetLocationSession(HttpContext);
             if (!ModelState.IsValid) return BadRequest(userRequest);
@@ -48,7 +48,7 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserRequestModel>> DisableAsync(string id)
         {
-            if (id == null) return BadRequest(null);
+            if (string.IsNullOrEmpty(id)) return BadRequest("User Id is not valid");
             return Ok(await _userSer.DisableUserAsync(id));
         }
 

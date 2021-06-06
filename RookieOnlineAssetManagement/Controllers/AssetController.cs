@@ -39,13 +39,13 @@ namespace RookieOnlineAssetManagement.Controllers
         [HttpGet("history")]
         public async Task<ActionResult<IEnumerable<AssetHistoryModel>>> GetListHistoryAsync(string assetId)
         {
-            if (assetId == null) return BadRequest(null);
+            if (string.IsNullOrEmpty(assetId)) return BadRequest("Asset Id is not valid");
             return Ok(await _assetService.GetListAssetHistoryAsync(assetId));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<AssetDetailModel>> GetAsync(string id)
         {
-            if (id == null) return BadRequest(null);
+            if (string.IsNullOrEmpty(id)) return BadRequest("Asset Id is not valid");
             return Ok(await _assetService.GetAssetByIdAsync(id));
         }
         [HttpPost]
@@ -59,13 +59,14 @@ namespace RookieOnlineAssetManagement.Controllers
         public async Task<ActionResult<AssetModel>> UpdateAsync(string id, AssetRequestModel assetRequestModel)
         {
             assetRequestModel.LocationId = RequestHelper.GetLocationSession(HttpContext);
+            if (string.IsNullOrEmpty(id)) return BadRequest("Asset Id is not valid");
             if (!ModelState.IsValid) return BadRequest(assetRequestModel);
             return Ok(await _assetService.UpdateAssetAsync(id, assetRequestModel));
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync(string id)
         {
-            if (id == null) return BadRequest(null);
+            if (string.IsNullOrEmpty(id)) return BadRequest("Asset Id is not valid");
             return Ok(await _assetService.DeleteAssetAsync(id));
         }
     }
