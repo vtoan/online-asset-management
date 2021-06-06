@@ -184,7 +184,7 @@ export default function Request() {
         <Col xs={2}>
           <RequestFilterDate onChange={handleFilterDate} />
         </Col>
-        <Col xs={3}>
+        <Col xs={4}>
           <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
       </Row>
