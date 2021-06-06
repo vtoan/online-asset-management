@@ -138,6 +138,12 @@ export default function Request() {
     _fetchData();
   };
 
+  const handleSearchKey = () => {
+    _refreshParams();
+    params.query = "";
+    _fetchData();
+  };
+
   const handleChangeSort = (target) => {
     _refreshParams();
     if ("sortNumber" in target) {
@@ -179,7 +185,7 @@ export default function Request() {
           <RequestFilterDate onChange={handleFilterDate} />
         </Col>
         <Col xs={3}>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onChangeKey={handleSearchKey} />
         </Col>
       </Row>
       <RequestTable
