@@ -18,7 +18,7 @@ export default function UserFilterState({ onChange }) {
       onChange={handleSelected}
       labelledBy="Select State"
       ArrowRenderer={() => <span className="fa fa-filter" />}
-      overrideStrings={{ selectSomeItems: "Admin, Staff..." }}
+      overrideStrings={{ selectSomeItems: "Type" }}
     />
   );
 }

@@ -18,7 +18,7 @@ export default function AssignmenttFilterState({ onChange }) {
       onChange={handleSelected}
       labelledBy="Select State"
       ArrowRenderer={() => <span className="fa fa-filter" />}
-      overrideStrings={{ selectSomeItems: "Accepted, Wating For Acceptance..." }}
+      overrideStrings={{ selectSomeItems: "State" }}
     />
   );
 }

@@ -18,7 +18,7 @@ export default function RequestFilterState({ onChange }) {
       onChange={handleSelected}
       labelledBy="Select State"
       ArrowRenderer={() => <span className="fa fa-filter" />}
-      overrideStrings={{ selectSomeItems: "Completed, Waiting for returning..." }}
+      overrideStrings={{ selectSomeItems: "State" }}
     />
   );
 }

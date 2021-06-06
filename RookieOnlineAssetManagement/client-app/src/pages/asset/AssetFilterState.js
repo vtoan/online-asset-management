@@ -18,7 +18,7 @@ export default function AssetFilterState({ onChange }) {
       onChange={handleSelected}
       labelledBy="Select State"
       ArrowRenderer={() => <span className="fa fa-filter" />}
-      overrideStrings={{ selectSomeItems: "Assignend, Avaiable, Not Avaiable" }}
+      overrideStrings={{ selectSomeItems: "State" }}
     />
   );
 }
