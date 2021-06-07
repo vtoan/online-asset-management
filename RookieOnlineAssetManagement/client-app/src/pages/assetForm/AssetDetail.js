@@ -57,12 +57,7 @@ export default function AssetDetail(props) {
             data: resp.data,
             key: "asset",
           });
-          history.push({
-            pathname: "/assets",
-            state: {
-              data: resp.data,
-            },
-          });
+          history.push("/assets");
         })
         .catch((err) => {
           modalAlert.show({

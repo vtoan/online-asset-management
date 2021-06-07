@@ -78,7 +78,7 @@ export default function Asset(props) {
   };
 
   const handleChangePage = (page) => {
-    _refreshParams();
+    // _refreshParams();
     params.page = page;
     _fetchData();
   };
