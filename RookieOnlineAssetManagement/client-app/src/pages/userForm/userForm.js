@@ -4,20 +4,26 @@ import { Col, Button, Input, FormGroup } from "reactstrap";
 import { formatDate } from "../../ultis/helper";
 
 export default function UserForm({ data, onSubmit, listState }) {
-
   const [selectType, setSelectType] = React.useState("");
-  const [firstName, setFirstName] = React.useState(false);
-  const [lastName, setLastName] = React.useState(false);
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [joinedDate, setjoinedDate] = React.useState(formatDate(Date.now()));
   const [dateOfBirth, setDateOfBirth] = React.useState([]);
   const [gender, setGender] = React.useState(0);
 
   React.useEffect(() => {
+    setFirstName(data?.firstName);
+    setLastName(data?.lastName);
     setSelectType(data?.roleName ?? "ADMIN");
-    setDateOfBirth(formatDate(data?.dateOfBirth));
+    setDateOfBirth(formatDate(data?.dateOfBirth, false));
     setjoinedDate(formatDate(data?.joinedDate));
-    setGender(Number(data?.gender ?? 0))
+    setGender(Number(data?.gender ?? 0));
   }, [data]);
+
+  const handleChangeInput = (event, setCallBack) => {
+    let val = event.target.value;
+    setCallBack && setCallBack(val);
+  };
 
   const handeChangeGender = (event) => {
     console.log(event.target.value);
@@ -44,14 +50,16 @@ export default function UserForm({ data, onSubmit, listState }) {
       joinedDate: String(event.target.dateAddUser.value),
       type: Number(event.target.nameCategoryType.value),
     };
-    console.log(user)
-    if (user.firstName === "") setFirstName(true)
-    if (user.lastName === "") setLastName(true)
-    if (user.dateOfBirth === "") setDateOfBirth(true)
-    if (user.joinedDate === "") setjoinedDate(true)
+    console.log(user);
+    if (user.firstName === "") setFirstName(true);
+    if (user.lastName === "") setLastName(true);
+    if (user.dateOfBirth === "") setDateOfBirth(true);
+    if (user.joinedDate === "") setjoinedDate(true);
 
     onSubmit && onSubmit(user);
   };
+
+  const validateForm = () => firstName && lastName && dateOfBirth;
 
   return (
     <>
@@ -65,9 +73,11 @@ export default function UserForm({ data, onSubmit, listState }) {
               type="text"
               className="first-name-user"
               name="firstName"
-              defaultValue={data?.firstName ?? ""}
+              value={firstName}
+              // defaultValue={data?.firstName ?? ""}
               disabled={data?.firstName}
-              invalid={firstName}
+              onChange={(e) => handleChangeInput(e, setFirstName)}
+              invalid={!firstName}
             />
           </Col>
         </FormGroup>
@@ -80,9 +90,11 @@ export default function UserForm({ data, onSubmit, listState }) {
               type="text"
               className="last-name-user"
               name="lastName"
-              defaultValue={data?.lastName ?? ""}
+              value={lastName}
+              // defaultValue={data?.lastName ?? ""}
+              onChange={(e) => handleChangeInput(e, setLastName)}
               disabled={data?.lastName}
-              invalid={lastName}
+              invalid={!lastName}
             />
           </Col>
         </FormGroup>
@@ -95,7 +107,8 @@ export default function UserForm({ data, onSubmit, listState }) {
               type="date"
               className="date-user"
               name="dobUser"
-              defaultValue={dateOfBirth}
+              value={dateOfBirth}
+              // defaultValue={dateOfBirth}
               onChange={handleChangeDateBOB}
               invalid={!dateOfBirth}
             />
@@ -161,18 +174,23 @@ export default function UserForm({ data, onSubmit, listState }) {
               className="category-type"
               defaultValue={selectType}
             >
-              {listState && listState.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
+              {listState &&
+                listState.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
             </Input>
           </Col>
         </FormGroup>
         <FormGroup row>
           <Col xs={5} className="area-button-assignment">
             <div className="submit-create-user" style={{ marginRight: "1em" }}>
-              <Button color="danger" type="submit">
+              <Button
+                className={validateForm() ? "" : "disabled"}
+                color="danger"
+                type="submit"
+              >
                 Save
               </Button>
               <Link to="/users">
@@ -192,5 +210,3 @@ export default function UserForm({ data, onSubmit, listState }) {
     </>
   );
 }
-
-
