@@ -80,7 +80,7 @@ export default function NSTable({
                 <td
                   key={index}
                   style={{
-                    width: index === 0 ? "7%" : item.width,
+                    width: index === 0 ? "8%" : item.width,
                     fontSize: 14,
                   }}
                 >
