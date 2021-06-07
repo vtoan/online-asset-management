@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Entities;
 
-namespace RookieOnlineAssetManagement.Data
+namespace RookieOnlineAssetManagement.Data.ModelBuilders
 {
     public class ModelBuilderUser
     {

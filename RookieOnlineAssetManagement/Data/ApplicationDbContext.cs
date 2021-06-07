@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RookieOnlineAssetManagement.Data.ModelBuilders;
 using RookieOnlineAssetManagement.Entities;
 
 namespace RookieOnlineAssetManagement.Data
@@ -19,7 +20,19 @@ namespace RookieOnlineAssetManagement.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            ModelBuilderHelper.Build(modelBuilder);
+            ModelBuilderAsset.Build(modelBuilder);
+            ModelBuilderAssignment.Build(modelBuilder);
+            ModelBuilderCategory.Build(modelBuilder);
+            ModelBuilderLocation.Build(modelBuilder);
+            ModelBuilderReturnRequest.Build(modelBuilder);
+            ModelBuilderRole.Build(modelBuilder);
+            ModelBuilderRoleClaim.Build(modelBuilder);
+            ModelBuilderUser.Build(modelBuilder);
+            ModelBuilderUserClaim.Build(modelBuilder);
+            ModelBuilderUserExtention.Build(modelBuilder);
+            ModelBuilderUserLogin.Build(modelBuilder);
+            ModelBuilderUserRole.Build(modelBuilder);
+            ModelBuilderUserToken.Build(modelBuilder);
         }
     }
 }

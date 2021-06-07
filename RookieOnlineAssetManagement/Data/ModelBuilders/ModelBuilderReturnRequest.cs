@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RookieOnlineAssetManagement.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace RookieOnlineAssetManagement.Data
+
+namespace RookieOnlineAssetManagement.Data.ModelBuilders
 {
     public class ModelBuilderReturnRequest
     {

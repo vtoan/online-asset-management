@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace RookieOnlineAssetManagement.Data
+namespace RookieOnlineAssetManagement.Data.ModelBuilders
 {
     public class ModelBuilderRoleClaim
     {
