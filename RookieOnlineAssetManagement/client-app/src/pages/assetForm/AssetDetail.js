@@ -17,7 +17,7 @@ export default function AssetDetail(props) {
   const [stateForm, setStateForm] = React.useState([]);
   const history = useHistory();
   //modal
-  const { modalLoading } = useNSModals();
+  const { modalLoading, modalAlert } = useNSModals();
   React.useEffect(() => {
     if (id) {
       _fetchAssetData(id);
@@ -35,7 +35,12 @@ export default function AssetDetail(props) {
       .then((resp) => {
         setEdit(resp.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        modalAlert.show({
+          title: "Error",
+          msg: err,
+        });
+      });
   };
 
   const handleSubmit = (asset) => {
@@ -53,7 +58,12 @@ export default function AssetDetail(props) {
             },
           });
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          modalAlert.show({
+            title: "Error",
+            msg: err,
+          });
+        })
         .finally(() => {
           modalLoading.close();
         });
@@ -63,7 +73,12 @@ export default function AssetDetail(props) {
         .then((resp) => {
           props.history.push("/assets");
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          modalAlert.show({
+            title: "Error",
+            msg: err,
+          });
+        })
         .finally(() => {
           modalLoading.close();
         });
