@@ -51,7 +51,7 @@ export default function Assignment() {
       pageSize: 8,
       page: 1,
       StateAssignments: [],
-      AssignedDateAssignment: "",
+      AssignedDate: "",
     };
     _fetchData();
   }, []);
@@ -192,7 +192,7 @@ export default function Assignment() {
 
   const handleFilterDate = (date) => {
     _refreshParams();
-    params.ReturnedDate = date ?? "";
+    params.AssignedDate = date ?? "";
     _fetchData();
   };
 
