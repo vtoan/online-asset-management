@@ -148,7 +148,7 @@ export default function Request() {
     _refreshParams();
     if ("sortNumber" in target) {
       params.sortNo = target.sortNumber;
-      target = { sortAssetId: target.sortNumber };
+      target = { SortAssetId: target.sortNumber };
     }
     params = { ...params, ...target };
     if (target < 0) return (params.sortCode = null);
