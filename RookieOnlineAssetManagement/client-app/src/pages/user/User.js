@@ -10,6 +10,7 @@ import NSConfirmModal, { useNSConfirmModal } from "../../common/NSConfirmModal";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import UserFilterState from "./UserFilterType";
 import { formatDate, _createQuery } from "../../ultis/helper";
+import { PageContext } from "../../containers/PageLayout.js";
 
 let params = {};
 
@@ -26,6 +27,7 @@ export default function User() {
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
+  const pageContext = React.useContext(PageContext);
 
   const history = useHistory();
   //modal
@@ -60,10 +62,19 @@ export default function User() {
   }, []);
 
   const _fetchData = () => {
+    pageContext?.payload ? (params.pagesize = 7) : (params.pagesize = 8);
+    //
     http
       .get("/api/users" + _createQuery(params))
       .then((resp) => {
-        setUser(resp.data);
+        let val = resp.data;
+        if (pageContext?.payload) {
+          if (pageContext.payload.key === "user") {
+            val.unshift(pageContext?.payload.data);
+            pageContext.setData(null);
+          }
+        }
+        setUser(val);
         let totalPages = resp.headers["total-pages"];
         setTotalPages(totalPages > 0 ? totalPages : 0);
         setPageCurrent(params.page);
@@ -75,7 +86,7 @@ export default function User() {
 
   //handleClick
   const handleChangePage = (page) => {
-    _refreshParams();
+    // _refreshParams();
     params.page = page;
     _fetchData();
   };
