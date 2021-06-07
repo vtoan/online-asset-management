@@ -12,6 +12,7 @@ import AssignmenttFilterState from "./AssignmenttFilterState";
 import AssignmenttFilterDate from "./AssignmenttFilterDate";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
 import { assignmentOptions } from "../../enums/assignmentState";
+import { PageContext } from "../../containers/PageLayout.js";
 
 let params = {};
 
@@ -30,6 +31,7 @@ export default function Assignment() {
   const [totalPages, setTotalPages] = React.useState(0);
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
+  const pageContext = React.useContext(PageContext);
   const history = useHistory();
   //modal
   const modalConfirm = useNSConfirmModal();
@@ -54,18 +56,23 @@ export default function Assignment() {
     _fetchData();
   }, []);
 
-  React.useEffect(() => {
-    console.log(assignmentData);
-  }, [assignmentData]);
-
   const _fetchData = () => {
+    pageContext?.payload ? (params.pageSize = 7) : (params.pageSize = 8);
+    //
     http
       .get("/api/assignments" + _createQuery(params))
       .then(({ data, headers }) => {
         let totalPages = headers["total-pages"];
         let totalItems = headers["total-item"];
-        _addFieldNo(data, params.page, totalItems);
-        setAssignment(data);
+        let val = data;
+        if (pageContext?.payload) {
+          if (pageContext.payload.key === "assignment") {
+            val.unshift(pageContext?.payload.data);
+            pageContext.setData(null);
+          }
+        }
+        _addFieldNo(val, params.page, totalItems);
+        setAssignment(val);
         setTotalPages(totalPages > 0 ? totalPages : 0);
         setPageCurrent(params.page);
       })
@@ -88,7 +95,7 @@ export default function Assignment() {
   };
 
   const handleChangePage = (page) => {
-    _refreshParams();
+    // _refreshParams();
     params.page = page;
     _fetchData();
   };
@@ -138,9 +145,9 @@ export default function Assignment() {
         http
           .post(
             "/api/ReturnRequests?assignmentId=" +
-            item.assignmentId +
-            "&requestedUserId=" +
-            item.userId
+              item.assignmentId +
+              "&requestedUserId=" +
+              item.userId
           )
           .then((resp) => {
             _refreshParams();
@@ -176,7 +183,6 @@ export default function Assignment() {
     params.query = "";
     _fetchData();
   };
-
 
   const handleFilterState = (items) => {
     _refreshParams();

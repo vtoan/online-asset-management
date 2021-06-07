@@ -8,6 +8,7 @@ import UserSelect from "./UserSelect";
 import http from "../../ultis/httpClient.js";
 import NSSelectModal, { useNSSelectModal } from "../../common/NSSelectModal";
 import { useNSModals } from "../../containers/ModalContainer";
+import { PageContext } from "../../containers/PageLayout";
 
 export default function UserForm() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ export default function UserForm() {
   const [date, setDate] = React.useState(formatDate(Date.now()));
   const [note, setNote] = React.useState("");
   const history = useHistory();
+  const pageContext = React.useContext(PageContext);
   //modal
   const modalSelectAsset = useNSSelectModal();
   const modalSelectUser = useNSSelectModal();
@@ -75,6 +77,10 @@ export default function UserForm() {
       http
         .put("/api/assignments/" + id, assignment)
         .then((resp) => {
+          pageContext.setData({
+            data: resp.data,
+            key: "assignment",
+          });
           history.push("/assignments");
         })
         .catch((err) => console.log(err))
@@ -85,6 +91,10 @@ export default function UserForm() {
       http
         .post("/api/assignments", assignment)
         .then((resp) => {
+          pageContext.setData({
+            data: resp.data,
+            key: "assignment",
+          });
           history.push("/assignments");
         })
         .catch((err) => console.log(err))
