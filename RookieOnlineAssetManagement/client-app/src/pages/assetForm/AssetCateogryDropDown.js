@@ -1,12 +1,15 @@
 import React from "react";
 import http from "../../ultis/httpClient";
-import { Input, FormGroup } from 'reactstrap';
+import { Input, FormGroup } from "reactstrap";
+import { useNSModals } from "../../containers/ModalContainer";
 
 export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
-  const [category, setCategory] = React.useState([]);
+  const [category, setCategory] = React.useState("");
   const [checkNameCate, setCheckNameCate] = React.useState("");
   const [checkShortNameCate, setCheckShortNameCate] = React.useState("");
-  const [cateSelected, setCateSelected] = React.useState([]);
+  const [cateSelected, setCateSelected] = React.useState("");
+
+  const { modalAlert } = useNSModals();
 
   let expanded = false;
 
@@ -28,7 +31,7 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
       label.style.display = "block";
       expanded = false;
     }
-  }
+  };
 
   const showDropDownList = (event) => {
     event.preventDefault();
@@ -37,7 +40,7 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
     let label = document.getElementById("form-category");
     label.style.display = "block";
     label.style.display = "inline-flex";
-  }
+  };
 
   const _fetchCateData = () => {
     http
@@ -79,8 +82,7 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
     } else if (cate.shortName === "") {
       setCheckShortNameCate(true);
       setCheckNameCate(false);
-    }
-    else {
+    } else {
       setCheckNameCate(false);
       setCheckShortNameCate(false);
     }
@@ -90,13 +92,30 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
       .then((resp) => {
         _fetchCateData();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        modalAlert.show({
+          title: "Error",
+          msg: err.response.data,
+        });
+      });
+  };
+
+  const isHasValue = () => {
+    if (itemSelected) return true;
+    else {
+      return cateSelected;
+    }
   };
 
   return (
-    <div className="multiselect" disabled={itemSelected} style={{
-      border: !itemSelected ? "1px solid red" : "", borderRadius: 6
-    }}>
+    <div
+      className="multiselect"
+      disabled={itemSelected}
+      style={{
+        border: isHasValue() ? "" : "1px solid red",
+        borderRadius: 6,
+      }}
+    >
       <div className="selectBox" onClick={showCheckboxes}>
         <span className="fa fa-chevron-down" />
         <select
@@ -126,8 +145,14 @@ export default function AssetCateogryDropDown({ onSeleted, itemSelected }) {
               </label>
             ))}
           <hr />
-          <a href="new-category" onClick={showDropDownList} id="add-new-cate">Add new category</a>
-          <FormGroup className="checkboxlist" id="form-category" style={{ padding: 6 }}>
+          <a href="new-category" onClick={showDropDownList} id="add-new-cate">
+            Add new category
+          </a>
+          <FormGroup
+            className="checkboxlist"
+            id="form-category"
+            style={{ padding: 6 }}
+          >
             <Input
               type="text"
               placeholder="MP3"
