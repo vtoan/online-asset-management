@@ -23,9 +23,9 @@ namespace RookieOnlineAssetManagement.Models
         [BindNever]
         public string LocationId { get; set; }
 
-        [Required(ErrorMessage = "Current asset id cannot null")]
+        // [Required(ErrorMessage = "Current asset id cannot null")]
         public string CurrentAssetId { get; set; }
-        
+
         public string Query { get; set; }
     }
 }
