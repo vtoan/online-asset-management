@@ -205,7 +205,7 @@ export default function User() {
             </tr>
             <tr>
               <td>Gender : </td>
-              <td>{itemDetail?.gender ? "MALE" : "FAMALE"}</td>
+              <td>{itemDetail?.gender ? "MALE" : "FEMALE"}</td>
             </tr>
             <tr>
               <td>Joined Date :</td>
