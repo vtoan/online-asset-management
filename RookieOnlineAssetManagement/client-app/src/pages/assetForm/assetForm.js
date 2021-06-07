@@ -7,16 +7,25 @@ import { formatDate } from "../../ultis/helper";
 export default function AssetForm({ data, onSubmit, listState }) {
   const [cateIdSelected, setCateSelected] = React.useState(null);
   const [stateSelected, setStateSelected] = React.useState();
-  const [dateCurrent, setDateCurrent] = React.useState([]);
-  const [checkNameAsset, setCheckNameAsset] = React.useState(false);
-  const [checkNote, setCheckNote] = React.useState(false);
-  const [checkDate, setCheckDate] = React.useState(false);
+  const [dateCurrent, setDateCurrent] = React.useState(null);
+  const [assetNameInput, setNameAsset] = React.useState("");
+  const [specificationInput, setSpecification] = React.useState("");
+  // const [checkDate, setCheckDate] = React.useState(false);
 
   React.useEffect(() => {
-    setCateSelected(data?.categoryId);
+    if (data) {
+      setNameAsset(data?.assetName);
+      setSpecification(data?.specification);
+      setCateSelected(data?.categoryId);
+      setDateCurrent(formatDate(data?.installedDate));
+    }
     setStateSelected(data?.state ?? 2);
-    setDateCurrent(formatDate(data?.installedDate));
   }, [data]);
+
+  const handleChangeInput = (event, setCallBack) => {
+    let val = event.target.value;
+    setCallBack && setCallBack(val);
+  };
 
   const handleChangeCategory = (cateId) => {
     setCateSelected(cateId);
@@ -33,18 +42,21 @@ export default function AssetForm({ data, onSubmit, listState }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const asset = {
-      assetName: String(event.target.nameAsset.value),
+      assetName: assetNameInput,
       categoryId: cateIdSelected,
-      specification: String(event.target.specificationAsset.value),
-      installedDate: String(event.target.dateAddAsset.value),
-      state: Number(event.target.radioAvailable.value),
+      specification: specificationInput,
+      installedDate: dateCurrent,
+      state: stateSelected,
     };
-    if (asset.assetName === "") setCheckNameAsset(true)
-    if (asset.specification === "") setCheckNote(true)
-    if (asset.installedDate === "") setCheckDate(true)
-
     onSubmit && onSubmit(asset);
   };
+
+  const validateForm = () =>
+    assetNameInput &&
+    cateIdSelected &&
+    specificationInput &&
+    dateCurrent &&
+    stateSelected;
 
   return (
     <form className="form-asset" onSubmit={handleSubmit}>
@@ -58,7 +70,8 @@ export default function AssetForm({ data, onSubmit, listState }) {
             defaultValue={data?.assetName ?? ""}
             className="name-new-asset"
             name="nameAsset"
-            invalid={checkNameAsset}
+            invalid={!assetNameInput}
+            onChange={(e) => handleChangeInput(e, setNameAsset)}
           />
         </Col>
       </FormGroup>
@@ -83,7 +96,8 @@ export default function AssetForm({ data, onSubmit, listState }) {
             rows="5"
             name="specificationAsset"
             defaultValue={data?.specification ?? ""}
-            invalid={checkNote}
+            invalid={!specificationInput}
+            onChange={(e) => handleChangeInput(e, setSpecification)}
           />
         </Col>
       </FormGroup>
@@ -98,7 +112,7 @@ export default function AssetForm({ data, onSubmit, listState }) {
             // value={formatDate(dataEdit?.installedDate)}
             value={dateCurrent}
             onChange={handleChangeDate}
-            invalid={checkDate}
+            invalid={!dateCurrent}
           />
         </Col>
       </FormGroup>
@@ -125,8 +139,12 @@ export default function AssetForm({ data, onSubmit, listState }) {
       </FormGroup>
       <FormGroup row>
         <Col xs={5} className="area-button">
-          <div className="submit-create-asset">
-            <Button color="danger" type="submit">
+          <div className="submit-create-asset  ">
+            <Button
+              className={validateForm() ? "" : "disabled"}
+              color="danger"
+              type="submit"
+            >
               Save
             </Button>
             <Link to="/assets">
