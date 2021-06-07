@@ -13,6 +13,7 @@ import NSConfirmModal, {
   useNSConfirmModal,
 } from "../../common/NSConfirmModal.js";
 import NSDetailModal, { useNSDetailModal } from "../../common/NSDetailModal";
+import { PageContext } from "../../containers/PageLayout.js";
 
 let params = {};
 
@@ -30,6 +31,7 @@ export default function Asset(props) {
   const [pageCurrent, setPageCurrent] = React.useState(0);
   const [itemDetail, setItemDetail] = React.useState(null);
   const [itemHistory, setItemHistory] = React.useState(null);
+  const pageContext = React.useContext(PageContext);
   const history = useHistory();
   //modal
   const modalConfirm = useNSConfirmModal();
@@ -53,10 +55,19 @@ export default function Asset(props) {
   }, []);
 
   const _fetchData = () => {
+    pageContext?.payload ? (params.pagesize = 7) : (params.pagesize = 8);
+    //
     http
       .get("/api/asset" + _createQuery(params))
       .then((resp) => {
-        setAssets(resp.data);
+        let val = resp.data;
+        if (pageContext?.payload) {
+          if (pageContext.payload.key === "asset") {
+            val.unshift(pageContext?.payload.data);
+            pageContext.setData(null);
+          }
+        }
+        setAssets(val);
         let totalPages = resp.headers["total-pages"];
         setTotalPages(totalPages > 0 ? totalPages : 0);
         setPageCurrent(params.page);
@@ -240,10 +251,8 @@ export default function Asset(props) {
                         </tr>
                       </tbody>
                     );
-                  }
-                  )}
+                  })}
               </Table>
-
             </tr>
           </tbody>
         </Table>
