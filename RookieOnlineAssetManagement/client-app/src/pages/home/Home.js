@@ -48,7 +48,7 @@ export default function Home() {
   };
   //handleClick
   const handleChangePage = (page) => {
-    _refreshParams();
+    // _refreshParams();
     params.page = page;
     _fetchData();
   };

@@ -63,7 +63,7 @@ export default function Report() {
 
   //handleClick
   const handleChangePage = (page) => {
-    _refreshParams();
+    // _refreshParams();
     params.page = page;
     _fetchData();
   };

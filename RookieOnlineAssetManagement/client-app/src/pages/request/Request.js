@@ -155,7 +155,7 @@ export default function Request() {
     _fetchData();
   };
   const handleChangePage = (page) => {
-    _refreshParams();
+    // _refreshParams();
     params.page = page;
     _fetchData();
   };
