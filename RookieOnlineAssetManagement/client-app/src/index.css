@@ -586,6 +586,16 @@ div.input-group {
   color: var(--clr-primary);
 }
 
+.page-link:focus {
+  box-shadow: none;
+  color: var(--clr-primary);
+}
+
+.page-link:hover {
+  /* box-shadow: none; */
+  color: var(--clr-primary);
+}
+
 .page-item.active .page-link {
   background-color: var(--clr-primary);
   border-color: var(--clr-primary);
