@@ -17,6 +17,7 @@ import { PageContext } from "../../containers/PageLayout.js";
 let params = {};
 
 function _refreshParams() {
+  params.sortNo = 0;
   params.sortAssetId = 0;
   params.sortAssetName = 0;
   params.sortAssignedTo = 0;
@@ -40,8 +41,8 @@ export default function Assignment() {
 
   React.useEffect(() => {
     params = {
-      sortNo: 1,
-      sortAssetId: 1,
+      sortNo: 0,
+      sortAssetId: 0,
       sortAssetName: 0,
       sortAssignedTo: 0,
       sortAssignedBy: 0,
@@ -65,6 +66,7 @@ export default function Assignment() {
         let totalPages = headers["total-pages"];
         let totalItems = headers["total-item"];
         let val = data;
+        console.log(data);
         if (pageContext?.payload) {
           if (pageContext.payload.key === "assignment") {
             val.unshift(pageContext?.payload.data);
@@ -101,6 +103,7 @@ export default function Assignment() {
   };
 
   const handleChangeSort = (target) => {
+    console.log(target);
     _refreshParams();
     if ("sortNumber" in target) {
       params.sortNo = target.sortNumber;
