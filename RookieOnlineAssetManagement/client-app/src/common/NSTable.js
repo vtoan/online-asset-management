@@ -39,6 +39,7 @@ export default function NSTable({
   };
 
   const handleChangePage = (page) => {
+    if (page === pageSelected) return;
     if (onChangePage) {
       setLoading(true);
       onChangePage(page);
